@@ -5,82 +5,135 @@
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
+
   --card: #ffffff;
   --card-foreground: #0f172a;
+
   --popover: #ffffff;
   --popover-foreground: #0f172a;
+
   --primary: #2563eb;
   --primary-foreground: #ffffff;
+
   --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
+
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
+
   --accent: #eff6ff;
   --accent-foreground: #1d4ed8;
+
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
+
   --border: #e2e8f0;
   --input: #e2e8f0;
   --ring: #2563eb;
-  --radius: 1.5rem;
+
+  --radius: 2rem;
 }
 
 .dark {
   --background: #020617;
   --foreground: #f8fafc;
+
   --card: #0f172a;
   --card-foreground: #f8fafc;
+
   --popover: #0f172a;
   --popover-foreground: #f8fafc;
+
   --primary: #3b82f6;
   --primary-foreground: #ffffff;
+
   --secondary: #1e293b;
   --secondary-foreground: #f8fafc;
+
   --muted: #1e293b;
   --muted-foreground: #94a3b8;
+
   --accent: #1e3a8a;
   --accent-foreground: #dbeafe;
+
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
+
   --border: #1e293b;
   --input: #1e293b;
   --ring: #3b82f6;
 }
 
-@layer base {
-  * {
-    @apply border-border outline-none;
-  }
-  
-  html,
-  body {
-    @apply w-full min-h-full overflow-x-hidden scroll-smooth;
-  }
-
-  body {
-    @apply bg-background text-foreground font-sans antialiased;
-  }
-
-  /* Custom Scrollbar for pills */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  border-color: var(--border);
 }
 
-@layer components {
-  .pill {
-    @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-bold transition-all active:scale-95;
-  }
-  
-  .card-premium {
-    @apply bg-white border border-slate-100 rounded-[2rem] shadow-sm hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-500 overflow-hidden;
-  }
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
 
-  .btn-pill {
-    @apply rounded-full font-black uppercase tracking-widest text-xs px-6 py-3 transition-all active:scale-95 flex items-center justify-center gap-2;
-  }
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: inherit;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Custom Utilities for Tailwind v4 compatibility */
+@utility border-border {
+  border-color: var(--border);
+}
+@utility bg-background {
+  background-color: var(--background);
+}
+@utility text-foreground {
+  color: var(--foreground);
+}
+@utility bg-muted {
+  background-color: var(--muted);
+}
+@utility text-muted-foreground {
+  color: var(--muted-foreground);
+}
+@utility border-input {
+  border-color: var(--input);
+}
+@utility bg-card {
+  background-color: var(--card);
+}
+@utility text-card-foreground {
+  color: var(--card-foreground);
+}
+@utility bg-popover {
+  background-color: var(--popover);
+}
+@utility text-popover-foreground {
+  color: var(--popover-foreground);
+}
+
+/* Custom Utilities for the new 'MDP Market' system */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
