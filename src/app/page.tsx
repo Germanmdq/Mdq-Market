@@ -33,7 +33,7 @@ import ServiceCard from "@/components/marketplace/ServiceCard";
 import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
 import AutoProductSlider from "@/components/marketplace/AutoProductSlider";
 import CategoryPills from "@/components/marketplace/CategoryPills";
-import { ProductCarousel } from "@/components/marketplace/ProductCarousel";
+import { ContentCarousel } from "@/components/ui/ContentCarousel";
 import { cn, formatPrice } from "@/lib/utils";
 
 /* ═══════════════════════════════════════════════════════════════ */
@@ -166,13 +166,13 @@ export default function HomePage() {
               Ver más <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
-          <ProductCarousel>
+          <ContentCarousel>
             {MOCK_PRODUCTS.slice(0, 12).map(product => (
-              <div key={product.id} className="w-[82vw] max-w-[300px] sm:w-[280px] flex-none snap-start py-4">
+              <div key={product.id} className="w-[82vw] max-w-[300px] sm:w-[280px] lg:w-[290px] flex-none snap-start py-4">
                 <ProductCard product={product} />
               </div>
             ))}
-          </ProductCarousel>
+          </ContentCarousel>
         </section>
 
         {/* OFERTAS DEL DÍA */}
@@ -189,13 +189,13 @@ export default function HomePage() {
               Ver todas <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
-          <ProductCarousel>
+          <ContentCarousel>
             {MOCK_PRODUCTS.filter(p => p.oldPrice).slice(0, 12).map(product => (
-              <div key={product.id} className="w-[82vw] max-w-[300px] sm:w-[280px] flex-none snap-start py-4">
+              <div key={product.id} className="w-[82vw] max-w-[300px] sm:w-[280px] lg:w-[290px] flex-none snap-start py-4">
                 <ProductCard product={product} />
               </div>
             ))}
-          </ProductCarousel>
+          </ContentCarousel>
         </section>
 
         {/* SERVICIOS HOY */}
@@ -210,13 +210,13 @@ export default function HomePage() {
               Explorar <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
-          <ProductCarousel showGradients={false}>
+          <ContentCarousel showGradients={false}>
             {MOCK_SERVICES.slice(0, 10).map(service => (
-              <div key={service.id} className="w-[82vw] max-w-[340px] sm:w-[320px] flex-none snap-start py-4">
+              <div key={service.id} className="w-[82vw] max-w-[340px] sm:w-[320px] lg:w-[340px] flex-none snap-start py-4">
                 <ServiceCard service={service} />
               </div>
             ))}
-          </ProductCarousel>
+          </ContentCarousel>
         </section>
 
         {/* PROFESIONALES VERIFICADOS */}
@@ -232,13 +232,13 @@ export default function HomePage() {
               Ver listado <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
-          <ProductCarousel>
+          <ContentCarousel>
             {MOCK_PROFESSIONALS.filter(p => p.verified).slice(0, 10).map(pro => (
-              <div key={pro.id} className="w-[82vw] max-w-[320px] sm:w-[300px] flex-none snap-start py-4">
+              <div key={pro.id} className="w-[82vw] max-w-[320px] sm:w-[300px] lg:w-[320px] flex-none snap-start py-4">
                 <ProfessionalCard professional={pro} />
               </div>
             ))}
-          </ProductCarousel>
+          </ContentCarousel>
         </section>
 
         {/* MÁS DE MDP */}
