@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, Shield, Heart, ShoppingCart } from "lucide-react";
+import { Heart, Star, ShoppingCart, Zap, Clock, MapPin } from "lucide-react";
 import { Product } from "@/types";
 import { formatPrice, cn } from "@/lib/utils";
 
@@ -12,127 +12,101 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const [isFav, setIsFav] = useState(false);
   const [imgError, setImgError] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
-  const discount = product.oldPrice ? Math.round((1 - product.price / product.oldPrice) * 100) : 0;
-  
-  // Category fallbacks
+
   const getFallbackImage = (category: string) => {
     const fallbacks: Record<string, string> = {
-      "cat-1": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop", // Tech
-      "cat-2": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=800&auto=format&fit=crop", // Home
-      "cat-3": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=800&auto=format&fit=crop", // Gadgets
-      "cat-4": "https://images.unsplash.com/photo-1504148455328-c376907d081c?q=80&w=800&auto=format&fit=crop", // Tools
-      "cat-5": "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=800&auto=format&fit=crop", // Fashion
-      "cat-8": "https://images.unsplash.com/photo-1596435764499-6293e2697418?q=80&w=800&auto=format&fit=crop", // Artisanal
-      "cat-10": "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=800&auto=format&fit=crop", // Decor
+      "cat-1": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800",
+      "cat-2": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800",
+      "cat-3": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=800",
+      "cat-4": "https://images.unsplash.com/photo-1504148455328-c376907d081c?q=80&w=800",
+      "cat-5": "https://images.unsplash.com/photo-1544923246-77307dd654ca?q=80&w=800",
     };
-    return fallbacks[category] || "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800&auto=format&fit=crop";
+    return fallbacks[category] || "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?q=80&w=800";
   };
 
   const handleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsFavorite(!isFavorite);
-    // TODO: Connect with Auth/Backend
+    setIsFav(!isFav);
   };
 
   return (
-    <Link href={`/productos/${product.slug}`} className="block h-full group">
-      <article className="bg-white rounded-[32px] overflow-hidden border border-slate-100 hover:border-blue-200 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-500 flex flex-col h-full relative group shadow-sm">
-        {/* Image Container - Full Width Top */}
-        <div className="relative aspect-square overflow-hidden bg-slate-50">
+    <Link href={`/productos/${product.slug}`} className="group block h-full">
+      <article className="bg-white rounded-[2rem] border border-slate-100 p-3 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-500 h-full flex flex-col">
+        {/* Image Container */}
+        <div className="relative aspect-square overflow-hidden rounded-[1.5rem] bg-slate-50 group-hover:shadow-inner transition-all">
           <Image
             src={imgError ? getFallbackImage(product.category) : product.images[0]}
             alt={product.title}
             fill
-            className="object-cover group-hover:scale-110 transition-transform duration-700"
+            className="object-contain p-4 group-hover:scale-110 transition-transform duration-700"
             onError={() => setImgError(true)}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           
-          {/* Floating Tags */}
-          <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-            {discount > 0 && (
-              <span className="bg-red-600 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-xl">
-                {discount}% OFF
-              </span>
-            )}
-            {product.condition === "Usado como nuevo" && (
-              <span className="bg-emerald-600 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-xl">
-                Como nuevo
-              </span>
-            )}
-          </div>
-
+          {/* Favorite Button */}
           <button 
             onClick={handleFavorite}
             className={cn(
-              "absolute top-4 right-4 p-2.5 rounded-full transition-all shadow-lg z-20 backdrop-blur-md",
-              isFavorite 
-                ? "bg-red-50 text-red-500 border border-red-100" 
-                : "bg-white/90 text-slate-400 hover:text-red-500 hover:bg-white border border-white/20"
+              "absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md shadow-sm transition-all z-10 active:scale-90",
+              isFav ? "bg-red-50 text-red-500" : "bg-white/80 text-slate-400 hover:text-red-500 hover:bg-white"
             )}
           >
-            <Heart className={cn("w-4 h-4", isFavorite && "fill-current")} />
+            <Heart className={cn("w-5 h-5", isFav && "fill-current")} />
           </button>
 
-          {/* Protected Payment (Subtle Badge) */}
-          {product.protectedPayment && (
-            <div className="absolute bottom-4 left-4 flex items-center gap-1.5 bg-white/90 backdrop-blur-md py-1.5 px-3 rounded-xl border border-white/20 shadow-sm z-10">
-              <Shield className="w-3 h-3 text-blue-600" strokeWidth={3} />
-              <span className="text-[8px] font-black text-blue-900 uppercase tracking-widest">Protegido</span>
+          {/* Discount Badge */}
+          {product.discount && (
+            <div className="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest shadow-lg z-10">
+              -{product.discount}%
             </div>
           )}
         </div>
 
         {/* Content */}
-        <div className="p-5 flex flex-col flex-grow">
-          <div className="flex flex-col gap-1 mb-4">
-            <div className="flex items-baseline gap-2">
-               <span className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
-                  {formatPrice(product.price)}
-               </span>
-               {product.oldPrice && (
-                 <span className="text-sm text-slate-400 line-through font-medium">
-                   {formatPrice(product.oldPrice)}
-                 </span>
-               )}
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">
+        <div className="p-4 flex flex-col flex-grow">
+          {/* Badges Row */}
+          <div className="flex flex-wrap gap-1.5 mb-3">
+             {product.mdpDelivery?.available && (
+               <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-black text-emerald-700 border border-emerald-100 uppercase tracking-tighter">
                  🚚 Entrega MDP
-              </span>
-              <span className="text-[10px] font-bold text-slate-300">•</span>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate max-w-[100px]">
-                 {product.zone}
-              </span>
+               </span>
+             )}
+             {product.protectedPayment && (
+               <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-black text-blue-700 border border-blue-100 uppercase tracking-tighter">
+                 🛡️ Pago Protegido
+               </span>
+             )}
+          </div>
+
+          <div className="mb-2">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{product.condition}</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-xl font-black text-slate-950 tracking-tighter">{formatPrice(product.price)}</span>
+              {product.oldPrice && (
+                <span className="text-xs text-slate-400 line-through font-bold">{formatPrice(product.oldPrice)}</span>
+              )}
             </div>
           </div>
-          
-          <h3 className="text-[13px] text-slate-600 font-bold mb-4 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors min-h-[32px]">
+
+          <h3 className="text-sm font-bold text-slate-800 line-clamp-2 leading-snug mb-4 min-h-[40px] group-hover:text-blue-600 transition-colors">
             {product.title}
           </h3>
 
-          {/* Footer Meta */}
-          <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-50">
-             <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg text-amber-600 border border-amber-100">
-                   <Star className="w-3 h-3 fill-amber-600" />
-                   <span className="text-[11px] font-black">{product.sellerRating}</span>
-                </div>
-                <span className="text-[10px] font-black text-slate-300 uppercase truncate max-w-[80px]">
-                   {product.views}+ visitas
-                </span>
-             </div>
-             <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-inner">
-                <ShoppingCart className="w-4 h-4" />
-             </div>
+          <div className="mt-auto pt-4 border-t border-slate-50 flex items-center justify-between">
+            <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-lg text-amber-600 border border-amber-100">
+               <Star className="w-3 h-3 fill-amber-600" />
+               <span className="text-[11px] font-black">{product.sellerRating}</span>
+            </div>
+            <div className="flex items-center gap-1 text-[11px] font-bold text-slate-400">
+              <MapPin className="w-3 h-3" />
+              <span>{product.zone}</span>
+            </div>
           </div>
 
-          {/* CTA Button */}
-          <div className="mt-5 w-full bg-blue-600 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2 active:scale-95 text-sm uppercase tracking-widest whitespace-nowrap">
-             Ver producto
+          <div className="mt-4 w-full h-10 rounded-full bg-slate-950 group-hover:bg-blue-600 text-white font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center transition-all shadow-xl active:scale-95">
+            Ver producto
           </div>
         </div>
       </article>
