@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
+import { Providers } from "@/components/providers/Providers";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({
@@ -24,12 +25,14 @@ export default function RootLayout({
   return (
     <html lang="es" className={cn("h-full antialiased", inter.variable)}>
       <body className="min-h-full flex flex-col bg-[#f8fafc] font-sans">
-        <Header />
-        <main className="flex-grow pb-20 lg:pb-0">
-          {children}
-        </main>
-        <Footer />
-        <BottomNav />
+        <Providers>
+          <Header />
+          <main className="flex-grow pb-20 lg:pb-0">
+            {children}
+          </main>
+          <Footer />
+          <BottomNav />
+        </Providers>
       </body>
     </html>
   );

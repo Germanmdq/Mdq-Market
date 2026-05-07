@@ -11,6 +11,8 @@ export type Category = {
   path_slugs: string[];
   children_count: number;
   is_root: boolean;
+  is_active?: boolean;
+  show_in_menu?: boolean;
   children?: Category[];
 };
 
