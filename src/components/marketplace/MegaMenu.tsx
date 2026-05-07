@@ -41,18 +41,24 @@ const MegaMenu = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loadingCategories, setLoadingCategories] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!isOpen || loaded || loadingCategories) return;
     const loadCategories = async () => {
+      setLoadingCategories(true);
       const tree = await getMegaMenuCategories();
       setCategories(tree);
       if (tree.length > 0) {
         setActiveCategory(tree[0]);
       }
+      setLoaded(true);
+      setLoadingCategories(false);
     };
     loadCategories();
-  }, []);
+  }, [isOpen, loaded, loadingCategories]);
 
   // Close on Escape
   useEffect(() => {
@@ -123,6 +129,13 @@ const MegaMenu = () => {
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
+                {loadingCategories && (
+                  <div className="space-y-2 p-2">
+                    <div className="h-9 animate-pulse rounded-xl bg-slate-100" />
+                    <div className="h-9 animate-pulse rounded-xl bg-slate-100" />
+                    <div className="h-9 animate-pulse rounded-xl bg-slate-100" />
+                  </div>
+                )}
                 {filteredCategories.map((cat) => (
                   <button
                     key={cat.id}
@@ -205,9 +218,6 @@ const MegaMenu = () => {
                     <h3 className="text-base font-semibold text-slate-950 mb-2">
                       {activeCategory.name}
                     </h3>
-                    <p className="text-sm text-slate-500 mb-6 max-w-xs">
-                      Explora todas las opciones disponibles en esta categoría
-                    </p>
                     <Link
                       href={getCategoryHref(activeCategory)}
                       className="px-5 py-2.5 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
@@ -218,13 +228,7 @@ const MegaMenu = () => {
                   </div>
                 )
               ) : (
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-4">
-                    <LayoutGrid className="w-8 h-8 text-slate-200" />
-                  </div>
-                  <p className="text-base font-medium text-slate-400">Selecciona una categoría</p>
-                  <p className="text-sm text-slate-400 mt-1">para explorar sus opciones</p>
-                </div>
+                <div className="py-16 text-center text-sm font-medium text-slate-400">Cargando categorías...</div>
               )}
             </section>
 
@@ -272,7 +276,7 @@ const MegaMenu = () => {
                     <Zap className="w-4 h-4 text-blue-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium group-hover:text-blue-300 transition-colors">Servicios 24 hs</div>
+                    <div className="text-sm font-medium group-hover:text-blue-300 transition-colors">Servicios urgentes</div>
                     <div className="text-xs text-slate-400">Disponibles hoy</div>
                   </div>
                 </Link>
@@ -286,8 +290,8 @@ const MegaMenu = () => {
                     <ShieldCheck className="w-4 h-4 text-purple-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium group-hover:text-blue-300 transition-colors">Verificados</div>
-                    <div className="text-xs text-slate-400">Profesionales</div>
+                    <div className="text-sm font-medium group-hover:text-blue-300 transition-colors">Profesionales verificados</div>
+                    <div className="text-xs text-slate-400">Identidad validada</div>
                   </div>
                 </Link>
 

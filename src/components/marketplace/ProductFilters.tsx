@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { getMegaMenuCategories, type Category } from "@/lib/categories";
 
 const ZONES = [
   "Centro", "Güemes", "Constitución", "La Perla", "Playa Grande",
@@ -11,15 +12,18 @@ const ZONES = [
   "Puerto", "Alfar", "Faro Norte", "San Carlos", "Las Américas"
 ];
 
-const CONDITIONS = [
-  "Nuevo", "Usado - Como nuevo", "Usado - Buen estado",
-  "Usado - Con detalles", "Reacondicionado"
-];
+const CONDITIONS = {
+  new: "Nuevo",
+  used_like_new: "Usado - como nuevo",
+  used_good: "Usado - buen estado",
+  used_with_details: "Usado - con detalles",
+  refurbished: "Reacondicionado",
+};
 
 const SELLER_TYPES = {
   "commerce": "Comercio",
   "entrepreneur": "Emprendedor",
-  "individual": "Particular"
+  "particular": "Particular"
 };
 
 interface ProductFiltersProps {
@@ -29,6 +33,20 @@ interface ProductFiltersProps {
 const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    getMegaMenuCategories().then((tree) => {
+      if (!mounted) return;
+      setCategories(tree);
+      setLoadingCategories(false);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const updateFilter = (key: string, value: string | null) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -37,9 +55,14 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
     } else {
       params.delete(key);
     }
+    params.delete("page");
     router.push(`/productos?${params.toString()}`, { scroll: false });
   };
 
+  const clearAll = () => router.push("/productos", { scroll: false });
+
+  const currentCategory = searchParams.get("category");
+  const currentSubcategory = searchParams.get("subcategory");
   const currentZone = searchParams.get("zone");
   const currentSellerType = searchParams.get("sellerType");
   const currentCondition = searchParams.get("condition");
@@ -48,6 +71,26 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
   const hasProtectedPayment = searchParams.get("protectedPayment") === "true";
   const hasDelivery = searchParams.get("delivery") === "true";
   const isVerified = searchParams.get("verified") === "true";
+  const hasOffers = searchParams.get("ofertas") === "true";
+
+  const subcategories = useMemo(
+    () => categories.find((category) => category.slug === currentCategory)?.children ?? categories.flatMap((category) => category.children ?? []).slice(0, 18),
+    [categories, currentCategory]
+  );
+
+  const chips = [
+    currentCategory && { key: "category", label: categories.find((c) => c.slug === currentCategory)?.name ?? currentCategory },
+    currentSubcategory && { key: "subcategory", label: subcategories.find((c) => c.slug === currentSubcategory)?.name ?? currentSubcategory },
+    currentMinPrice && { key: "minPrice", label: `Desde $${Number(currentMinPrice).toLocaleString("es-AR")}` },
+    currentMaxPrice && { key: "maxPrice", label: `Hasta $${Number(currentMaxPrice).toLocaleString("es-AR")}` },
+    currentZone && { key: "zone", label: currentZone },
+    currentCondition && { key: "condition", label: CONDITIONS[currentCondition as keyof typeof CONDITIONS] ?? currentCondition },
+    currentSellerType && { key: "sellerType", label: SELLER_TYPES[currentSellerType as keyof typeof SELLER_TYPES] ?? currentSellerType },
+    hasDelivery && { key: "delivery", label: "Entrega MDP" },
+    hasProtectedPayment && { key: "protectedPayment", label: "Pago protegido" },
+    hasOffers && { key: "ofertas", label: "Ofertas" },
+    isVerified && { key: "verified", label: "Vendedor verificado" },
+  ].filter(Boolean) as { key: string; label: string }[];
 
   const toggleBoolean = (key: string, current: boolean) => {
     updateFilter(key, current ? null : "true");
@@ -56,7 +99,77 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
   return (
     <div className={cn("space-y-6", mobile ? "pb-24" : "")}>
       {!mobile && (
-        <h2 className="text-lg font-semibold text-slate-950">Filtros</h2>
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-slate-950">Filtros</h2>
+          {chips.length > 0 && (
+            <button onClick={clearAll} className="text-xs font-semibold text-blue-600 hover:text-blue-700">
+              Limpiar
+            </button>
+          )}
+        </div>
+      )}
+
+      {chips.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {chips.map((chip) => (
+            <button
+              key={chip.key}
+              onClick={() => updateFilter(chip.key, null)}
+              className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100"
+            >
+              {chip.label} ×
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div>
+        <h3 className="text-sm font-semibold text-slate-900 mb-3">Categoría</h3>
+        {loadingCategories ? (
+          <div className="space-y-2">
+            <div className="h-4 w-3/4 animate-pulse rounded bg-slate-100" />
+            <div className="h-4 w-2/3 animate-pulse rounded bg-slate-100" />
+          </div>
+        ) : (
+          <div className="space-y-1.5">
+            {categories.slice(0, 14).map((category) => (
+              <label key={category.id} className="flex items-center gap-2.5 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="category"
+                  checked={currentCategory === category.slug}
+                  onChange={() => updateFilter("category", currentCategory === category.slug ? null : category.slug)}
+                  className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
+                />
+                <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
+                  {category.name}
+                </span>
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {subcategories.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-slate-900 mb-3">Subcategoría</h3>
+          <div className="space-y-1.5">
+            {subcategories.slice(0, 16).map((subcategory) => (
+              <label key={subcategory.id} className="flex items-center gap-2.5 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="subcategory"
+                  checked={currentSubcategory === subcategory.slug}
+                  onChange={() => updateFilter("subcategory", currentSubcategory === subcategory.slug ? null : subcategory.slug)}
+                  className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
+                />
+                <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
+                  {subcategory.name}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* Price */}
@@ -113,17 +226,17 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
       <div>
         <h3 className="text-sm font-semibold text-slate-900 mb-3">Estado</h3>
         <div className="space-y-1.5">
-          {CONDITIONS.map((condition) => (
-            <label key={condition} className="flex items-center gap-2.5 cursor-pointer group">
+          {Object.entries(CONDITIONS).map(([key, label]) => (
+            <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
               <input
                 type="radio"
                 name="condition"
-                checked={currentCondition === condition}
-                onChange={() => updateFilter("condition", currentCondition === condition ? null : condition)}
+                checked={currentCondition === key}
+                onChange={() => updateFilter("condition", currentCondition === key ? null : key)}
                 className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
               />
               <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
-                {condition}
+                {label}
               </span>
             </label>
           ))}
@@ -171,6 +284,17 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
       <div>
         <h3 className="text-sm font-semibold text-slate-900 mb-3">Características</h3>
         <div className="space-y-2">
+          <label className="flex items-center gap-2.5 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={hasOffers}
+              onChange={() => toggleBoolean("ofertas", hasOffers)}
+              className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+            />
+            <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
+              Ofertas
+            </span>
+          </label>
           <label className="flex items-center gap-2.5 cursor-pointer group">
             <input
               type="checkbox"

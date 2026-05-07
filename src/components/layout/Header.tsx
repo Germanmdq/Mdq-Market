@@ -15,6 +15,7 @@ const Header = () => {
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
 
   const { user, signOut, loading } = useAuth();
 
@@ -22,6 +23,24 @@ const Header = () => {
     const handleScroll = () => setScrolled(window.scrollY > 16);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      try {
+        const items = JSON.parse(window.localStorage.getItem("mdp-market-cart") ?? "[]");
+        setCartCount(Array.isArray(items) ? items.reduce((acc, item) => acc + (item.quantity ?? 1), 0) : 0);
+      } catch {
+        setCartCount(0);
+      }
+    };
+    updateCartCount();
+    window.addEventListener("mdp-cart-updated", updateCartCount);
+    window.addEventListener("storage", updateCartCount);
+    return () => {
+      window.removeEventListener("mdp-cart-updated", updateCartCount);
+      window.removeEventListener("storage", updateCartCount);
+    };
   }, []);
 
   return (
@@ -80,9 +99,11 @@ const Header = () => {
             )}
             <Link href="/carrito" className="flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-50 hover:text-slate-950 transition-colors relative">
               <ShoppingCart className="h-5 w-5" />
-              <span className="absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold text-white border-2 border-white">
-                3
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[9px] font-bold text-white border-2 border-white">
+                  {cartCount}
+                </span>
+              )}
             </Link>
 
             {!loading && (
@@ -103,7 +124,7 @@ const Header = () => {
                         <p className="text-xs text-slate-500 truncate">{user.email}</p>
                       </div>
                       <Link
-                        href="/mi-cuenta"
+                        href="/cuenta"
                         className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
@@ -137,12 +158,14 @@ const Header = () => {
                   )}
                 </div>
               ) : (
-                <button
-                  onClick={() => setAuthModalOpen(true)}
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-full hover:bg-blue-700 transition-colors"
-                >
-                  Ingresar
-                </button>
+                <div className="hidden sm:flex items-center gap-2">
+                  <Link href="/login" className="px-3 py-2 text-sm font-medium text-slate-700 hover:text-slate-950">
+                    Ingresar
+                  </Link>
+                  <Link href="/registro" className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-full hover:bg-blue-700 transition-colors">
+                    Crear cuenta
+                  </Link>
+                </div>
               )
             )}
 
@@ -186,8 +209,8 @@ const Header = () => {
               { label: "Servicios", href: "/servicios" },
               { label: "Profesionales", href: "/profesionales" },
               { label: "Ofertas", href: "/productos?ofertas=true" },
-              { label: "Vender", href: "/vender" },
-              ...(user ? [{ label: "Mi cuenta", href: "/mi-cuenta" }] : []),
+              { label: "Publicar gratis", href: "/publicar" },
+              ...(user ? [{ label: "Mi cuenta", href: "/cuenta" }, { label: "Favoritos", href: "/favoritos" }, { label: "Carrito", href: "/carrito" }] : [{ label: "Ingresar", href: "/login" }, { label: "Crear cuenta", href: "/registro" }]),
             ].map(l => (
               <Link key={l.label} href={l.href} className="block px-4 py-3 rounded-2xl text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
                 {l.label}
@@ -204,17 +227,7 @@ const Header = () => {
                 <LogOut className="w-4 h-4" />
                 Cerrar sesión
               </button>
-            ) : (
-              <button
-                onClick={() => {
-                  setAuthModalOpen(true);
-                  setMenuOpen(false);
-                }}
-                className="w-full px-4 py-3 bg-blue-600 text-white text-sm font-medium rounded-2xl hover:bg-blue-700 transition-colors"
-              >
-                Ingresar
-              </button>
-            )}
+            ) : null}
           </div>
         )}
       </header>

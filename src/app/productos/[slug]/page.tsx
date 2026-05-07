@@ -2,12 +2,13 @@ import React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  Star, ShieldCheck, Heart, Truck, ArrowRight
+  Star, ShieldCheck, Truck, ArrowRight, PackageCheck, MapPin
 } from "lucide-react";
-import { getProductBySlug, getRelatedProducts } from "@/lib/products";
+import { getProductBySlug, getRelatedProducts, getProductsBySeller } from "@/lib/products";
 import { getProductGallery, getProductMainImage } from "@/lib/product-images";
 import ProductCard from "@/components/marketplace/ProductCard";
 import { formatPrice, cn } from "@/lib/utils";
+import ProductPurchasePanel from "@/components/marketplace/ProductPurchasePanel";
 
 const STATUS_BUTTON: Record<string, { label: string; disabled: boolean }> = {
   published: { label: "Comprar ahora", disabled: false },
@@ -30,7 +31,10 @@ export default async function ProductDetailPage({
 
   const gallery = getProductGallery(product);
   const mainImage = getProductMainImage(product);
-  const relatedProducts = await getRelatedProducts(product, 8);
+  const [relatedProducts, sellerProducts] = await Promise.all([
+    getRelatedProducts(product, 8),
+    getProductsBySeller(product.seller_profile_id, 8),
+  ]);
   
   const btn = STATUS_BUTTON[product.status] || STATUS_BUTTON.published;
 
@@ -107,23 +111,7 @@ export default async function ProductDetailPage({
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="grid gap-3">
-              <Link href={btn.disabled ? "#" : `/checkout?type=product&id=${product.id}`}
-                className={cn("h-12 rounded-full font-semibold text-center flex items-center justify-center transition-colors text-sm",
-                  btn.disabled ? "bg-slate-100 text-slate-400 cursor-not-allowed" : "bg-slate-950 hover:bg-slate-800 text-white"
-                )}>
-                {btn.label}
-              </Link>
-              <div className="grid grid-cols-[1fr_auto] gap-3">
-                <button className="h-12 rounded-full font-semibold text-slate-950 border border-slate-300 hover:bg-slate-50 transition-colors flex items-center justify-center text-sm">
-                  Agregar al carrito
-                </button>
-                <button className="h-12 w-12 rounded-full border border-slate-300 hover:bg-slate-50 flex items-center justify-center transition-colors text-slate-500 hover:text-red-500">
-                  <Heart className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
+            <ProductPurchasePanel product={product} disabled={btn.disabled} buttonLabel={btn.label} />
 
             {/* Seller & Safety */}
             <div className="space-y-4 pt-6 border-t border-slate-200">
@@ -155,8 +143,8 @@ export default async function ProductDetailPage({
                     <Truck className="w-5 h-5 text-emerald-600" /> Entrega MDP
                   </p>
                   <div className="mt-2 text-sm text-slate-500 space-y-1">
-                    <p>Envío local: <span className="font-medium text-slate-950">{formatPrice(1500)}</span></p>
-                    <p>Tiempo: <span className="font-medium text-slate-950">Hoy</span></p>
+                    <p>Coordinación local dentro de Mar del Plata.</p>
+                    <p>No usamos métodos de envío externos.</p>
                   </div>
                 </div>
               )}
@@ -174,6 +162,10 @@ export default async function ProductDetailPage({
               <h2 className="text-xl font-semibold tracking-tight text-slate-950">
                 Detalles del producto
               </h2>
+              <div className="mt-6 grid gap-3 text-sm text-slate-600">
+                <p className="flex items-center gap-2"><PackageCheck className="h-4 w-4 text-slate-400" /> Stock: {product.stock > 0 ? `${product.stock} disponible${product.stock === 1 ? "" : "s"}` : "sin stock"}</p>
+                <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-slate-400" /> Zona: {product.zone || product.city}</p>
+              </div>
             </div>
             <div className="space-y-10">
               
@@ -201,6 +193,34 @@ export default async function ProductDetailPage({
         </div>
       </section>
 
+      <section className="border-t border-slate-200 bg-slate-50">
+        <div className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+            <div>
+              <h2 className="text-xl font-semibold tracking-tight text-slate-950">
+                Cómo funciona esta compra
+              </h2>
+            </div>
+            <ol className="grid gap-3 text-sm text-slate-700">
+              {[
+                "Pagás con operación protegida.",
+                "El vendedor confirma disponibilidad.",
+                "Coordinamos entrega en Mar del Plata.",
+                "Recibís el producto.",
+                "Confirmás recepción y se libera el pago.",
+              ].map((step, index) => (
+                <li key={step} className="flex gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white">
+                    {index + 1}
+                  </span>
+                  <span className="pt-1">{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ PRODUCTOS RELACIONADOS ═══ */}
       {relatedProducts.length > 0 && (
         <section className="border-t border-slate-200 bg-white py-16">
@@ -215,6 +235,23 @@ export default async function ProductDetailPage({
             </div>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {relatedProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {sellerProducts.length > 0 && (
+        <section className="border-t border-slate-200 bg-white py-16">
+          <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+            <div className="mb-8 flex items-center justify-between">
+              <h2 className="text-xl font-semibold tracking-tight text-slate-950">
+                Más de este vendedor
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {sellerProducts.filter((p) => p.id !== product.id).slice(0, 4).map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
             </div>

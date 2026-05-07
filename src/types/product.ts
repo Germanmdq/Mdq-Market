@@ -35,6 +35,8 @@ export type Product = {
 
   category: string;
   subcategory?: string | null;
+  category_id?: string | null;
+  subcategory_id?: string | null;
 
   description?: string | null;
 

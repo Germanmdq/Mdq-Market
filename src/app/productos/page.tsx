@@ -7,11 +7,10 @@ import { ProductGrid } from "@/components/marketplace/ProductGrid";
 import ProductFilters from "@/components/marketplace/ProductFilters";
 import ProductCard from "@/components/marketplace/ProductCard";
 import ServiceCard from "@/components/marketplace/ServiceCard";
-import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
 import { MarketCarousel } from "@/components/ui/MarketCarousel";
 import { MarketSection } from "@/components/marketplace/MarketSection";
 import { getPublishedServices } from "@/lib/services";
-import { MOCK_PROFESSIONALS } from "@/data/mockData";
+import PersonalizedProductSections from "@/components/marketplace/PersonalizedProductSections";
 
 export default async function ProductsPage({
   searchParams,
@@ -27,12 +26,12 @@ export default async function ProductsPage({
   const to = from + PRODUCTS_PER_PAGE - 1;
 
   // Count query for total
-  let countQuery = supabase
+  const countQuery = supabase
     .from("products")
     .select("*", { count: "exact", head: true })
     .eq("status", "published");
 
-  let query = supabase
+  const query = supabase
     .from("products")
     .select("*")
     .eq("status", "published");
@@ -164,7 +163,9 @@ export default async function ProductsPage({
   const deals = (dealsResult.data ?? []) as Product[];
   const featured = (featuredResult.data ?? []) as Product[];
   const services = await getPublishedServices();
-  const professionals = MOCK_PROFESSIONALS.slice(0, 8);
+  const cleanParams = Object.fromEntries(
+    Object.entries(params).filter(([, value]) => typeof value === "string")
+  ) as Record<string, string>;
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -212,10 +213,17 @@ export default async function ProductsPage({
           <div>
             {/* Mobile Filter Button */}
             <div className="lg:hidden mb-6">
-              <button className="w-full flex items-center justify-center gap-2 py-3 bg-white rounded-2xl border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
-                <SlidersHorizontal className="w-4 h-4" />
-                Filtros
-              </button>
+              <details className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <summary className="flex cursor-pointer items-center justify-center gap-2 py-3 text-sm font-medium text-slate-700">
+                  <SlidersHorizontal className="w-4 h-4" />
+                  Filtros
+                </summary>
+                <div className="border-t border-slate-100 p-5">
+                  <Suspense fallback={<div className="h-48 animate-pulse rounded-xl bg-slate-100" />}>
+                    <ProductFilters mobile />
+                  </Suspense>
+                </div>
+              </details>
             </div>
 
             {products.length > 0 ? (
@@ -227,7 +235,7 @@ export default async function ProductsPage({
                   <div className="mt-12 flex items-center justify-center gap-2">
                     {page > 1 && (
                       <Link
-                        href={`/productos?${new URLSearchParams({ ...Object.fromEntries(Object.entries(params).filter(([k]) => k !== "page")), page: String(page - 1) }).toString()}`}
+                        href={`/productos?${new URLSearchParams({ ...Object.fromEntries(Object.entries(cleanParams).filter(([k]) => k !== "page")), page: String(page - 1) }).toString()}`}
                         className="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                       >
                         Anterior
@@ -242,7 +250,7 @@ export default async function ProductsPage({
                         return (
                           <Link
                             key={pageNum}
-                            href={`/productos?${new URLSearchParams({ ...Object.fromEntries(Object.entries(params).filter(([k]) => k !== "page")), page: String(pageNum) }).toString()}`}
+                            href={`/productos?${new URLSearchParams({ ...Object.fromEntries(Object.entries(cleanParams).filter(([k]) => k !== "page")), page: String(pageNum) }).toString()}`}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                               pageNum === page
                                 ? "bg-blue-600 text-white"
@@ -257,7 +265,7 @@ export default async function ProductsPage({
 
                     {page < totalPages && (
                       <Link
-                        href={`/productos?${new URLSearchParams({ ...Object.fromEntries(Object.entries(params).filter(([k]) => k !== "page")), page: String(page + 1) }).toString()}`}
+                        href={`/productos?${new URLSearchParams({ ...Object.fromEntries(Object.entries(cleanParams).filter(([k]) => k !== "page")), page: String(page + 1) }).toString()}`}
                         className="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                       >
                         Siguiente
@@ -273,12 +281,12 @@ export default async function ProductsPage({
                 </div>
                 <h3 className="text-lg font-semibold text-slate-950 mb-2">No encontramos resultados</h3>
                 <p className="text-sm text-slate-600 mb-6">Probá quitando algunos filtros o cambiando tu búsqueda</p>
-                <a
+                <Link
                   href="/productos"
                   className="inline-block px-5 py-2.5 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
                 >
                   Limpiar todos los filtros
-                </a>
+                </Link>
               </div>
             )}
           </div>
@@ -344,25 +352,7 @@ export default async function ProductsPage({
           </MarketSection>
         )}
 
-        {/* Profesionales */}
-        {professionals.length > 0 && (
-          <MarketSection
-            eyebrow="Confianza"
-            title="Profesionales verificados"
-            description="Con identidad validada por MDP Market"
-            href="/profesionales"
-            linkLabel="Ver listado"
-            className="border-t border-slate-200 bg-white"
-          >
-            <MarketCarousel>
-              {professionals.map(p => (
-                <div key={p.id} className="min-w-0 flex-[0_0_86%] sm:flex-[0_0_48%] lg:flex-[0_0_31%] xl:flex-[0_0_24%] py-4">
-                  <ProfessionalCard professional={p} />
-                </div>
-              ))}
-            </MarketCarousel>
-          </MarketSection>
-        )}
+        <PersonalizedProductSections />
       </div>
     </main>
   );

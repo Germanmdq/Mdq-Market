@@ -16,6 +16,15 @@ export type Category = {
   children?: Category[];
 };
 
+type ProductCategoryReference = {
+  category_id?: string | null;
+  subcategory_id?: string | null;
+};
+
+function isString(value: string | null | undefined): value is string {
+  return typeof value === "string" && value.length > 0;
+}
+
 export async function getRootCategories() {
   const { data, error } = await supabase
     .from("categories")
@@ -46,11 +55,36 @@ export async function getMegaMenuCategories() {
     return [];
   }
 
-  return buildCategoryTree(data ?? []);
+  const categories = (data ?? []) as Category[];
+  if (categories.length === 0) return [];
+
+  const ids = categories.map((category) => category.id);
+  const [{ data: categoryProducts }, { data: subcategoryProducts }] = await Promise.all([
+    supabase
+      .from("products")
+      .select("category_id")
+      .eq("status", "published")
+      .in("category_id", ids),
+    supabase
+      .from("products")
+      .select("subcategory_id")
+      .eq("status", "published")
+      .in("subcategory_id", ids),
+  ]);
+
+  const categoryIdsWithProducts = new Set(
+    ((categoryProducts ?? []) as ProductCategoryReference[]).map((row) => row.category_id).filter(isString)
+  );
+  const subcategoryIdsWithProducts = new Set(
+    ((subcategoryProducts ?? []) as ProductCategoryReference[]).map((row) => row.subcategory_id).filter(isString)
+  );
+  const idsWithProducts = new Set([...categoryIdsWithProducts, ...subcategoryIdsWithProducts]);
+
+  return pruneEmptyCategories(buildCategoryTree(categories), idsWithProducts);
 }
 
-function buildCategoryTree(categories: any[]): Category[] {
-  const map = new Map();
+function buildCategoryTree(categories: Category[]): Category[] {
+  const map = new Map<string, Category>();
   const roots: Category[] = [];
 
   for (const category of categories) {
@@ -58,14 +92,24 @@ function buildCategoryTree(categories: any[]): Category[] {
   }
 
   for (const category of map.values()) {
-    if (category.parent_id && map.has(category.parent_id)) {
-      map.get(category.parent_id).children.push(category);
+    const parent = category.parent_id ? map.get(category.parent_id) : null;
+    if (parent) {
+      parent.children?.push(category);
     } else if (category.is_root) {
       roots.push(category);
     }
   }
 
   return roots;
+}
+
+function pruneEmptyCategories(categories: Category[], idsWithProducts: Set<string>): Category[] {
+  return categories
+    .map((category) => {
+      const children = pruneEmptyCategories(category.children ?? [], idsWithProducts);
+      return { ...category, children };
+    })
+    .filter((category) => idsWithProducts.has(category.id) || Boolean(category.children?.length));
 }
 
 export async function getCategoryBySlug(slug: string) {

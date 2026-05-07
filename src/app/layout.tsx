@@ -1,16 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 import { Providers } from "@/components/providers/Providers";
-import { cn } from "@/lib/utils";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
 
 export const metadata: Metadata = {
   title: "MDP Market & Services | Mar del Plata",
@@ -23,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className={cn("h-full antialiased", inter.variable)}>
+    <html lang="es" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-[#f8fafc] font-sans">
         <Providers>
           <Header />
