@@ -10,8 +10,8 @@ const NAV_ITEMS = [
   { label: "Inicio", icon: Home, href: "/" },
   { label: "Buscar", icon: Search, href: "/productos" },
   { label: "Publicar", icon: PlusCircle, href: "/publicar", primary: true },
-  { label: "Compras", icon: ShoppingBag, href: "/compras" },
-  { label: "Cuenta", icon: User, href: "/perfil" },
+  { label: "Compras", icon: ShoppingBag, href: "/operaciones" },
+  { label: "Cuenta", icon: User, href: "/mi-cuenta" },
 ];
 
 const BottomNav = () => {

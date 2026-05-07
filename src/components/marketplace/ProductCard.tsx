@@ -28,7 +28,12 @@ export default function ProductCard({ product }: { product: Product }) {
             className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
             loading="lazy"
             onError={(event) => {
-              event.currentTarget.src = "/fallbacks/producto.svg";
+              const fallback = "/fallbacks/producto.svg";
+              // Evitar loop infinito si el fallback también falla
+              if (event.currentTarget.src.includes(fallback)) return;
+              
+              console.warn(`Image load failed for ${product.slug}: ${imageSrc}`);
+              event.currentTarget.src = fallback;
             }}
           />
 
