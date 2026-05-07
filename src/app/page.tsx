@@ -53,68 +53,90 @@ export default function HomePage() {
       {/* ═══ HERO INTEGRADO ═══ */}
       <section className="w-full bg-slate-50">
         <div className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-[32px] bg-[radial-gradient(circle_at_top_right,#1d4ed8_0%,#020617_42%,#020617_100%)] shadow-[0_24px_80px_rgba(15,23,42,0.18)]">
-            <div className="relative grid gap-8 p-8 sm:p-10 lg:grid-cols-[1.1fr_0.9fr] lg:p-12">
+          <div className="overflow-hidden rounded-[32px] bg-[radial-gradient(circle_at_top_right,#2563eb_0%,#0f172a_42%,#020617_100%)] shadow-[0_26px_80px_rgba(15,23,42,0.20)]">
+            <div className="grid gap-10 p-8 sm:p-10 lg:grid-cols-[1.15fr_0.85fr] lg:p-12">
+              
               <div>
                 <p className="text-sm font-medium text-blue-200">
                   MDP Market & Services
                 </p>
-                <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl leading-[1.1]">
+
+                <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
                   Comprá, vendé y contratá en Mar del Plata
                 </h1>
+
                 <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300">
                   Productos locales, servicios verificados, entrega coordinada y operaciones protegidas en una sola plataforma.
                 </p>
+
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Link
                     href="/productos"
-                    className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100 shadow-sm"
+                    className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 shadow-sm transition hover:bg-slate-100"
                   >
                     Ver productos
                   </Link>
+
                   <Link
                     href="/servicios"
-                    className="rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/15"
+                    className="rounded-full border border-white/15 bg-white/[0.06] px-5 py-3 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/[0.10]"
                   >
                     Buscar servicios
                   </Link>
+
                   <Link
                     href="/vender"
-                    className="rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/15"
+                    className="rounded-full border border-white/15 bg-white/[0.06] px-5 py-3 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/[0.10]"
                   >
                     Publicar gratis
                   </Link>
                 </div>
               </div>
-              <div className="grid content-end gap-3 sm:grid-cols-2 lg:grid-cols-1">
-                <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.12)] transition hover:bg-white/[0.08]">
-                  <p className="text-sm font-semibold text-white flex items-center gap-2">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500/20 text-blue-300 text-xs">🛡</span>
-                    Pago protegido
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">
+
+              <div className="grid content-center gap-3">
+                <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.12)]">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white">
+                      🛡️
+                    </span>
+                    <p className="text-sm font-semibold text-white">
+                      Pago protegido
+                    </p>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-slate-300">
                     El dinero queda resguardado hasta que la operación se confirma.
                   </p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.12)] transition hover:bg-white/[0.08]">
-                  <p className="text-sm font-semibold text-white flex items-center gap-2">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-300 text-xs">🚚</span>
-                    Entrega MDP
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">
+
+                <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.12)]">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white">
+                      🚚
+                    </span>
+                    <p className="text-sm font-semibold text-white">
+                      Entrega MDP
+                    </p>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-slate-300">
                     Coordinación local para productos dentro de Mar del Plata.
                   </p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.12)] transition hover:bg-white/[0.08] sm:col-span-2 lg:col-span-1">
-                  <p className="text-sm font-semibold text-white flex items-center gap-2">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-purple-500/20 text-purple-300 text-xs">✓</span>
-                    Servicios verificados
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">
+
+                <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.12)]">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white">
+                      ✅
+                    </span>
+                    <p className="text-sm font-semibold text-white">
+                      Servicios verificados
+                    </p>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-slate-300">
                     Profesionales con reputación, reserva protegida y seguimiento.
                   </p>
                 </div>
               </div>
+
             </div>
           </div>
         </div>

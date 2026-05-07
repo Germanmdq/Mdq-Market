@@ -19,10 +19,8 @@ export default function SellPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <Header />
-      
-      <main className="flex-1 max-w-[960px] mx-auto w-full px-4 py-10 sm:px-6 lg:px-8">
+    <div className="bg-slate-50 min-h-screen pb-20">
+      <main className="max-w-[800px] mx-auto w-full px-4 py-8 sm:px-6 lg:px-8">
         
         {step === 1 ? (
           <>

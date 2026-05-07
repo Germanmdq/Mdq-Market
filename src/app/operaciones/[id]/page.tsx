@@ -18,10 +18,8 @@ const TIMELINE = [
 
 export default function OperationTimelinePage({ params }: { params: { id: string } }) {
   return (
-    <div className="bg-slate-50 min-h-screen flex flex-col">
-      <Header />
-
-      <main className="flex-1 max-w-[800px] mx-auto w-full px-4 py-10 sm:px-6 lg:px-8">
+    <div className="bg-slate-50 min-h-screen">
+      <main className="max-w-[800px] mx-auto w-full px-4 py-10">
         
         <div className="mb-8 flex items-center gap-4">
           <Link href="/mi-cuenta" className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-slate-200 text-slate-500 hover:text-slate-900 transition-colors shadow-sm">

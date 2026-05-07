@@ -19,10 +19,8 @@ export default function CartPage() {
   const total = items.reduce((acc, item) => acc + item.price, 0);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <Header />
-      
-      <main className="flex-1 max-w-[1280px] mx-auto w-full px-4 py-10 sm:px-6 lg:px-8">
+    <div className="bg-slate-50 min-h-screen">
+      <main className="max-w-[1024px] mx-auto w-full px-4 py-8">
         <h1 className="text-3xl font-semibold tracking-tight text-slate-950 mb-8">Tu carrito</h1>
 
         {items.length === 0 ? (
