@@ -5,66 +5,48 @@
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
-
   --card: #ffffff;
   --card-foreground: #0f172a;
-
   --popover: #ffffff;
   --popover-foreground: #0f172a;
-
   --primary: #2563eb;
   --primary-foreground: #ffffff;
-
   --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
-
-  --muted: #f1f5f9;
+  --muted: #f8fafc;
   --muted-foreground: #64748b;
-
   --accent: #eff6ff;
   --accent-foreground: #1d4ed8;
-
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-
   --border: #e2e8f0;
   --input: #e2e8f0;
   --ring: #2563eb;
-
-  --radius: 2rem;
+  --radius: 1rem;
 }
 
 .dark {
   --background: #020617;
   --foreground: #f8fafc;
-
   --card: #0f172a;
   --card-foreground: #f8fafc;
-
   --popover: #0f172a;
   --popover-foreground: #f8fafc;
-
   --primary: #3b82f6;
   --primary-foreground: #ffffff;
-
   --secondary: #1e293b;
   --secondary-foreground: #f8fafc;
-
   --muted: #1e293b;
   --muted-foreground: #94a3b8;
-
   --accent: #1e3a8a;
   --accent-foreground: #dbeafe;
-
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-
   --border: #1e293b;
   --input: #1e293b;
   --ring: #3b82f6;
 }
 
-/* Base Styles */
 * {
   box-sizing: border-box;
   border-color: var(--border);
@@ -75,65 +57,30 @@ body {
   width: 100%;
   min-height: 100%;
   overflow-x: hidden;
-  scroll-behavior: smooth;
+  font-family: var(--font-inter), system-ui, sans-serif;
 }
 
 body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: inherit;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-/* Custom Utilities for Tailwind v4 compatibility */
-@utility border-border {
-  border-color: var(--border);
-}
-@utility bg-background {
-  background-color: var(--background);
-}
-@utility text-foreground {
-  color: var(--foreground);
-}
-@utility bg-muted {
-  background-color: var(--muted);
-}
-@utility text-muted-foreground {
-  color: var(--muted-foreground);
-}
-@utility border-input {
-  border-color: var(--input);
-}
-@utility bg-card {
-  background-color: var(--card);
-}
-@utility text-card-foreground {
-  color: var(--card-foreground);
-}
-@utility bg-popover {
-  background-color: var(--popover);
-}
-@utility text-popover-foreground {
-  color: var(--popover-foreground);
-}
-
-/* Custom Utilities for the new 'MDP Market' system */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
+@utility no-scrollbar {
   scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
+
+/* Custom Base Utilities for shadcn */
+@utility bg-background { background-color: var(--background); }
+@utility text-foreground { color: var(--foreground); }
+@utility border-border { border-color: var(--border); }
+@utility bg-muted { background-color: var(--muted); }
+@utility text-muted-foreground { color: var(--muted-foreground); }
+@utility bg-primary { background-color: var(--primary); }
+@utility text-primary-foreground { color: var(--primary-foreground); }
+@utility bg-card { background-color: var(--card); }
+@utility text-card-foreground { color: var(--card-foreground); }
+@utility rounded-pill { border-radius: 9999px; }
