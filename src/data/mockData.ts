@@ -166,7 +166,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Macrocentro", "Güemes"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(6, \"Profesional\"),
+    experience: createExperience(6, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -190,7 +190,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Güemes", "Playa Grande"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(7, \"Profesional\"),
+    experience: createExperience(7, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -214,7 +214,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Playa Grande", "Punta Mogotes"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(8, \"Profesional\"),
+    experience: createExperience(8, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -238,7 +238,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Punta Mogotes", "Puerto"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(9, \"Profesional\"),
+    experience: createExperience(9, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -262,7 +262,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Puerto", "Constitución"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(10, \"Profesional\"),
+    experience: createExperience(10, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -286,7 +286,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Constitución", "La Perla"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(11, \"Profesional\"),
+    experience: createExperience(11, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -310,7 +310,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["La Perla", "Chauvín"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(12, \"Profesional\"),
+    experience: createExperience(12, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -334,7 +334,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Chauvín", "San Juan"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(13, \"Profesional\"),
+    experience: createExperience(13, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -358,7 +358,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["San Juan", "San José"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(14, \"Profesional\"),
+    experience: createExperience(14, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -382,7 +382,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["San José", "Centro"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(15, \"Profesional\"),
+    experience: createExperience(15, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -406,7 +406,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Centro", "Macrocentro"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(16, \"Profesional\"),
+    experience: createExperience(16, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -430,7 +430,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Macrocentro", "Güemes"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(17, \"Profesional\"),
+    experience: createExperience(17, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -454,7 +454,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Güemes", "Playa Grande"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(18, \"Profesional\"),
+    experience: createExperience(18, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -478,7 +478,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Playa Grande", "Punta Mogotes"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(19, \"Profesional\"),
+    experience: createExperience(19, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -502,7 +502,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Punta Mogotes", "Puerto"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(5, \"Profesional\"),
+    experience: createExperience(5, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -526,7 +526,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Puerto", "Constitución"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(6, \"Profesional\"),
+    experience: createExperience(6, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -550,7 +550,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Constitución", "La Perla"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(7, \"Profesional\"),
+    experience: createExperience(7, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -574,7 +574,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["La Perla", "Chauvín"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(8, \"Profesional\"),
+    experience: createExperience(8, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -598,7 +598,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Chauvín", "San Juan"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(9, \"Profesional\"),
+    experience: createExperience(9, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -622,7 +622,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["San Juan", "San José"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(10, \"Profesional\"),
+    experience: createExperience(10, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -646,7 +646,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["San José", "Centro"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(11, \"Profesional\"),
+    experience: createExperience(11, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -670,7 +670,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Centro", "Macrocentro"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(12, \"Profesional\"),
+    experience: createExperience(12, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -694,7 +694,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Macrocentro", "Güemes"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(13, \"Profesional\"),
+    experience: createExperience(13, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -718,7 +718,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Güemes", "Playa Grande"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(14, \"Profesional\"),
+    experience: createExperience(14, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -742,7 +742,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Playa Grande", "Punta Mogotes"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(15, \"Profesional\"),
+    experience: createExperience(15, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -766,7 +766,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Punta Mogotes", "Puerto"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(16, \"Profesional\"),
+    experience: createExperience(16, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -790,7 +790,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Puerto", "Constitución"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(17, \"Profesional\"),
+    experience: createExperience(17, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -814,7 +814,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Constitución", "La Perla"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(18, \"Profesional\"),
+    experience: createExperience(18, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -838,7 +838,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["La Perla", "Chauvín"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(19, \"Profesional\"),
+    experience: createExperience(19, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -862,7 +862,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Chauvín", "San Juan"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(5, \"Profesional\"),
+    experience: createExperience(5, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -886,7 +886,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["San Juan", "San José"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(6, \"Profesional\"),
+    experience: createExperience(6, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -910,7 +910,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["San José", "Centro"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(7, \"Profesional\"),
+    experience: createExperience(7, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -934,7 +934,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Centro", "Macrocentro"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(8, \"Profesional\"),
+    experience: createExperience(8, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -958,7 +958,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Macrocentro", "Güemes"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(9, \"Profesional\"),
+    experience: createExperience(9, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -982,7 +982,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Güemes", "Playa Grande"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(10, \"Profesional\"),
+    experience: createExperience(10, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1006,7 +1006,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Playa Grande", "Punta Mogotes"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(11, \"Profesional\"),
+    experience: createExperience(11, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1030,7 +1030,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Punta Mogotes", "Puerto"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(12, \"Profesional\"),
+    experience: createExperience(12, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1054,7 +1054,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Puerto", "Constitución"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(13, \"Profesional\"),
+    experience: createExperience(13, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1078,7 +1078,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Constitución", "La Perla"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(14, \"Profesional\"),
+    experience: createExperience(14, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1102,7 +1102,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["La Perla", "Chauvín"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(15, \"Profesional\"),
+    experience: createExperience(15, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1126,7 +1126,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Chauvín", "San Juan"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(16, \"Profesional\"),
+    experience: createExperience(16, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1150,7 +1150,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["San Juan", "San José"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(17, \"Profesional\"),
+    experience: createExperience(17, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1174,7 +1174,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["San José", "Centro"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(18, \"Profesional\"),
+    experience: createExperience(18, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1198,7 +1198,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Centro", "Macrocentro"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(19, \"Profesional\"),
+    experience: createExperience(19, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1222,7 +1222,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Macrocentro", "Güemes"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(5, \"Profesional\"),
+    experience: createExperience(5, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1246,7 +1246,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Güemes", "Playa Grande"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(6, \"Profesional\"),
+    experience: createExperience(6, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1270,7 +1270,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Playa Grande", "Punta Mogotes"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(7, \"Profesional\"),
+    experience: createExperience(7, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1294,7 +1294,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Punta Mogotes", "Puerto"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(8, \"Profesional\"),
+    experience: createExperience(8, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Gasista matriculado argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1318,7 +1318,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Puerto", "Constitución"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(9, \"Profesional\"),
+    experience: createExperience(9, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Electricista domiciliario argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
@@ -1342,7 +1342,7 @@ export const MOCK_PROFESSIONALS: Professional[] = [
     zones: ["Constitución", "La Perla"],
     services: ["Visita técnica", "Presupuesto"],
     credentials: [],
-    experience: createExperience(10, \"Profesional\"),
+    experience: createExperience(10, "Profesional"),
     availability: [],
     imagePrompts: {
         main: "Retrato profesional realista de Plomero instalador argentino de 40 años, ropa de trabajo limpia, fondo desenfocado, mirada amable, luz natural, estilo perfil premium, 4K, relación 1:1."
