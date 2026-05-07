@@ -29,7 +29,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const subcategory = category?.subcategories.find((s) => s.id === product.subcategory);
   const similarProducts = MOCK_PRODUCTS.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
   const sellerProducts = MOCK_PRODUCTS.filter((p) => p.sellerId === product.sellerId && p.id !== product.id).slice(0, 4);
-  const btn = STATUS_BUTTON[product.status] || STATUS_BUTTON.Disponible;
+  const btn = (product.status ? STATUS_BUTTON[product.status] : null) || STATUS_BUTTON.Disponible;
 
   return (
     <main className="w-full bg-white min-h-screen">
@@ -162,8 +162,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     <Truck className="w-5 h-5 text-emerald-600" /> Entrega MDP
                   </p>
                   <div className="mt-2 text-sm text-slate-500 space-y-1">
-                    <p>Envío local: <span className="font-medium text-slate-950">{formatPrice(product.mdpDelivery.fee)}</span></p>
-                    <p>Tiempo: <span className="font-medium text-slate-950">{product.mdpDelivery.estimatedTime}</span></p>
+                    <p>Envío local: <span className="font-medium text-slate-950">{formatPrice(product.mdpDelivery.fee || product.mdpDelivery.cost || 0)}</span></p>
+                    <p>Tiempo: <span className="font-medium text-slate-950">{product.mdpDelivery.estimatedTime || product.mdpDelivery.timeFrame}</span></p>
                   </div>
                 </div>
               )}
@@ -190,7 +190,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               </div>
 
               {/* Attributes */}
-              {product.attributes && product.attributes.length > 0 && (
+              {Array.isArray(product.attributes) && product.attributes.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-slate-950 mb-4">Especificaciones</h3>
                   <div className="border border-slate-200 rounded-xl overflow-hidden text-sm">

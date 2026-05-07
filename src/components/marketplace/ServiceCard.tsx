@@ -63,7 +63,7 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
               <p className="text-lg font-bold text-slate-950 tracking-tight">{formatPrice(service.priceFrom)}</p>
             </div>
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-600">
-              <Star className="w-3 h-3 fill-current" />{service.rating}
+              <Star className="w-3 h-3 fill-current" />{service.rating || 0}
             </span>
           </div>
 

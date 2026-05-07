@@ -41,6 +41,8 @@ export type Product = {
   title: string;
   slug: string;
   category: string;
+  brand?: string;
+  model?: string;
   subcategory: string;
   price: number;
   oldPrice?: number;
@@ -61,24 +63,26 @@ export type Product = {
   zone: string;
   condition: "Nuevo" | "Usado como nuevo" | "Usado bueno" | "Usado con detalles" | "Reacondicionado";
   conditionDescription?: string;
-  status: "Disponible" | "Reservado" | "Vendido" | "Pausado" | "En revisión";
+  status?: "Disponible" | "Reservado" | "Vendido" | "Pausado" | "En revisión";
   stock: number;
   featured: boolean;
   protectedPayment: true;
   mdpDelivery: {
-    available: true;
-    fee: number;
-    estimatedTime: string;
+    available: boolean;
+    fee?: number;
+    cost?: number; // compatibilidad con mocks
+    estimatedTime?: string;
+    timeFrame?: string; // compatibilidad con mocks
   };
-  attributes?: { label: string; value: string }[];
+  attributes?: ({ label: string; value: string }[] | Record<string, any>);
   includedItems?: string[];
   notIncludedItems?: string[];
   warranty?: string;
-  views: number;
-  favorites: number;
+  views?: number;
+  favorites?: number;
   questions?: Question[];
   sellerReviews?: Review[];
-  createdAt: string;
+  createdAt?: string;
   imagePrompts?: {
     main: string;
     side: string;
@@ -96,7 +100,7 @@ export type Service = {
   professionalId: string;
   professionalName: string;
   businessName?: string;
-  specialty: string;
+  specialty?: string;
   priceType?: "Fijo" | "Desde" | "Por hora" | "A presupuestar";
   priceFrom: number;
   estimatedDuration?: string;
@@ -106,28 +110,30 @@ export type Service = {
   advancePaymentPercentage?: number;
   description: string;
   image: string;
-  gallery: string[];
+  gallery?: string[];
   includes?: string[];
   notIncludes?: string[];
   checklist?: string[];
   exclusions?: string[];
   rating: number;
-  reviews: number;
+  reviews?: number | Review[];
   verified: boolean;
   license?: string;
   licenseAuthority?: string;
   zones: string[];
   availability: "Hoy" | "Esta semana" | "Próxima semana" | "Alta demanda" | "No disponible";
   schedule?: string;
-  featured: boolean;
+  featured?: boolean;
   protectedBooking: true;
   directBooking?: boolean;
   requiresQuote?: boolean;
   urgentAvailable?: boolean;
   responseTime: string;
-  completedJobs: number;
+  completedJobs?: number;
   imagePrompts?: {
-    main: string;
+    main?: string;
+    detail?: string;
+    context?: string;
   };
 };
 

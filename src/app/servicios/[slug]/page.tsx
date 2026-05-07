@@ -24,6 +24,17 @@ export default function ServiceDetailPage({ params }: { params: Promise<{ slug: 
   const { slug } = React.use(params);
   const service = MOCK_SERVICES.find(s => s.slug === slug) || MOCK_SERVICES[0];
 
+  // Defensive fallbacks
+  const completedJobs = service.completedJobs ?? 0;
+  const rating = service.rating ?? 0;
+  const reviewsCount = Array.isArray(service.reviews) ? service.reviews.length : (service.reviews ?? 0);
+  const gallery = service.gallery?.length ? service.gallery : [service.image || "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?q=80&w=1200&auto=format&fit=crop"];
+  const zones = service.zones ?? [];
+  const responseTime = service.responseTime || "Menos de 2 horas";
+  const availability = service.availability || "Disponible";
+  const specialty = service.specialty || service.subcategory || service.category;
+  const description = service.description || "Servicio profesional verificado en MDP Market con reserva protegida.";
+
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
       {/* Top Banner / Breadcrumbs */}
@@ -54,7 +65,7 @@ export default function ServiceDetailPage({ params }: { params: Promise<{ slug: 
                        </div>
                      )}
                      <div className="bg-white/90 backdrop-blur-sm text-gray-900 text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
-                        {service.completedJobs} Trabajos realizados
+                        {completedJobs} Trabajos realizados
                      </div>
                   </div>
                </div>
@@ -68,13 +79,13 @@ export default function ServiceDetailPage({ params }: { params: Promise<{ slug: 
                         <div className="flex items-center gap-4 text-sm text-gray-600">
                            <div className="flex items-center gap-1">
                               <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                              <span className="font-bold text-gray-900">{service.rating}</span>
-                              <span className="text-gray-400">({service.reviews} opiniones)</span>
+                              <span className="font-bold text-gray-900">{rating}</span>
+                              <span className="text-gray-400">({reviewsCount} opiniones)</span>
                            </div>
                            <div className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
                            <div className="flex items-center gap-1.5">
                               <MapPin className="w-4 h-4 text-gray-400" />
-                              <span>{service.zones.join(", ")}</span>
+                              <span>{zones.join(", ")}</span>
                            </div>
                         </div>
                      </div>
@@ -94,9 +105,9 @@ export default function ServiceDetailPage({ params }: { params: Promise<{ slug: 
                   </div>
 
                   <div className="prose prose-blue max-w-none mb-12">
-                     <h2 className="text-xl font-black mb-4">Sobre el servicio</h2>
+                     <h2 className="text-xl font-black mb-4">Sobre el servicio ({specialty})</h2>
                      <p className="text-gray-600 leading-relaxed text-lg">
-                        {service.description}
+                        {description}
                      </p>
                   </div>
 
@@ -104,12 +115,12 @@ export default function ServiceDetailPage({ params }: { params: Promise<{ slug: 
                      <div className="flex flex-col gap-1">
                         <Clock className="w-6 h-6 text-blue-500 mb-2" />
                         <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Respuesta</span>
-                        <span className="font-bold text-gray-900">{service.responseTime}</span>
+                        <span className="font-bold text-gray-900">{responseTime}</span>
                      </div>
                      <div className="flex flex-col gap-1">
                         <Calendar className="w-6 h-6 text-green-500 mb-2" />
                         <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Disponibilidad</span>
-                        <span className="font-bold text-gray-900">{service.availability}</span>
+                        <span className="font-bold text-gray-900">{availability}</span>
                      </div>
                      <div className="flex flex-col gap-1">
                         <Award className="w-6 h-6 text-purple-500 mb-2" />
@@ -129,11 +140,11 @@ export default function ServiceDetailPage({ params }: { params: Promise<{ slug: 
             <section className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
                <h2 className="text-xl font-black mb-6">Trabajos realizados</h2>
                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {[1, 2, 3, 4, 5, 6].map(i => (
+                  {gallery.map((img, i) => (
                     <div key={i} className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 hover:opacity-90 transition-opacity cursor-pointer">
                        <Image 
-                        src={`https://images.unsplash.com/photo-1581244277943-fe4a9c777189?q=80&w=400&auto=format&fit=crop&sig=${i}`} 
-                        alt="Trabajo" 
+                        src={img} 
+                        alt={`Trabajo ${i + 1}`} 
                         fill 
                         className="object-cover" 
                        />
