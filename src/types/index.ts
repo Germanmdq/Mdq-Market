@@ -142,6 +142,7 @@ export type Professional = {
   subcategories: string[];
   headline: string;
   bio: string;
+  coverImage?: string;
   verified: boolean;
   featured: boolean;
   license?: {

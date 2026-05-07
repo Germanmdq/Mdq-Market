@@ -77,7 +77,7 @@ export default function ProfessionalDetailPage({ params }: { params: Promise<{ s
           
           {/* 2. Header Profesional */}
           <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm relative">
-            {professional.coverImage ? (
+            {professional?.coverImage ? (
               <div className="h-32 w-full relative bg-blue-900">
                 <Image src={professional.coverImage} alt="Cover" fill className="object-cover opacity-80" />
               </div>

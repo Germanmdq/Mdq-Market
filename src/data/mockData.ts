@@ -4172,6 +4172,7 @@ export const MOCK_PROFESSIONAL_DETAILS = MOCK_PROFESSIONALS.map((professional) =
   bio:
     professional.bio ||
     `${professional.profession} con experiencia comprobable, atención por zonas y reserva protegida dentro de MDP Market.`,
+  coverImage: `https://images.unsplash.com/photo-1541888941257-18202532bc13?q=80&w=1200&auto=format&fit=crop`,
   credentials: (professional as any).credentials || [
     {
       type: "Identidad verificada",
