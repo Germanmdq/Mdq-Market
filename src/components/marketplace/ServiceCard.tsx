@@ -7,23 +7,27 @@ import { Star, Clock, MapPin, CheckCircle2 } from "lucide-react";
 import { Service } from "@/types";
 import { formatPrice } from "@/lib/utils";
 
+const FALLBACK = "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?q=80&w=600&auto=format&fit=crop";
+
 const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
-  const fallback = "https://placehold.co/400x300/f1f5f9/94a3b8?text=Servicio";
-  const [imgSrc, setImgSrc] = useState(service.image || fallback);
+  const [imgSrc, setImgSrc] = useState(service.image || FALLBACK);
 
   return (
     <Link href={`/servicios/${service.slug}`} className="block h-full group">
-      <article className="h-full overflow-hidden rounded-[24px] border border-slate-200/70 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_36px_rgba(15,23,42,0.08)] flex flex-col">
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
+      <article className="h-full overflow-hidden rounded-[28px] border border-slate-200/60 bg-white shadow-[0_8px_28px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_44px_rgba(15,23,42,0.10)] flex flex-col">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50">
           <Image
             src={imgSrc}
             alt={service.title}
             fill
-            className="object-cover group-hover:scale-105 transition duration-300"
-            onError={() => setImgSrc(fallback)}
+            sizes="(max-width: 640px) 86vw, (max-width: 1024px) 48vw, 28vw"
+            className="object-cover group-hover:scale-105 transition duration-500"
+            onError={() => setImgSrc(FALLBACK)}
           />
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
+
           {service.availability === "Hoy" && (
-            <span className="absolute top-3 left-3 flex items-center gap-1.5 bg-emerald-600 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">
+            <span className="absolute top-3 left-3 flex items-center gap-1.5 bg-emerald-600 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
               Disponible hoy
             </span>
@@ -38,13 +42,13 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
 
         <div className="p-4 flex flex-col flex-grow">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+            <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-100 border border-slate-200/70 shrink-0">
               <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${service.professionalName}`} alt="" className="w-full h-full" />
             </div>
             <span className="text-[11px] font-medium text-slate-400 truncate">{service.professionalName}</span>
           </div>
 
-          <h3 className="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">
+          <h3 className="text-sm font-semibold text-slate-700 mb-3 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">
             {service.title}
           </h3>
 
@@ -53,7 +57,7 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
             <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{service.zones[0]}</span>
           </div>
 
-          <div className="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between">
+          <div className="mt-auto pt-3 border-t border-slate-100/80 flex items-center justify-between">
             <div>
               <span className="text-[10px] font-medium text-slate-400">Desde</span>
               <p className="text-lg font-bold text-slate-950 tracking-tight">{formatPrice(service.priceFrom)}</p>
@@ -63,7 +67,7 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
             </span>
           </div>
 
-          <div className="mt-4 flex h-10 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white transition hover:bg-blue-700">
+          <div className="mt-4 flex h-10 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(37,99,235,0.3)] transition hover:bg-blue-700 hover:shadow-[0_6px_20px_rgba(37,99,235,0.4)]">
             Reservar
           </div>
         </div>

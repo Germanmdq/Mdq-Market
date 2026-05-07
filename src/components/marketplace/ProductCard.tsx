@@ -3,17 +3,27 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, MapPin, Star } from "lucide-react";
+import { Heart } from "lucide-react";
 import { Product } from "@/types";
-import { formatPrice, cn } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 
-interface ProductCardProps {
-  product: Product;
-}
+const FALLBACK_BY_CAT: Record<string, string> = {
+  "cat-1": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=600&auto=format&fit=crop",
+  "cat-2": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=600&auto=format&fit=crop",
+  "cat-3": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop",
+  "cat-4": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=600&auto=format&fit=crop",
+  "cat-5": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=600&auto=format&fit=crop",
+  "cat-6": "https://images.unsplash.com/photo-1515488764276-beab7607c1e6?q=80&w=600&auto=format&fit=crop",
+  "cat-7": "https://images.unsplash.com/photo-1485965120184-e220f721d03e?q=80&w=600&auto=format&fit=crop",
+  "cat-8": "https://images.unsplash.com/photo-1513519245088-0e12902e35ca?q=80&w=600&auto=format&fit=crop",
+  "cat-9": "https://images.unsplash.com/photo-1534723452862-4c874e70d6f3?q=80&w=600&auto=format&fit=crop",
+  "cat-10": "https://images.unsplash.com/photo-1459156212016-c812468e2115?q=80&w=600&auto=format&fit=crop",
+};
+const FALLBACK_DEFAULT = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600&auto=format&fit=crop";
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const [isFav, setIsFav] = useState(false);
-  const fallback = "https://placehold.co/400x300/f1f5f9/94a3b8?text=MDP+Market";
+  const fallback = FALLBACK_BY_CAT[product.category] || FALLBACK_DEFAULT;
   const [imgSrc, setImgSrc] = useState(product.images?.[0] || fallback);
 
   const discount =
@@ -23,13 +33,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       : undefined);
 
   return (
-    <article className="group h-full overflow-hidden rounded-[24px] border border-slate-200/70 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_36px_rgba(15,23,42,0.08)]">
-      <Link href={`/productos/${product.slug}`} className="block">
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
+    <article className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md h-full flex flex-col">
+      <Link href={`/productos/${product.slug}`} className="block flex-1 flex flex-col">
+        <div className="relative aspect-square w-full overflow-hidden bg-slate-100 shrink-0">
           <Image
             src={imgSrc}
             alt={product.title}
             fill
+            sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 22vw"
             className="object-cover transition duration-300 group-hover:scale-105"
             onError={() => setImgSrc(fallback)}
           />
@@ -37,69 +48,51 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <button
             type="button"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsFav(!isFav); }}
-            className={cn(
-              "absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-sm transition active:scale-90",
-              isFav ? "text-red-500" : "text-slate-400 hover:text-red-500"
-            )}
+            className={`absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur transition hover:text-red-500 ${isFav ? "text-red-500" : "text-slate-500"}`}
           >
-            <Heart className={cn("h-4 w-4", isFav && "fill-current")} />
+            <Heart className={`h-4 w-4 ${isFav ? "fill-current" : ""}`} />
           </button>
 
           {discount ? (
-            <span className="absolute left-3 top-3 rounded-full bg-red-600 px-2.5 py-1 text-[11px] font-semibold text-white">
-              {discount}% OFF
+            <span className="absolute left-3 top-3 rounded-full bg-red-600 px-2.5 py-1 text-xs font-medium text-white shadow-sm">
+              {discount}% off
             </span>
           ) : null}
         </div>
-      </Link>
 
-      <div className="p-4">
-        <div className="mb-2 flex flex-wrap gap-1.5">
-          {product.mdpDelivery?.available && (
-            <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700">
-              Entrega MDP
-            </span>
-          )}
-          {product.protectedPayment && (
-            <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-semibold text-blue-700">
-              Pago protegido
-            </span>
-          )}
-        </div>
+        <div className="p-4 flex flex-col flex-1">
+          <div className="mb-3 flex flex-wrap gap-2">
+            {product.mdpDelivery?.available && (
+              <span className="rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-medium text-emerald-700">
+                Entrega MDP
+              </span>
+            )}
+            {product.protectedPayment && (
+              <span className="rounded-full bg-blue-50 px-2 py-1 text-[11px] font-medium text-blue-700">
+                Pago protegido
+              </span>
+            )}
+          </div>
 
-        <p className="text-xl font-bold tracking-tight text-slate-950">
-          {formatPrice(product.price)}
-        </p>
-        {product.oldPrice && (
-          <p className="text-xs font-medium text-slate-400 line-through">
-            {formatPrice(product.oldPrice)}
+          <p className="text-lg font-semibold tracking-tight text-slate-950 leading-tight">
+            {formatPrice(product.price)}
           </p>
-        )}
+          {product.oldPrice && (
+            <p className="text-sm font-medium text-slate-400 line-through mt-0.5">
+              {formatPrice(product.oldPrice)}
+            </p>
+          )}
 
-        <Link href={`/productos/${product.slug}`}>
-          <h3 className="mt-2 line-clamp-2 min-h-[38px] text-sm font-semibold leading-snug text-slate-800 transition group-hover:text-blue-700">
+          <h3 className="mt-2 line-clamp-2 text-sm font-medium leading-snug text-slate-700">
             {product.title}
           </h3>
-        </Link>
 
-        <div className="mt-3 flex items-center justify-between text-xs">
-          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-1 font-semibold text-amber-600">
-            <Star className="h-3 w-3 fill-current" />
-            {product.sellerRating}
-          </span>
-          <span className="inline-flex items-center gap-1 truncate font-medium text-slate-400">
-            <MapPin className="h-3.5 w-3.5 shrink-0" />
-            {product.zone}
-          </span>
+          <div className="mt-auto pt-4 flex items-center justify-between text-xs text-slate-500 font-medium">
+            <span>★ {product.sellerRating ?? 4.8}</span>
+            <span className="truncate ml-2">{product.zone}</span>
+          </div>
         </div>
-
-        <Link
-          href={`/productos/${product.slug}`}
-          className="mt-4 flex h-10 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white transition hover:bg-blue-700"
-        >
-          Ver producto
-        </Link>
-      </div>
+      </Link>
     </article>
   );
 };

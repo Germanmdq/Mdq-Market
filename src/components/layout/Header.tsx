@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, ShoppingCart, User, Menu, MapPin, Heart, Bell, X, ChevronDown, Package, Store, Briefcase } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, Heart, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const Header = () => {
@@ -10,94 +10,103 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const h = () => setScrolled(window.scrollY > 16);
-    window.addEventListener("scroll", h);
-    return () => window.removeEventListener("scroll", h);
+    const handleScroll = () => setScrolled(window.scrollY > 16);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <header className={cn(
       "sticky top-0 z-50 w-full transition-all duration-300",
-      scrolled ? "bg-white/95 backdrop-blur-xl shadow-[0_1px_3px_rgba(0,0,0,0.05)] py-2" : "bg-white py-3 border-b border-slate-100"
+      scrolled 
+        ? "bg-white/90 backdrop-blur-xl border-b border-slate-200/70 shadow-[0_4px_24px_rgba(15,23,42,0.04)] py-2" 
+        : "bg-white py-4 border-b border-slate-200/50"
     )}>
-      <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-4 lg:gap-6">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center">
-              <span className="text-white font-bold text-lg">M</span>
-            </div>
-            <span className="hidden sm:block text-base font-bold text-slate-900">MDP Market</span>
-          </Link>
-
-          {/* Search */}
-          <div className="flex-1 max-w-xl hidden md:block">
-            <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Buscar productos, servicios o profesionales..."
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200/70 rounded-full text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-500 transition placeholder:text-slate-400"
-              />
-            </div>
+      <div className="mx-auto flex max-w-[1440px] items-center gap-6 px-4 sm:px-6 lg:px-8">
+        
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-3 shrink-0">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
+            M
           </div>
+          <div className="hidden sm:block">
+            <p className="text-base font-semibold tracking-tight text-slate-950 leading-tight">
+              MDP Market
+            </p>
+            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-blue-600 leading-tight">
+              Mar del Plata
+            </p>
+          </div>
+        </Link>
 
-          {/* Nav links desktop */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {[
-              { label: "Productos", href: "/productos", icon: Package },
-              { label: "Servicios", href: "/servicios", icon: Store },
-              { label: "Profesionales", href: "/profesionales", icon: Briefcase },
-            ].map(l => (
-              <Link key={l.label} href={l.href} className="flex items-center gap-1.5 px-3 py-2 rounded-full text-[13px] font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition">
-                <l.icon className="w-4 h-4" />
-                {l.label}
-              </Link>
-            ))}
-          </nav>
+        {/* Nav links desktop */}
+        <nav className="hidden items-center gap-6 lg:flex">
+          <Link href="/productos" className="text-sm font-medium text-slate-600 hover:text-slate-950 transition-colors">Productos</Link>
+          <Link href="/servicios" className="text-sm font-medium text-slate-600 hover:text-slate-950 transition-colors">Servicios</Link>
+          <Link href="/profesionales" className="text-sm font-medium text-slate-600 hover:text-slate-950 transition-colors">Profesionales</Link>
+          <Link href="/productos?ofertas=true" className="text-sm font-medium text-slate-600 hover:text-slate-950 transition-colors">Ofertas</Link>
+          <Link href="/vender" className="text-sm font-medium text-slate-600 hover:text-slate-950 transition-colors">Vender</Link>
+        </nav>
 
-          {/* Right */}
-          <div className="flex items-center gap-1 ml-auto">
-            <Link href="/favoritos" className="hidden sm:flex w-9 h-9 items-center justify-center rounded-full text-slate-500 hover:bg-slate-50 transition relative">
-              <Heart className="h-[18px] w-[18px]" />
-            </Link>
-            <Link href="/carrito" className="flex w-9 h-9 items-center justify-center rounded-full text-slate-500 hover:bg-slate-50 transition relative">
-              <ShoppingCart className="h-[18px] w-[18px]" />
-              <span className="absolute -top-0.5 -right-0.5 bg-blue-600 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">3</span>
-            </Link>
-            <Link href="/perfil" className="hidden sm:flex w-9 h-9 items-center justify-center rounded-full text-slate-500 hover:bg-slate-50 transition">
-              <User className="h-[18px] w-[18px]" />
-            </Link>
-            <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden w-9 h-9 flex items-center justify-center rounded-full text-slate-700 hover:bg-slate-50">
-              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
+        {/* Search */}
+        <div className="ml-auto hidden flex-1 max-w-md lg:block">
+          <div className="flex h-10 items-center rounded-full border border-slate-200 bg-slate-50 px-3 shadow-sm transition focus-within:border-blue-300 focus-within:ring-4 focus-within:ring-blue-50 focus-within:bg-white">
+            <Search className="h-4 w-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Buscar productos, servicios..."
+              className="ml-2 flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-slate-400"
+            />
           </div>
         </div>
 
-        {/* Mobile search */}
-        <div className="md:hidden mt-3">
-          <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="¿Qué estás buscando?"
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200/70 rounded-full text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-500 transition placeholder:text-slate-400"
-            />
-          </div>
+        {/* Right Actions */}
+        <div className="ml-auto lg:ml-0 flex items-center gap-2">
+          <Link href="/favoritos" className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full text-slate-500 hover:bg-slate-50 transition-colors">
+            <Heart className="h-5 w-5" />
+          </Link>
+          <Link href="/carrito" className="flex h-10 w-10 items-center justify-center rounded-full text-slate-500 hover:bg-slate-50 transition-colors relative">
+            <ShoppingCart className="h-5 w-5" />
+            <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold text-white border-2 border-white">
+              3
+            </span>
+          </Link>
+          <Link href="/perfil" className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full text-slate-500 hover:bg-slate-50 transition-colors">
+            <User className="h-5 w-5" />
+          </Link>
+          <button 
+            onClick={() => setMenuOpen(!menuOpen)} 
+            className="lg:hidden flex h-10 w-10 items-center justify-center rounded-full text-slate-700 hover:bg-slate-50 transition-colors"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile search */}
+      <div className="lg:hidden px-4 pb-3 pt-2">
+        <div className="flex h-11 items-center rounded-full border border-slate-200 bg-slate-50 px-4 shadow-sm transition focus-within:border-blue-300 focus-within:ring-4 focus-within:ring-blue-50 focus-within:bg-white">
+          <Search className="h-4 w-4 text-slate-400" />
+          <input
+            type="text"
+            placeholder="¿Qué estás buscando?"
+            className="ml-3 flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-slate-400"
+          />
         </div>
       </div>
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-slate-100 px-4 py-4 space-y-1 animate-in slide-in-from-top duration-200">
+        <div className="lg:hidden bg-white border-t border-slate-100 px-4 py-4 space-y-1 animate-in slide-in-from-top duration-200">
           {[
             { label: "Productos", href: "/productos" },
             { label: "Servicios", href: "/servicios" },
             { label: "Profesionales", href: "/profesionales" },
             { label: "Ofertas", href: "/productos?ofertas=true" },
+            { label: "Vender", href: "/vender" },
             { label: "Mi cuenta", href: "/perfil" },
           ].map(l => (
-            <Link key={l.label} href={l.href} className="block px-4 py-3 rounded-2xl text-sm font-medium text-slate-700 hover:bg-slate-50 transition">
+            <Link key={l.label} href={l.href} className="block px-4 py-3 rounded-2xl text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
               {l.label}
             </Link>
           ))}
