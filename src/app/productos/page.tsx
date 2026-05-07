@@ -1,8 +1,9 @@
-import React from "react";
-import { Search, Filter, X } from "lucide-react";
+import React, { Suspense } from "react";
+import { Search, SlidersHorizontal } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import type { Product } from "@/types/product";
 import { ProductGrid } from "@/components/marketplace/ProductGrid";
+import ProductFilters from "@/components/marketplace/ProductFilters";
 
 export default async function ProductsPage({
   searchParams,
@@ -50,6 +51,10 @@ export default async function ProductsPage({
     query = query.eq("seller_type", params.sellerType);
   }
 
+  if (typeof params.condition === "string") {
+    query = query.eq("condition", params.condition);
+  }
+
   if (params.ofertas === "true") {
     query = query.or("featured_deal.eq.true,discount.gt.0");
   }
@@ -64,6 +69,18 @@ export default async function ProductsPage({
 
   if (typeof params.maxPrice === "string") {
     query = query.lte("price", Number(params.maxPrice));
+  }
+
+  if (params.protectedPayment === "true") {
+    query = query.eq("protected_payment", true);
+  }
+
+  if (params.delivery === "true") {
+    query = query.eq("mdp_delivery_available", true);
+  }
+
+  if (params.verified === "true") {
+    query = query.eq("seller_verified", true);
   }
 
   if (typeof params.q === "string" && params.q.trim()) {
@@ -81,58 +98,76 @@ export default async function ProductsPage({
   const products = (data ?? []) as Product[];
 
   return (
-    <main className="min-h-screen bg-slate-50 pb-20">
-      {/* Header / Search */}
+    <main className="min-h-screen bg-slate-50">
+      {/* Header */}
       <div className="bg-white border-b border-slate-200">
-        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-10">
-          <div className="mb-8">
-            <h1 className="text-4xl font-semibold tracking-tight text-slate-950">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mb-6">
+            <h1 className="text-3xl font-semibold tracking-tight text-slate-950">
               Productos en Mar del Plata
             </h1>
-            <p className="mt-2 text-base text-slate-500">
-              Catálogo real cargado desde Supabase.
+            <p className="mt-1.5 text-sm text-slate-600">
+              {products.length} productos encontrados
             </p>
           </div>
 
-          <form action="/productos" method="GET" className="w-full relative group">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
-            <input 
+          <form action="/productos" method="GET" className="relative max-w-2xl">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <input
               name="q"
               defaultValue={typeof params.q === "string" ? params.q : ""}
-              placeholder="Buscar productos..." 
-              className="w-full pl-14 pr-6 py-4 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-blue-600 focus:bg-white transition-all outline-none font-semibold text-slate-900"
+              placeholder="Buscar productos..."
+              className="w-full pl-12 pr-4 py-3 bg-slate-50 rounded-2xl border border-slate-200 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all outline-none text-slate-900"
             />
-            {/* Hidden fields for existing filters to preserve them on search */}
+            {/* Preserve existing filters */}
             {typeof params.category === "string" && <input type="hidden" name="category" value={params.category} />}
             {typeof params.zone === "string" && <input type="hidden" name="zone" value={params.zone} />}
           </form>
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
-            {products.length} productos encontrados
-          </div>
-          <div className="flex items-center gap-4">
-             {/* Add simplified filter chips here if needed */}
+      {/* Main Content */}
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 py-8">
+        <div className="lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
+
+          {/* Sidebar Filters - Desktop */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-24 bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+              <Suspense fallback={<div className="h-96 animate-pulse bg-slate-100 rounded-xl" />}>
+                <ProductFilters />
+              </Suspense>
+            </div>
+          </aside>
+
+          {/* Products Grid */}
+          <div>
+            {/* Mobile Filter Button */}
+            <div className="lg:hidden mb-6">
+              <button className="w-full flex items-center justify-center gap-2 py-3 bg-white rounded-2xl border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+                <SlidersHorizontal className="w-4 h-4" />
+                Filtros
+              </button>
+            </div>
+
+            {products.length > 0 ? (
+              <ProductGrid products={products} />
+            ) : (
+              <div className="py-24 text-center bg-white rounded-3xl border border-slate-200 shadow-sm">
+                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Search className="w-8 h-8 text-slate-300" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-950 mb-2">No encontramos resultados</h3>
+                <p className="text-sm text-slate-600 mb-6">Probá quitando algunos filtros o cambiando tu búsqueda.</p>
+                <a
+                  href="/productos"
+                  className="inline-block px-5 py-2.5 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
+                >
+                  Limpiar todos los filtros
+                </a>
+              </div>
+            )}
           </div>
         </div>
-
-        <ProductGrid products={products} />
-
-        {products.length === 0 && (
-          <div className="py-24 text-center bg-white rounded-[32px] border border-slate-200 shadow-sm">
-             <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                <Search className="w-8 h-8 text-slate-300" />
-             </div>
-             <h3 className="text-xl font-semibold text-slate-950 mb-2">No encontramos resultados</h3>
-             <p className="text-slate-500">Probá quitando algunos filtros o cambiando tu búsqueda.</p>
-             <a href="/productos" className="mt-8 inline-block text-blue-600 font-semibold hover:underline">
-               Limpiar todos los filtros
-             </a>
-          </div>
-        )}
       </div>
     </main>
   );

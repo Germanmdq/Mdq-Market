@@ -21,64 +21,64 @@ const Header = () => {
   return (
     <>
       <header className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300",
-        scrolled 
-          ? "bg-white/90 backdrop-blur-xl border-b border-slate-200/70 shadow-[0_4px_24px_rgba(15,23,42,0.04)] py-2" 
-          : "bg-white py-4 border-b border-slate-200/50"
+        "sticky top-0 z-50 w-full transition-all duration-200",
+        scrolled
+          ? "bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm"
+          : "bg-white border-b border-slate-200"
       )}>
-        <div className="mx-auto flex max-w-[1440px] items-center gap-6 px-4 sm:px-6 lg:px-8">
-          
+        <div className="mx-auto flex max-w-[1440px] items-center gap-6 px-4 sm:px-6 lg:px-8 h-16">
+
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 shrink-0">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
+          <Link href="/" className="flex items-center gap-2.5 shrink-0">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
               M
             </div>
             <div className="hidden sm:block">
-              <p className="text-base font-semibold tracking-tight text-slate-950 leading-tight">
+              <p className="text-sm font-semibold tracking-tight text-slate-950 leading-tight">
                 MDP Market
               </p>
-              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-blue-600 leading-tight">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 leading-tight">
                 Mar del Plata
               </p>
             </div>
           </Link>
 
           {/* Nav links desktop */}
-          <nav className="hidden items-center gap-4 lg:flex">
+          <nav className="hidden items-center gap-1 lg:flex">
             <MegaMenu />
-            <Link href="/productos" className="text-sm font-medium text-slate-600 hover:text-slate-950 transition-colors">Productos</Link>
-            <Link href="/servicios" className="text-sm font-medium text-slate-600 hover:text-slate-950 transition-colors">Servicios</Link>
-            <Link href="/profesionales" className="text-sm font-medium text-slate-600 hover:text-slate-950 transition-colors">Profesionales</Link>
+            <Link href="/productos" className="text-sm font-medium text-slate-700 hover:text-slate-950 transition-colors px-3 py-2 rounded-lg hover:bg-slate-50">Productos</Link>
+            <Link href="/servicios" className="text-sm font-medium text-slate-700 hover:text-slate-950 transition-colors px-3 py-2 rounded-lg hover:bg-slate-50">Servicios</Link>
+            <Link href="/profesionales" className="text-sm font-medium text-slate-700 hover:text-slate-950 transition-colors px-3 py-2 rounded-lg hover:bg-slate-50">Profesionales</Link>
           </nav>
 
           {/* Search */}
-          <div className="ml-auto hidden flex-1 max-w-md lg:block">
-            <div className="flex h-10 items-center rounded-full border border-slate-200 bg-slate-50 px-3 shadow-sm transition focus-within:border-blue-300 focus-within:ring-4 focus-within:ring-blue-50 focus-within:bg-white">
+          <div className="ml-auto hidden flex-1 max-w-lg lg:block">
+            <div className="flex h-10 items-center rounded-full border border-slate-200 bg-slate-50 px-4 transition-all focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-50 focus-within:bg-white">
               <Search className="h-4 w-4 text-slate-400" />
               <input
                 type="text"
                 placeholder="Buscar productos, servicios..."
-                className="ml-2 flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-slate-400"
+                className="ml-2.5 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
               />
             </div>
           </div>
 
           {/* Right Actions */}
-          <div className="ml-auto lg:ml-0 flex items-center gap-2">
-            <Link href="/favoritos" className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full text-slate-500 hover:bg-slate-50 transition-colors">
+          <div className="ml-auto lg:ml-0 flex items-center gap-1">
+            <Link href="/favoritos" className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-50 hover:text-slate-950 transition-colors">
               <Heart className="h-5 w-5" />
             </Link>
-            <Link href="/carrito" className="flex h-10 w-10 items-center justify-center rounded-full text-slate-500 hover:bg-slate-50 transition-colors relative">
+            <Link href="/carrito" className="flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-50 hover:text-slate-950 transition-colors relative">
               <ShoppingCart className="h-5 w-5" />
-              <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold text-white border-2 border-white">
+              <span className="absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold text-white border-2 border-white">
                 3
               </span>
             </Link>
-            <Link href="/mi-cuenta" className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full text-slate-500 hover:bg-slate-50 transition-colors">
+            <Link href="/mi-cuenta" className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-50 hover:text-slate-950 transition-colors">
               <User className="h-5 w-5" />
             </Link>
-            <button 
-              onClick={() => setMenuOpen(!menuOpen)} 
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
               className="lg:hidden flex h-10 w-10 items-center justify-center rounded-full text-slate-700 hover:bg-slate-50 transition-colors"
             >
               {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -87,21 +87,21 @@ const Header = () => {
         </div>
 
         {/* Mobile search & Quick Cats */}
-        <div className="lg:hidden px-4 pb-3 pt-2 space-y-2">
-          <div className="flex h-11 items-center rounded-full border border-slate-200 bg-slate-50 px-4 shadow-sm transition focus-within:border-blue-300 focus-within:ring-4 focus-within:ring-blue-50 focus-within:bg-white">
+        <div className="lg:hidden px-4 pb-3 space-y-2 border-t border-slate-100">
+          <div className="pt-3 flex h-10 items-center rounded-full border border-slate-200 bg-slate-50 px-4 transition-all focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-50 focus-within:bg-white">
             <Search className="h-4 w-4 text-slate-400" />
             <input
               type="text"
               placeholder="¿Qué estás buscando?"
-              className="ml-3 flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-slate-400"
+              className="ml-2.5 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
             />
           </div>
-          <button 
+          <button
             onClick={() => setMobileCategoriesOpen(true)}
-            className="w-full flex items-center justify-center gap-2 py-2 bg-slate-50 rounded-xl text-xs font-bold text-slate-600 border border-slate-200"
+            className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-50 rounded-xl text-xs font-semibold text-slate-700 border border-slate-200 hover:bg-white transition-colors"
           >
             <LayoutGrid className="w-3.5 h-3.5" />
-            VER CATEGORÍAS
+            Categorías
           </button>
         </div>
 

@@ -1,160 +1,207 @@
+"use client";
+
 import React from "react";
-import { CATEGORIES, ZONES } from "@/data/mockData";
+import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import type { ProductFilterState } from "@/types/filters";
+
+const ZONES = [
+  "Centro", "Güemes", "Constitución", "La Perla", "Playa Grande",
+  "Punta Mogotes", "Camet", "Los Troncos", "Parque Camet", "Stella Maris",
+  "Colinas de Peralta Ramos", "Bosque Peralta Ramos", "Playa Chica",
+  "Puerto", "Alfar", "Faro Norte", "San Carlos", "Las Américas"
+];
+
+const CONDITIONS = [
+  "Nuevo", "Usado - Como nuevo", "Usado - Buen estado",
+  "Usado - Con detalles", "Reacondicionado"
+];
+
+const SELLER_TYPES = {
+  "commerce": "Comercio",
+  "entrepreneur": "Emprendedor",
+  "individual": "Particular"
+};
 
 interface ProductFiltersProps {
-  filters: ProductFilterState;
-  setFilters: React.Dispatch<React.SetStateAction<ProductFilterState>>;
   mobile?: boolean;
 }
 
-const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, mobile }) => {
-  
-  const toggleArrayItem = (key: keyof ProductFilterState, val: string) => {
-    setFilters(prev => {
-      const arr = prev[key] as string[];
-      if (arr.includes(val)) {
-        return { ...prev, [key]: arr.filter(x => x !== val) };
-      }
-      return { ...prev, [key]: [...arr, val] };
-    });
+const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const updateFilter = (key: string, value: string | null) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+    router.push(`/productos?${params.toString()}`, { scroll: false });
+  };
+
+  const currentZone = searchParams.get("zone");
+  const currentSellerType = searchParams.get("sellerType");
+  const currentCondition = searchParams.get("condition");
+  const currentMinPrice = searchParams.get("minPrice");
+  const currentMaxPrice = searchParams.get("maxPrice");
+  const hasProtectedPayment = searchParams.get("protectedPayment") === "true";
+  const hasDelivery = searchParams.get("delivery") === "true";
+  const isVerified = searchParams.get("verified") === "true";
+
+  const toggleBoolean = (key: string, current: boolean) => {
+    updateFilter(key, current ? null : "true");
   };
 
   return (
-    <div className={cn("space-y-8", mobile ? "pb-24" : "")}>
+    <div className={cn("space-y-6", mobile ? "pb-24" : "")}>
       {!mobile && (
-        <h2 className="text-lg font-black text-slate-950 mb-6">Filtros</h2>
+        <h2 className="text-lg font-semibold text-slate-950">Filtros</h2>
       )}
-
-      {/* Category */}
-      <div>
-        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4">Categoría</h3>
-        <div className="space-y-2">
-          {CATEGORIES.filter(c => c.type === 'producto' || c.type === 'mixto').map(cat => (
-            <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
-              <input 
-                type="checkbox" 
-                checked={filters.categories.includes(cat.name)}
-                onChange={() => toggleArrayItem("categories", cat.name)}
-                className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
-              />
-              <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">{cat.name}</span>
-            </label>
-          ))}
-        </div>
-      </div>
 
       {/* Price */}
       <div>
-        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4">Precio</h3>
-        <div className="grid grid-cols-2 gap-3">
-          <input 
-            type="number" 
-            placeholder="Mínimo" 
-            value={filters.minPrice}
-            onChange={(e) => setFilters(f => ({ ...f, minPrice: e.target.value ? Number(e.target.value) : undefined }))}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-blue-600 focus:bg-white transition-all"
+        <h3 className="text-sm font-semibold text-slate-900 mb-3">Rango de precio</h3>
+        <div className="grid grid-cols-2 gap-2">
+          <input
+            type="number"
+            placeholder="Mín"
+            defaultValue={currentMinPrice || ""}
+            onBlur={(e) => updateFilter("minPrice", e.target.value || null)}
+            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
           />
-          <input 
-            type="number" 
-            placeholder="Máximo" 
-            value={filters.maxPrice}
-            onChange={(e) => setFilters(f => ({ ...f, maxPrice: e.target.value ? Number(e.target.value) : undefined }))}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-blue-600 focus:bg-white transition-all"
+          <input
+            type="number"
+            placeholder="Máx"
+            defaultValue={currentMaxPrice || ""}
+            onBlur={(e) => updateFilter("maxPrice", e.target.value || null)}
+            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
           />
         </div>
       </div>
 
       {/* Zone */}
       <div>
-        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4">Zona</h3>
-        <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-          {ZONES.map(zone => (
-            <label key={zone} className="flex items-center gap-3 cursor-pointer group">
-              <input 
-                type="checkbox" 
-                checked={filters.zones.includes(zone)}
-                onChange={() => toggleArrayItem("zones", zone)}
-                className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
+        <h3 className="text-sm font-semibold text-slate-900 mb-3">Zona</h3>
+        <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+          {ZONES.map((zone) => (
+            <label key={zone} className="flex items-center gap-2.5 cursor-pointer group">
+              <input
+                type="radio"
+                name="zone"
+                checked={currentZone === zone}
+                onChange={() => updateFilter("zone", currentZone === zone ? null : zone)}
+                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
               />
-              <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">{zone}</span>
+              <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
+                {zone}
+              </span>
             </label>
           ))}
         </div>
+        {currentZone && (
+          <button
+            onClick={() => updateFilter("zone", null)}
+            className="mt-2 text-xs font-medium text-blue-600 hover:underline"
+          >
+            Limpiar zona
+          </button>
+        )}
       </div>
 
       {/* Condition */}
       <div>
-        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4">Estado</h3>
-        <div className="space-y-2">
-          {["Nuevo", "Usado como nuevo", "Usado bueno", "Usado con detalles", "Reacondicionado"].map(status => (
-            <label key={status} className="flex items-center gap-3 cursor-pointer group">
-              <input 
-                type="checkbox" 
-                checked={filters.conditions.includes(status)}
-                onChange={() => toggleArrayItem("conditions", status)}
-                className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
+        <h3 className="text-sm font-semibold text-slate-900 mb-3">Estado</h3>
+        <div className="space-y-1.5">
+          {CONDITIONS.map((condition) => (
+            <label key={condition} className="flex items-center gap-2.5 cursor-pointer group">
+              <input
+                type="radio"
+                name="condition"
+                checked={currentCondition === condition}
+                onChange={() => updateFilter("condition", currentCondition === condition ? null : condition)}
+                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
               />
-              <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">{status}</span>
+              <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
+                {condition}
+              </span>
             </label>
           ))}
         </div>
+        {currentCondition && (
+          <button
+            onClick={() => updateFilter("condition", null)}
+            className="mt-2 text-xs font-medium text-blue-600 hover:underline"
+          >
+            Limpiar estado
+          </button>
+        )}
       </div>
 
       {/* Seller Type */}
       <div>
-        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4">Vendedor</h3>
-        <div className="space-y-2">
-          {["Comercio", "Emprendedor", "Particular"].map(type => (
-            <label key={type} className="flex items-center gap-3 cursor-pointer group">
-              <input 
-                type="checkbox" 
-                checked={filters.sellerTypes.includes(type)}
-                onChange={() => toggleArrayItem("sellerTypes", type)}
-                className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
+        <h3 className="text-sm font-semibold text-slate-900 mb-3">Tipo de vendedor</h3>
+        <div className="space-y-1.5">
+          {Object.entries(SELLER_TYPES).map(([key, label]) => (
+            <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
+              <input
+                type="radio"
+                name="sellerType"
+                checked={currentSellerType === key}
+                onChange={() => updateFilter("sellerType", currentSellerType === key ? null : key)}
+                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
               />
-              <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">{type}</span>
+              <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
+                {label}
+              </span>
             </label>
           ))}
         </div>
+        {currentSellerType && (
+          <button
+            onClick={() => updateFilter("sellerType", null)}
+            className="mt-2 text-xs font-medium text-blue-600 hover:underline"
+          >
+            Limpiar tipo
+          </button>
+        )}
       </div>
 
-      {/* Operation */}
+      {/* Special Features */}
       <div>
-        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4">Operación</h3>
+        <h3 className="text-sm font-semibold text-slate-900 mb-3">Características</h3>
         <div className="space-y-2">
-          <label className="flex items-center gap-3 cursor-pointer group">
-            <input 
-              type="checkbox" 
-              checked={filters.protectedPaymentOnly}
-              onChange={() => setFilters(f => ({ ...f, protectedPaymentOnly: !f.protectedPaymentOnly }))}
-              className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
+          <label className="flex items-center gap-2.5 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={hasProtectedPayment}
+              onChange={() => toggleBoolean("protectedPayment", hasProtectedPayment)}
+              className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
             />
-            <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">
-              🛡️ Pago protegido
+            <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
+              Pago protegido
             </span>
           </label>
-          <label className="flex items-center gap-3 cursor-pointer group">
-            <input 
-              type="checkbox" 
-              checked={filters.deliveryOnly}
-              onChange={() => setFilters(f => ({ ...f, deliveryOnly: !f.deliveryOnly }))}
-              className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
+          <label className="flex items-center gap-2.5 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={hasDelivery}
+              onChange={() => toggleBoolean("delivery", hasDelivery)}
+              className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
             />
-            <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">
-              🚚 Entrega MDP
+            <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
+              Entrega en MDP
             </span>
           </label>
-          <label className="flex items-center gap-3 cursor-pointer group">
-            <input 
-              type="checkbox" 
-              checked={filters.verifiedOnly}
-              onChange={() => setFilters(f => ({ ...f, verifiedOnly: !f.verifiedOnly }))}
-              className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
+          <label className="flex items-center gap-2.5 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={isVerified}
+              onChange={() => toggleBoolean("verified", isVerified)}
+              className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
             />
-            <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">
-              ✅ Vendedor Verificado
+            <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
+              Vendedor verificado
             </span>
           </label>
         </div>
