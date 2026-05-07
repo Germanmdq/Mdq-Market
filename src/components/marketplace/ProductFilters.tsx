@@ -1,7 +1,7 @@
 import React from "react";
 import { CATEGORIES, ZONES } from "@/data/mockData";
 import { cn } from "@/lib/utils";
-import { ProductFilterState } from "@/app/productos/page";
+import type { ProductFilterState } from "@/types/filters";
 
 interface ProductFiltersProps {
   filters: ProductFilterState;
@@ -53,14 +53,14 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, mo
             type="number" 
             placeholder="Mínimo" 
             value={filters.minPrice}
-            onChange={(e) => setFilters(f => ({ ...f, minPrice: e.target.value }))}
+            onChange={(e) => setFilters(f => ({ ...f, minPrice: e.target.value ? Number(e.target.value) : undefined }))}
             className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-blue-600 focus:bg-white transition-all"
           />
           <input 
             type="number" 
             placeholder="Máximo" 
             value={filters.maxPrice}
-            onChange={(e) => setFilters(f => ({ ...f, maxPrice: e.target.value }))}
+            onChange={(e) => setFilters(f => ({ ...f, maxPrice: e.target.value ? Number(e.target.value) : undefined }))}
             className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-blue-600 focus:bg-white transition-all"
           />
         </div>
