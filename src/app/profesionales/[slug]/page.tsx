@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, use } from "react";
+import React, { useEffect, useState, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -9,11 +9,55 @@ import {
   FileText, Briefcase
 } from "lucide-react";
 import { MOCK_PROFESSIONAL_DETAILS, MOCK_SERVICES, MOCK_PROFESSIONALS } from "@/data/mockData";
+import { supabase } from "@/lib/supabase/client";
 import { formatPrice, cn } from "@/lib/utils";
 
 export default function ProfessionalDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const professional = MOCK_PROFESSIONAL_DETAILS.find((p) => p.slug === slug) || MOCK_PROFESSIONAL_DETAILS[0];
+  const [remoteProfessional, setRemoteProfessional] = useState<any>(null);
+
+  useEffect(() => {
+    async function loadProfessional() {
+      const { data } = await supabase
+        .from("professionals")
+        .select("*")
+        .eq("slug", slug)
+        .maybeSingle();
+      if (data) setRemoteProfessional(data);
+    }
+
+    loadProfessional();
+  }, [slug]);
+
+  const mockProfessional = MOCK_PROFESSIONAL_DETAILS.find((p) => p.slug === slug);
+  const professional = remoteProfessional
+    ? {
+        ...MOCK_PROFESSIONAL_DETAILS[0],
+        ...remoteProfessional,
+        avatar: remoteProfessional.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${remoteProfessional.name}`,
+        profession: remoteProfessional.profession || remoteProfessional.category || "Profesional local",
+        headline: remoteProfessional.headline || `${remoteProfessional.profession || remoteProfessional.category || "Profesional"} en Mar del Plata`,
+        bio: remoteProfessional.bio || "Profesional verificado en MDP Market, con atención por zonas, reputación visible y reserva protegida.",
+        priceFrom: remoteProfessional.priceFrom ?? remoteProfessional.price_from ?? MOCK_PROFESSIONAL_DETAILS[0].priceFrom,
+        zones: remoteProfessional.zones || (remoteProfessional.zone ? [remoteProfessional.zone] : []),
+        rating: typeof remoteProfessional.rating === "number"
+          ? {
+              average: remoteProfessional.rating,
+              totalReviews: 0,
+              punctuality: remoteProfessional.rating,
+              quality: remoteProfessional.rating,
+              communication: remoteProfessional.rating,
+              value: remoteProfessional.rating,
+            }
+          : remoteProfessional.rating || MOCK_PROFESSIONAL_DETAILS[0].rating,
+        stats: {
+          ...MOCK_PROFESSIONAL_DETAILS[0].stats,
+          completedJobs: remoteProfessional.completedJobs ?? remoteProfessional.completed_jobs ?? 0,
+          responseTime: remoteProfessional.responseTime ?? remoteProfessional.response_time ?? "A coordinar",
+        },
+        services: remoteProfessional.services || [],
+      }
+    : mockProfessional || MOCK_PROFESSIONAL_DETAILS[0];
 
   // Defensive fallbacks
   const portfolio = (professional as any).portfolio ?? [];
@@ -421,7 +465,7 @@ export default function ProfessionalDetailPage({ params }: { params: Promise<{ s
 
                 <div className="space-y-3 mb-6">
                   <Link
-                    href={selectedSlot && selectedService ? `/checkout/profesional?id=${professional.id}&service=${selectedService.id}&day=${selectedDay}&slot=${selectedSlot}` : "#disponibilidad"}
+                    href={selectedSlot && selectedService ? `/checkout/profesional?professional=${professional.id}&service=${selectedService.id}&title=${encodeURIComponent(selectedService.title)}&professionalName=${encodeURIComponent(professional.name)}&price=${selectedService.priceFrom || professional.priceFrom || 0}&day=${encodeURIComponent(selectedDay)}&slot=${encodeURIComponent(selectedSlot)}` : "#disponibilidad"}
                     className={cn(
                       "w-full py-4 rounded-xl font-medium text-center flex items-center justify-center gap-2 transition-all text-sm",
                       selectedSlot && selectedService
@@ -473,7 +517,7 @@ export default function ProfessionalDetailPage({ params }: { params: Promise<{ s
       {/* Mobile Sticky CTA */}
       <div className="fixed bottom-16 left-0 right-0 p-4 bg-white border-t border-slate-200 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] lg:hidden z-50 flex gap-2">
         <Link
-          href={selectedSlot && selectedService ? `/checkout/profesional?id=${professional.id}&service=${selectedService.id}&day=${selectedDay}&slot=${selectedSlot}` : "#disponibilidad"}
+          href={selectedSlot && selectedService ? `/checkout/profesional?professional=${professional.id}&service=${selectedService.id}&title=${encodeURIComponent(selectedService.title)}&professionalName=${encodeURIComponent(professional.name)}&price=${selectedService.priceFrom || professional.priceFrom || 0}&day=${encodeURIComponent(selectedDay)}&slot=${encodeURIComponent(selectedSlot)}` : "#disponibilidad"}
           className="flex-1 bg-blue-600 text-white font-medium rounded-xl py-3.5 text-center text-sm shadow-lg flex items-center justify-center"
         >
           {selectedSlot ? "Reservar turno" : "Seleccionar horario"}

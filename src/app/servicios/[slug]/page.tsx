@@ -181,7 +181,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
                <div className="flex flex-col gap-3">
                   <Link 
-                    href={`/checkout?type=service&id=${service.id}`}
+                    href={`/checkout/profesional?service=${service.id}&title=${encodeURIComponent(service.title)}&professionalName=${encodeURIComponent(service.professionalName || "Profesional MDP")}&price=${service.priceFrom || 0}`}
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-xl transition-all text-center flex items-center justify-center gap-2"
                   >
                      <Calendar className="w-5 h-5" />

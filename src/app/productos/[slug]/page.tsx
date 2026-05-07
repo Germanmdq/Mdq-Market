@@ -87,6 +87,34 @@ export default async function ProductDetailPage({
                 ))}
               </div>
             )}
+
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="mb-4 flex flex-wrap items-center gap-4 text-sm text-slate-600">
+                <span className="flex items-center gap-2">
+                  <PackageCheck className="h-4 w-4 text-slate-400" />
+                  Stock: {product.stock > 0 ? `${product.stock} disponible${product.stock === 1 ? "" : "s"}` : "sin stock"}
+                </span>
+                <span className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-slate-400" />
+                  Zona: {product.zone || product.city}
+                </span>
+              </div>
+              <h2 className="text-lg font-semibold tracking-tight text-slate-950">
+                Descripción
+              </h2>
+              <div className="mt-3 text-sm leading-7 text-slate-600 whitespace-pre-wrap">
+                {product.description || "Sin descripción disponible."}
+              </div>
+              {product.tags && product.tags.length > 0 && (
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {product.tags.map((tag, i) => (
+                    <span key={i} className="px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-600">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* ═══ RIGHT: Info Panel ═══ */}
@@ -153,45 +181,6 @@ export default async function ProductDetailPage({
           </aside>
         </div>
       </div>
-
-      {/* ═══ DETALLES DEL PRODUCTO ═══ */}
-      <section className="border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-            <div>
-              <h2 className="text-xl font-semibold tracking-tight text-slate-950">
-                Detalles del producto
-              </h2>
-              <div className="mt-6 grid gap-3 text-sm text-slate-600">
-                <p className="flex items-center gap-2"><PackageCheck className="h-4 w-4 text-slate-400" /> Stock: {product.stock > 0 ? `${product.stock} disponible${product.stock === 1 ? "" : "s"}` : "sin stock"}</p>
-                <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-slate-400" /> Zona: {product.zone || product.city}</p>
-              </div>
-            </div>
-            <div className="space-y-10">
-              
-              {/* Description */}
-              <div className="text-slate-600 leading-relaxed text-sm whitespace-pre-wrap">
-                {product.description || "Sin descripción disponible."}
-              </div>
-
-              {/* Tags as specifications if any */}
-              {product.tags && product.tags.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-950 mb-4">Etiquetas</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {product.tags.map((tag, i) => (
-                      <span key={i} className="px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-600">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-            </div>
-          </div>
-        </div>
-      </section>
 
       <section className="border-t border-slate-200 bg-slate-50">
         <div className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 lg:px-8">
