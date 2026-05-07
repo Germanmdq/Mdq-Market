@@ -58,16 +58,18 @@ const Header = () => {
           </nav>
 
           {/* Search */}
-          <div className="ml-auto hidden flex-1 max-w-lg lg:block">
+          <form action="/buscar" method="GET" className="ml-auto hidden flex-1 max-w-lg lg:block">
             <div className="flex h-10 items-center rounded-full border border-slate-200 bg-slate-50 px-4 transition-all focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-50 focus-within:bg-white">
               <Search className="h-4 w-4 text-slate-400" />
               <input
                 type="text"
+                name="q"
                 placeholder="Buscar productos, servicios..."
                 className="ml-2.5 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+                required
               />
             </div>
-          </div>
+          </form>
 
           {/* Right Actions */}
           <div className="ml-auto lg:ml-0 flex items-center gap-1">
@@ -155,14 +157,18 @@ const Header = () => {
 
         {/* Mobile search & Quick Cats */}
         <div className="lg:hidden px-4 pb-3 space-y-2 border-t border-slate-100">
-          <div className="pt-3 flex h-10 items-center rounded-full border border-slate-200 bg-slate-50 px-4 transition-all focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-50 focus-within:bg-white">
-            <Search className="h-4 w-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="¿Qué estás buscando?"
-              className="ml-2.5 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
-            />
-          </div>
+          <form action="/buscar" method="GET" className="pt-3">
+            <div className="flex h-10 items-center rounded-full border border-slate-200 bg-slate-50 px-4 transition-all focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-50 focus-within:bg-white">
+              <Search className="h-4 w-4 text-slate-400" />
+              <input
+                type="text"
+                name="q"
+                placeholder="¿Qué estás buscando?"
+                className="ml-2.5 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+                required
+              />
+            </div>
+          </form>
           <button
             onClick={() => setMobileCategoriesOpen(true)}
             className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-50 rounded-xl text-xs font-semibold text-slate-700 border border-slate-200 hover:bg-white transition-colors"
