@@ -12,7 +12,8 @@ import {
 import { MOCK_PRODUCTS, CATEGORIES } from "@/data/mockData";
 import { formatPrice, cn } from "@/lib/utils";
 import ProductCard from "@/components/marketplace/ProductCard";
-import { ContentCarousel } from "@/components/ui/ContentCarousel";
+import { MarketCarousel } from "@/components/ui/MarketCarousel";
+import { MarketSection } from "@/components/marketplace/MarketSection";
 
 const STATUS_BUTTON: Record<string, { label: string; disabled: boolean }> = {
   Disponible: { label: "Comprar ahora", disabled: false },
@@ -307,61 +308,32 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         </div>
       </div>
 
-      {/* SECCIONES INFERIORES: Carruseles */}
+      {/* SECCIONES INFERIORES */}
       
-      {/* 1. Productos similares */}
       {similarProducts.length > 0 && (
-        <section className="w-full bg-white border-t border-slate-100 mt-20">
-          <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8 py-20">
-            <div className="mb-12 flex items-end justify-between gap-4">
-              <div>
-                <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-2 block">Recomendados</span>
-                <h2 className="text-3xl lg:text-4xl font-black text-slate-950 tracking-tighter">
-                  Productos similares
-                </h2>
+        <MarketSection eyebrow="Recomendados" title="Productos similares" href={`/productos?category=${product.category}`} linkLabel="Ver más" className="bg-white border-t border-slate-100 mt-16">
+          <MarketCarousel>
+            {similarProducts.map((p: any) => (
+              <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%]">
+                <ProductCard product={p} />
               </div>
-              <Link href={`/productos?category=${product.category}`} className="text-[10px] font-black text-slate-400 hover:text-blue-600 uppercase tracking-widest flex items-center gap-2 px-6 py-3 bg-white border border-slate-100 rounded-full transition-all">
-                Ver más <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            <ContentCarousel>
-              {similarProducts.map((p: any) => (
-                <div key={p.id} className="w-[82vw] max-w-[300px] sm:w-[280px] lg:w-[290px] flex-none snap-start py-4">
-                  <ProductCard product={p} />
-                </div>
-              ))}
-            </ContentCarousel>
-          </div>
-        </section>
+            ))}
+          </MarketCarousel>
+        </MarketSection>
       )}
 
-      {/* 2. Más de este vendedor */}
       {sellerProducts.length > 0 && (
-        <section className="w-full bg-slate-50 border-t border-slate-100">
-          <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8 py-20">
-            <div className="mb-12 flex items-end justify-between gap-4">
-              <div>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2 block">Vendedor</span>
-                <h2 className="text-3xl lg:text-4xl font-black text-slate-950 tracking-tighter">
-                  Más de {product.sellerName}
-                </h2>
+        <MarketSection eyebrow="Vendedor" title={`Más de ${product.sellerName}`} href={`/vendedores/${product.sellerId}`} linkLabel="Ver catálogo" className="bg-slate-50 border-t border-slate-100">
+          <MarketCarousel>
+            {sellerProducts.map((p: any) => (
+              <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%]">
+                <ProductCard product={p} />
               </div>
-              <Link href={`/vendedores/${product.sellerId}`} className="text-[10px] font-black text-slate-400 hover:text-blue-600 uppercase tracking-widest flex items-center gap-2 px-6 py-3 bg-white border border-slate-100 rounded-full transition-all">
-                Ver catálogo <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            <ContentCarousel>
-              {sellerProducts.map((p: any) => (
-                <div key={p.id} className="w-[82vw] max-w-[300px] sm:w-[280px] lg:w-[290px] flex-none snap-start py-4">
-                  <ProductCard product={p} />
-                </div>
-              ))}
-            </ContentCarousel>
-          </div>
-        </section>
+            ))}
+          </MarketCarousel>
+        </MarketSection>
       )}
+
 
     </main>
   );
