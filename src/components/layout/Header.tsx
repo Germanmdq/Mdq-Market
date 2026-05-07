@@ -2,20 +2,37 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, ShoppingCart, User, Menu, Heart, X, LayoutGrid } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, Heart, X, LayoutGrid, LogIn } from "lucide-react";
 import { cn } from "@/lib/utils";
 import MegaMenu from "../marketplace/MegaMenu";
 import MobileCategoryMenu from "../marketplace/MobileCategoryMenu";
+import { supabase } from "@/lib/supabase/client";
+import { User as SupabaseUser } from "@supabase/supabase-js";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 16);
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    
+    // Get initial user
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      subscription.unsubscribe();
+    };
   }, []);
 
   return (
@@ -71,14 +88,21 @@ const Header = () => {
             <Link href="/carrito" className="flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-50 hover:text-slate-950 transition-colors relative">
               <ShoppingCart className="h-5 w-5" />
               <span className="absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold text-white border-2 border-white">
-                3
+                0
               </span>
             </Link>
-            <Link href="/mi-cuenta" className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-50 hover:text-slate-950 transition-colors">
-              <User className="h-5 w-5" />
-            </Link>
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
+            {user ? (
+              <Link href="/mi-cuenta" className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
+                <User className="h-5 w-5" />
+              </Link>
+            ) : (
+              <Link href="/login" className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg shadow-slate-100">
+                <LogIn className="h-4 w-4" />
+                Ingresar
+              </Link>
+            )}
+            <button 
+              onClick={() => setMenuOpen(!menuOpen)} 
               className="lg:hidden flex h-10 w-10 items-center justify-center rounded-full text-slate-700 hover:bg-slate-50 transition-colors"
             >
               {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -112,9 +136,8 @@ const Header = () => {
               { label: "Productos", href: "/productos" },
               { label: "Servicios", href: "/servicios" },
               { label: "Profesionales", href: "/profesionales" },
-              { label: "Ofertas", href: "/productos?ofertas=true" },
-              { label: "Vender", href: "/vender" },
-              { label: "Mi cuenta", href: "/mi-cuenta" },
+              { label: "Vender", href: "/publicar" },
+              user ? { label: "Mi cuenta", href: "/mi-cuenta" } : { label: "Ingresar", href: "/login" },
             ].map(l => (
               <Link key={l.label} href={l.href} className="block px-4 py-3 rounded-2xl text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
                 {l.label}

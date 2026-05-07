@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Heart, ArrowLeft, Search, Loader2 } from "lucide-react";
+import { Heart, ArrowLeft, Search, Loader2, ChevronRight } from "lucide-react";
 import ProductCard from "@/components/marketplace/ProductCard";
-import { getPublishedProducts } from "@/lib/products";
+import { supabase } from "@/lib/supabase/client";
 import type { Product } from "@/types/product";
 
 export default function FavoritosPage() {
@@ -13,8 +13,24 @@ export default function FavoritosPage() {
 
   useEffect(() => {
     async function loadFavorites() {
-      const allProds = await getPublishedProducts();
-      setFavorites(allProds.slice(4, 8)); // Sample favorites
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("favorites")
+        .select(`
+          product_id,
+          products (*)
+        `)
+        .eq("user_id", user.id);
+
+      if (data) {
+        const products = data.map(item => item.products).filter(Boolean) as unknown as Product[];
+        setFavorites(products);
+      }
       setLoading(false);
     }
     loadFavorites();

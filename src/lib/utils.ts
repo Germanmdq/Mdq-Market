@@ -14,4 +14,14 @@ export function formatPrice(price: number) {
     maximumFractionDigits: 0,
   }).format(price);
 }
-
+export function slugify(text: string) {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-")
+    .replace(/^-+/, "")
+    .replace(/-+$/, "");
+}
