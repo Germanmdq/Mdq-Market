@@ -3,16 +3,86 @@ import { Category, Product, Service, Professional } from "@/types";
 export const ZONES = ["Centro", "Macrocentro", "G\u00fcemes", "Playa Grande", "Punta Mogotes", "Puerto", "Constituci\u00f3n", "La Perla", "Chauv\u00edn", "San Juan", "San Jos\u00e9"];
 
 export const CATEGORIES = [
-  { id: "c1", name: "Tecnología y celulares", slug: "tecnologia", icon: "Laptop", type: "producto", description: "Celulares, notebooks, accesorios y productos tecnológicos en Mar del Plata." },
-  { id: "c2", name: "Electrodomésticos", slug: "electrodomesticos", icon: "Tv", type: "producto", description: "Electrodomésticos nuevos y usados con entrega local." },
-  { id: "c3", name: "Hogar y muebles", slug: "hogar", icon: "Sofa", type: "producto", description: "Muebles, decoración, bazar y productos para tu casa." },
-  { id: "c4", name: "Herramientas y construcción", slug: "herramientas", icon: "Hammer", type: "producto", description: "Herramientas, máquinas, construcción y artículos de trabajo." },
-  { id: "c5", name: "Indumentaria y accesorios", slug: "indumentaria", icon: "Shirt", type: "producto", description: "Indumentaria, calzado, accesorios y productos de moda local." },
-  { id: "c6", name: "Bebés, niños y juguetes", slug: "bebes", icon: "Baby", type: "producto", description: "Productos para bebés, niños, juguetes y artículos familiares." },
-  { id: "c7", name: "Bicicletas y movilidad", slug: "movilidad", icon: "Bike", type: "producto", description: "Bicicletas, monopatines, accesorios y movilidad sustentable." },
-  { id: "s1", name: "Mantenimiento y Reparación", slug: "mantenimiento", icon: "Wrench", type: "servicio", description: "Prestadores verificados para resolver mantenimiento general." },
-  { id: "s2", name: "Servicios Profesionales", slug: "profesionales", icon: "Briefcase", type: "servicio", description: "Profesionales con reputación, matrícula y reserva protegida." },
-  { id: "s3", name: "Salud y Bienestar", slug: "salud", icon: "Heart", type: "servicio", description: "Servicios orientados al bienestar, deporte y calidad de vida." }
+  { 
+    id: "c1", name: "Tecnología y celulares", slug: "tecnologia", icon: "Laptop", type: "producto", description: "Celulares, notebooks, accesorios y productos tecnológicos en Mar del Plata.",
+    subcategories: [
+      { id: "sub-celulares", name: "Celulares", slug: "celulares", description: "", parentCategoryId: "c1" },
+      { id: "sub-notebooks", name: "Notebooks", slug: "notebooks", description: "", parentCategoryId: "c1" },
+      { id: "sub-accesorios-tech", name: "Accesorios", slug: "accesorios-tech", description: "", parentCategoryId: "c1" }
+    ]
+  },
+  { 
+    id: "c2", name: "Electrodomésticos", slug: "electrodomesticos", icon: "Tv", type: "producto", description: "Electrodomésticos nuevos y usados con entrega local.",
+    subcategories: [
+      { id: "sub-heladeras", name: "Heladeras", slug: "heladeras", description: "", parentCategoryId: "c2" },
+      { id: "sub-lavarropas", name: "Lavarropas", slug: "lavarropas", description: "", parentCategoryId: "c2" },
+      { id: "sub-cocinas", name: "Cocinas", slug: "cocinas", description: "", parentCategoryId: "c2" }
+    ]
+  },
+  { 
+    id: "c3", name: "Hogar y muebles", slug: "hogar", icon: "Sofa", type: "producto", description: "Muebles, decoración, bazar y productos para tu casa.",
+    subcategories: [
+      { id: "sub-living", name: "Living", slug: "living", description: "", parentCategoryId: "c3" },
+      { id: "sub-comedor", name: "Comedor", slug: "comedor", description: "", parentCategoryId: "c3" },
+      { id: "sub-dormitorio", name: "Dormitorio", slug: "dormitorio", description: "", parentCategoryId: "c3" }
+    ]
+  },
+  { 
+    id: "c4", name: "Herramientas y construcción", slug: "herramientas", icon: "Hammer", type: "producto", description: "Herramientas, máquinas, construcción y artículos de trabajo.",
+    subcategories: [
+      { id: "sub-electricas", name: "Eléctricas", slug: "electricas", description: "", parentCategoryId: "c4" },
+      { id: "sub-manuales", name: "Manuales", slug: "manuales", description: "", parentCategoryId: "c4" },
+      { id: "sub-materiales", name: "Materiales", slug: "materiales", description: "", parentCategoryId: "c4" }
+    ]
+  },
+  { 
+    id: "c5", name: "Indumentaria y accesorios", slug: "indumentaria", icon: "Shirt", type: "producto", description: "Indumentaria, calzado, accesorios y productos de moda local.",
+    subcategories: [
+      { id: "sub-mujer", name: "Mujer", slug: "mujer", description: "", parentCategoryId: "c5" },
+      { id: "sub-hombre", name: "Hombre", slug: "hombre", description: "", parentCategoryId: "c5" },
+      { id: "sub-calzado", name: "Calzado", slug: "calzado", description: "", parentCategoryId: "c5" }
+    ]
+  },
+  { 
+    id: "c6", name: "Bebés, niños y juguetes", slug: "bebes", icon: "Baby", type: "producto", description: "Productos para bebés, niños, juguetes y artículos familiares.",
+    subcategories: [
+      { id: "sub-juguetes", name: "Juguetes", slug: "juguetes", description: "", parentCategoryId: "c6" },
+      { id: "sub-ropa-bebes", name: "Ropa", slug: "ropa", description: "", parentCategoryId: "c6" },
+      { id: "sub-paseo", name: "Paseo", slug: "paseo", description: "", parentCategoryId: "c6" }
+    ]
+  },
+  { 
+    id: "c7", name: "Bicicletas y movilidad", slug: "movilidad", icon: "Bike", type: "producto", description: "Bicicletas, monopatines, accesorios y movilidad sustentable.",
+    subcategories: [
+      { id: "sub-bicicletas", name: "Bicicletas", slug: "bicicletas", description: "", parentCategoryId: "c7" },
+      { id: "sub-monopatines", name: "Monopatines", slug: "monopatines", description: "", parentCategoryId: "c7" },
+      { id: "sub-accesorios-bici", name: "Accesorios", slug: "accesorios", description: "", parentCategoryId: "c7" }
+    ]
+  },
+  { 
+    id: "s1", name: "Mantenimiento y Reparación", slug: "mantenimiento", icon: "Wrench", type: "servicio", description: "Prestadores verificados para resolver mantenimiento general.",
+    subcategories: [
+      { id: "sub-plomeria", name: "Plomería", slug: "plomeria", description: "", parentCategoryId: "s1" },
+      { id: "sub-electricidad", name: "Electricidad", slug: "electricidad", description: "", parentCategoryId: "s1" },
+      { id: "sub-gas", name: "Gas", slug: "gas", description: "", parentCategoryId: "s1" }
+    ]
+  },
+  { 
+    id: "s2", name: "Servicios Profesionales", slug: "profesionales", icon: "Briefcase", type: "servicio", description: "Profesionales con reputación, matrícula y reserva protegida.",
+    subcategories: [
+      { id: "sub-abogados", name: "Abogados", slug: "abogados", description: "", parentCategoryId: "s2" },
+      { id: "sub-contadores", name: "Contadores", slug: "contadores", description: "", parentCategoryId: "s2" },
+      { id: "sub-psicologos", name: "Psicólogos", slug: "psicologos", description: "", parentCategoryId: "s2" }
+    ]
+  },
+  { 
+    id: "s3", name: "Salud y Bienestar", slug: "salud", icon: "Heart", type: "servicio", description: "Servicios orientados al bienestar, deporte y calidad de vida.",
+    subcategories: [
+      { id: "sub-masajes", name: "Masajes", slug: "masajes", description: "", parentCategoryId: "s3" },
+      { id: "sub-entrenadores", name: "Entrenadores", slug: "entrenadores", description: "", parentCategoryId: "s3" },
+      { id: "sub-nutricion", name: "Nutrición", slug: "nutricion", description: "", parentCategoryId: "s3" }
+    ]
+  }
 ];
 
 export const MOCK_PROFESSIONALS: Professional[] = [

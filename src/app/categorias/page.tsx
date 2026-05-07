@@ -76,14 +76,14 @@ export default function CategoriesPage() {
                  
                  <div className="mt-auto space-y-4">
                     <div className="flex flex-wrap gap-2">
-                       {cat.subcategories.slice(0, 3).map((sub) => (
+                       {(cat.subcategories ?? []).slice(0, 3).map((sub) => (
                          <span key={sub.id} className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-1 rounded">
                             {sub.name}
                          </span>
                        ))}
-                       {cat.subcategories.length > 3 && (
+                       {(cat.subcategories ?? []).length > 3 && (
                          <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest px-2 py-1">
-                            +{cat.subcategories.length - 3} más
+                            +{(cat.subcategories ?? []).length - 3} más
                          </span>
                        )}
                     </div>
