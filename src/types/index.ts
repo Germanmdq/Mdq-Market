@@ -110,6 +110,7 @@ export type Service = {
   advancePaymentPercentage?: number;
   description: string;
   image: string;
+  image_url?: string;
   gallery?: string[];
   includes?: string[];
   notIncludes?: string[];

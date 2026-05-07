@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,18 +15,24 @@ import {
   Info,
   Phone
 } from "lucide-react";
-import { MOCK_SERVICES } from "@/data/mockData";
 import { formatPrice, cn } from "@/lib/utils";
+import { getServiceBySlug } from "@/lib/services";
+import { notFound } from "next/navigation";
 
-export default function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = React.use(params);
-  const service = MOCK_SERVICES.find(s => s.slug === slug) || MOCK_SERVICES[0];
+export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const service = await getServiceBySlug(slug);
+
+  if (!service) {
+    notFound();
+  }
 
   // Defensive fallbacks
   const completedJobs = service.completedJobs ?? 0;
   const rating = service.rating ?? 0;
   const reviewsCount = Array.isArray(service.reviews) ? service.reviews.length : (service.reviews ?? 0);
-  const gallery = service.gallery?.length ? service.gallery : [service.image || "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?q=80&w=1200&auto=format&fit=crop"];
+  const mainImage = service.image_url || service.image || "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?q=80&w=1200&auto=format&fit=crop";
+  const gallery = service.gallery?.length ? service.gallery : [mainImage];
   const zones = service.zones ?? [];
   const responseTime = service.responseTime || "Menos de 2 horas";
   const availability = service.availability || "Disponible";
@@ -56,7 +60,7 @@ export default function ServiceDetailPage({ params }: { params: Promise<{ slug: 
           <div className="lg:col-span-2 space-y-8">
             <section className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                <div className="relative aspect-[21/9] bg-gray-100">
-                  <Image src={service.image} alt={service.title} fill className="object-cover" />
+                  <Image src={mainImage} alt={service.title} fill className="object-cover" />
                   <div className="absolute top-4 left-4 flex gap-2">
                      {service.verified && (
                        <div className="bg-blue-600 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest flex items-center gap-1.5 shadow-lg">

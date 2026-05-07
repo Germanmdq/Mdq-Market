@@ -15,15 +15,28 @@ import {
   Clock,
   Briefcase
 } from "lucide-react";
-import { MOCK_SERVICES, CATEGORIES, ZONES } from "@/data/mockData";
+import { CATEGORIES, ZONES } from "@/data/mockData";
 import ServiceCard from "@/components/marketplace/ServiceCard";
 import { cn } from "@/lib/utils";
+import { getPublishedServices } from "@/lib/services";
+import { Service } from "@/types";
 
 export default function ServiciosPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredServices = MOCK_SERVICES.filter(s => 
+  useEffect(() => {
+    const loadServices = async () => {
+      const data = await getPublishedServices();
+      setServices(data);
+      setLoading(false);
+    };
+    loadServices();
+  }, []);
+
+  const filteredServices = services.filter(s => 
     s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     s.professionalName.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -159,11 +172,19 @@ export default function ServiciosPage() {
             </div>
 
             {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-              {filteredServices.map(service => (
-                <ServiceCard key={service.id} service={service} />
-              ))}
-            </div>
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {[1,2,3,4,5,6].map(i => (
+                  <div key={i} className="h-96 bg-slate-100 rounded-3xl animate-pulse" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {filteredServices.map(service => (
+                  <ServiceCard key={service.id} service={service} />
+                ))}
+              </div>
+            )}
 
             {/* Empty State */}
             {filteredServices.length === 0 && (

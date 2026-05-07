@@ -10,7 +10,7 @@ import { formatPrice } from "@/lib/utils";
 const FALLBACK = "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?q=80&w=600&auto=format&fit=crop";
 
 const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
-  const [imgSrc, setImgSrc] = useState(service.image || FALLBACK);
+  const [imgSrc, setImgSrc] = useState(service.image_url || service.image || FALLBACK);
 
   return (
     <Link href={`/servicios/${service.slug}`} className="block h-full group">
