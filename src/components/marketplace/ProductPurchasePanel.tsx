@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Heart, MessageCircle, ShoppingCart } from "lucide-react";
 import type { Product } from "@/types/product";
 import { addToCart, DELIVERY_SLOTS, rememberProductView, type DeliverySlotId } from "@/lib/cart";
+import { trackActivity } from "@/lib/activity";
 import { trackDeliverySlotSelected, trackProductAddedToCart, trackProductViewed } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +24,21 @@ export default function ProductPurchasePanel({
   useEffect(() => {
     rememberProductView(product);
     trackProductViewed(product);
+    trackActivity({
+      event_type: "product_view",
+      entity_type: "product",
+      entity_id: product.id,
+      title: product.title,
+      slug: product.slug,
+      category_id: product.category_id,
+      subcategory_id: product.subcategory_id,
+      metadata: {
+        price: product.price,
+        category: product.category,
+        subcategory: product.subcategory,
+        zone: product.zone,
+      },
+    });
   }, [product]);
 
   const handleSlot = (value: DeliverySlotId) => {
@@ -33,6 +49,16 @@ export default function ProductPurchasePanel({
   const handleAdd = () => {
     addToCart(product, slot);
     trackProductAddedToCart({ id: product.id, title: product.title, price: product.price, quantity: 1 });
+    trackActivity({
+      event_type: "add_to_cart",
+      entity_type: "cart",
+      entity_id: product.id,
+      title: product.title,
+      slug: product.slug,
+      category_id: product.category_id,
+      subcategory_id: product.subcategory_id,
+      metadata: { delivery_slot: slot, price: product.price },
+    });
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1800);
   };

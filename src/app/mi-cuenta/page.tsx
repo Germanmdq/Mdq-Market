@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase/client";
 import ProductCard from "@/components/marketplace/ProductCard";
+import { clearActivity } from "@/lib/activity";
 
 const TABS = [
   { id: "perfil", label: "Mi perfil", icon: User },
@@ -24,6 +25,7 @@ export default function MiCuentaPage() {
   const [favorites, setFavorites] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);
   const [loadingData, setLoadingData] = useState(true);
+  const [historyCleared, setHistoryCleared] = useState(false);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -168,6 +170,21 @@ export default function MiCuentaPage() {
                         disabled
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm"
                       />
+                    </div>
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <p className="text-sm font-semibold text-slate-950">Historial de navegación</p>
+                      <p className="mt-1 text-xs leading-5 text-slate-500">
+                        Usamos tu actividad dentro de MDP Market para mejorar tus recomendaciones.
+                      </p>
+                      <button
+                        onClick={async () => {
+                          await clearActivity();
+                          setHistoryCleared(true);
+                        }}
+                        className="mt-3 rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                      >
+                        {historyCleared ? "Historial borrado" : "Borrar historial de navegación"}
+                      </button>
                     </div>
                   </div>
                 </div>

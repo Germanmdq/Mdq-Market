@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import {
-  Laptop, Smartphone, Shirt, Bike,
+  Laptop, Smartphone, Shirt,
   Tv, Sofa, Hammer, Baby, Store, Wrench
 } from "lucide-react";
 import ProductCard from "@/components/marketplace/ProductCard";
@@ -9,6 +9,9 @@ import ServiceCard from "@/components/marketplace/ServiceCard";
 import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
 import { MarketCarousel } from "@/components/ui/MarketCarousel";
 import { MarketSection } from "@/components/marketplace/MarketSection";
+import SmartSearchAssistant from "@/components/ai/SmartSearchAssistant";
+import RecentlyViewedSection from "@/components/personalization/RecentlyViewedSection";
+import ForYouSection from "@/components/personalization/ForYouSection";
 import { supabase } from "@/lib/supabase/client";
 import type { Product } from "@/types/product";
 import type { Service } from "@/types";
@@ -217,6 +220,13 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <div className="-mt-2 pb-8">
+        <SmartSearchAssistant />
+      </div>
+
+      <RecentlyViewedSection />
+      <ForYouSection />
 
       {/* ═══ OFERTAS DEL DÍA ═══ */}
       {deals.length > 0 && (

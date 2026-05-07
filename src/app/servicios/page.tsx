@@ -1,21 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Search,
   MapPin,
-  Star,
   SlidersHorizontal,
   X,
   ChevronDown,
-  Clock,
   Briefcase,
   ShieldCheck
 } from "lucide-react";
 import ServiceCard from "@/components/marketplace/ServiceCard";
 import { cn } from "@/lib/utils";
 import { getPublishedServices } from "@/lib/services";
+import { trackActivity } from "@/lib/activity";
 import { Service } from "@/types";
 
 const ZONES = [
@@ -23,12 +23,14 @@ const ZONES = [
   "Punta Mogotes", "Camet", "Los Troncos", "Parque Camet"
 ];
 
-export default function ServiciosPage() {
+function ServiciosContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedZone, setSelectedZone] = useState<string>("");
-  const [availableToday, setAvailableToday] = useState(false);
-  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "");
+  const [selectedZone, setSelectedZone] = useState<string>(searchParams.get("zone") ?? "");
+  const [availableToday, setAvailableToday] = useState(searchParams.get("availableToday") === "true");
+  const [verifiedOnly, setVerifiedOnly] = useState(searchParams.get("verified") === "true");
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,6 +42,46 @@ export default function ServiciosPage() {
     };
     loadServices();
   }, []);
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      const query = searchParams.get("q") ?? "";
+      setSearchQuery(query);
+      setSelectedZone(searchParams.get("zone") ?? "");
+      setAvailableToday(searchParams.get("availableToday") === "true");
+      setVerifiedOnly(searchParams.get("verified") === "true");
+      if (query) {
+        trackActivity({
+          event_type: "search",
+          entity_type: "search",
+          search_query: query,
+          metadata: {
+            source: "services_url",
+            availableToday: searchParams.get("availableToday") === "true",
+            zone: searchParams.get("zone"),
+          },
+        });
+      }
+    });
+  }, [searchParams]);
+
+  const updateUrl = (next?: { q?: string; zone?: string; availableToday?: boolean; verified?: boolean }) => {
+    const params = new URLSearchParams(searchParams.toString());
+    const q = next?.q ?? searchQuery;
+    const zone = next?.zone ?? selectedZone;
+    const today = next?.availableToday ?? availableToday;
+    const verified = next?.verified ?? verifiedOnly;
+
+    if (q) params.set("q", q);
+    else params.delete("q");
+    if (zone) params.set("zone", zone);
+    else params.delete("zone");
+    if (today) params.set("availableToday", "true");
+    else params.delete("availableToday");
+    if (verified) params.set("verified", "true");
+    else params.delete("verified");
+    router.push(`/servicios?${params.toString()}`, { scroll: false });
+  };
 
   const filteredServices = services.filter((s) => {
     if (searchQuery && !s.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
@@ -79,6 +121,9 @@ export default function ServiciosPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") updateUrl();
+                }}
                 placeholder="¿Qué servicio necesitás?"
                 className="w-full bg-transparent focus:outline-none text-slate-900 placeholder-slate-400"
               />
@@ -87,7 +132,10 @@ export default function ServiciosPage() {
               <MapPin className="w-5 h-5 text-slate-400" />
               <select
                 value={selectedZone}
-                onChange={(e) => setSelectedZone(e.target.value)}
+                onChange={(e) => {
+                  setSelectedZone(e.target.value);
+                  updateUrl({ zone: e.target.value });
+                }}
                 className="w-full bg-transparent focus:outline-none text-slate-900 appearance-none cursor-pointer"
               >
                 <option value="">Toda Mar del Plata</option>
@@ -96,7 +144,10 @@ export default function ServiciosPage() {
                 ))}
               </select>
             </div>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-8 rounded-xl transition-colors">
+            <button
+              onClick={() => updateUrl()}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-8 rounded-xl transition-colors"
+            >
               Buscar
             </button>
           </div>
@@ -132,7 +183,10 @@ export default function ServiciosPage() {
                     <input
                       type="checkbox"
                       checked={availableToday}
-                      onChange={(e) => setAvailableToday(e.target.checked)}
+                      onChange={(e) => {
+                        setAvailableToday(e.target.checked);
+                        updateUrl({ availableToday: e.target.checked });
+                      }}
                       className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                     <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
@@ -148,7 +202,10 @@ export default function ServiciosPage() {
                     <input
                       type="checkbox"
                       checked={verifiedOnly}
-                      onChange={(e) => setVerifiedOnly(e.target.checked)}
+                      onChange={(e) => {
+                        setVerifiedOnly(e.target.checked);
+                        updateUrl({ verified: e.target.checked });
+                      }}
                       className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                     <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
@@ -251,5 +308,13 @@ export default function ServiciosPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function ServiciosPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50 p-12 text-center text-sm font-semibold text-slate-500">Cargando servicios...</div>}>
+      <ServiciosContent />
+    </Suspense>
   );
 }

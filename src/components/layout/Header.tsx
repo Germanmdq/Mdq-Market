@@ -8,6 +8,7 @@ import MegaMenu from "../marketplace/MegaMenu";
 import MobileCategoryMenu from "../marketplace/MobileCategoryMenu";
 import AuthModal from "../auth/AuthModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { trackActivity } from "@/lib/activity";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -77,7 +78,23 @@ const Header = () => {
           </nav>
 
           {/* Search */}
-          <form action="/buscar" method="GET" className="ml-auto hidden flex-1 max-w-lg lg:block">
+          <form
+            action="/buscar"
+            method="GET"
+            className="ml-auto hidden flex-1 max-w-lg lg:block"
+            onSubmit={(event) => {
+              const formData = new FormData(event.currentTarget);
+              const query = String(formData.get("q") ?? "").trim();
+              if (query) {
+                trackActivity({
+                  event_type: "search",
+                  entity_type: "search",
+                  search_query: query,
+                  metadata: { source: "header_search" },
+                });
+              }
+            }}
+          >
             <div className="flex h-10 items-center rounded-full border border-slate-200 bg-slate-50 px-4 transition-all focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-50 focus-within:bg-white">
               <Search className="h-4 w-4 text-slate-400" />
               <input
@@ -180,7 +197,23 @@ const Header = () => {
 
         {/* Mobile search & Quick Cats */}
         <div className="lg:hidden px-4 pb-3 space-y-2 border-t border-slate-100">
-          <form action="/buscar" method="GET" className="pt-3">
+          <form
+            action="/buscar"
+            method="GET"
+            className="pt-3"
+            onSubmit={(event) => {
+              const formData = new FormData(event.currentTarget);
+              const query = String(formData.get("q") ?? "").trim();
+              if (query) {
+                trackActivity({
+                  event_type: "search",
+                  entity_type: "search",
+                  search_query: query,
+                  metadata: { source: "mobile_header_search" },
+                });
+              }
+            }}
+          >
             <div className="flex h-10 items-center rounded-full border border-slate-200 bg-slate-50 px-4 transition-all focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-50 focus-within:bg-white">
               <Search className="h-4 w-4 text-slate-400" />
               <input

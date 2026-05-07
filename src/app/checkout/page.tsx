@@ -9,6 +9,7 @@ import { getProductById } from "@/lib/products";
 import { getProductMainImage } from "@/lib/product-images";
 import { formatPrice, cn } from "@/lib/utils";
 import { clearCart, DELIVERY_SLOTS, getCartItems, saveCartItems, type CartItem, type DeliverySlotId } from "@/lib/cart";
+import { trackActivity } from "@/lib/activity";
 import { trackCheckoutStarted, trackDeliverySlotSelected, trackOperationCreated } from "@/lib/analytics";
 
 const OPERATION_STATUSES = [
@@ -66,6 +67,15 @@ function CheckoutContent() {
         saveCartItems(validItems);
         const value = validItems.reduce((acc, item) => acc + (item.product?.price ?? 0) * item.quantity, 0);
         trackCheckoutStarted(value, validItems.length);
+        trackActivity({
+          event_type: "checkout_started",
+          entity_type: "checkout",
+          metadata: {
+            value,
+            item_count: validItems.length,
+            product_ids: validItems.map((item) => item.productId),
+          },
+        });
       } catch {
         setError("No pudimos preparar el checkout.");
       } finally {

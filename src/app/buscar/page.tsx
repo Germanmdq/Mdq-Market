@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase/client";
 import ProductCard from "@/components/marketplace/ProductCard";
 import ServiceCard from "@/components/marketplace/ServiceCard";
 import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
+import SearchActivityTracker from "@/components/activity/SearchActivityTracker";
 import type { Product } from "@/types/product";
 import type { Service } from "@/types";
 
@@ -66,11 +67,12 @@ export default async function BuscarPage({
 
   return (
     <main className="min-h-screen bg-slate-50">
+      <SearchActivityTracker query={query} source="global_search_page" />
       {/* Header */}
       <div className="bg-white border-b border-slate-200">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 py-8">
           <h1 className="text-2xl font-semibold text-slate-950 mb-4">
-            Resultados para "{query}"
+            Resultados para &ldquo;{query}&rdquo;
           </h1>
           <p className="text-sm text-slate-600">
             {totalResults === 0

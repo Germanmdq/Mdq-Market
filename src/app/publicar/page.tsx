@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { Suspense, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { 
   Package, 
-  Tag, 
   DollarSign, 
-  Info, 
   MapPin, 
   Image as ImageIcon, 
   Plus, 
@@ -19,11 +17,17 @@ import {
 import Link from "next/link";
 import { slugify } from "@/lib/utils";
 
-export default function PublicarPage() {
+type MenuCategory = {
+  id: string;
+  name: string;
+};
+
+function PublicarContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [subcategories, setSubcategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<MenuCategory[]>([]);
+  const [subcategories, setSubcategories] = useState<MenuCategory[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
@@ -38,6 +42,35 @@ export default function PublicarPage() {
     images: [""]
   });
 
+  const publishQuery = searchParams.get("q") ?? "";
+  const publishIntent = searchParams.get("intent");
+
+  function buildPublishSuggestion(query: string) {
+    const value = query.toLowerCase();
+    if (value.includes("bici") || value.includes("bicicleta")) {
+      return {
+        title: "Bicicleta MTB rodado 29 usada en buen estado",
+        categoryTerm: "bicicletas",
+        description: "Bicicleta MTB rodado 29, ideal para uso urbano o recreativo. Se entrega en Mar del Plata con Entrega MDP. Consultar disponibilidad.",
+        priceRange: "$180.000 - $260.000 según estado",
+      };
+    }
+    if (value.includes("notebook")) {
+      return {
+        title: "Notebook usada en buen estado",
+        categoryTerm: "tecnologia",
+        description: "Notebook usada, ideal para estudio, trabajo o uso diario. Se entrega en Mar del Plata con Entrega MDP. Consultar detalles y disponibilidad.",
+        priceRange: "$350.000 - $900.000 según marca, memoria y estado",
+      };
+    }
+    return {
+      title: query ? `${query.charAt(0).toUpperCase()}${query.slice(1)} usado en buen estado` : "",
+      categoryTerm: "",
+      description: query ? `${query} en buen estado. Se entrega en Mar del Plata con Entrega MDP. Consultar disponibilidad.` : "",
+      priceRange: "Definir según estado, marca y demanda local",
+    };
+  }
+
   useEffect(() => {
     async function loadCategories() {
       const { data } = await supabase
@@ -49,6 +82,18 @@ export default function PublicarPage() {
     }
     loadCategories();
   }, []);
+
+  useEffect(() => {
+    if (publishIntent !== "vender" || !publishQuery) return;
+    queueMicrotask(() => {
+      const suggestion = buildPublishSuggestion(publishQuery);
+      setFormData((current) => ({
+        ...current,
+        title: current.title || suggestion.title,
+        description: current.description || suggestion.description,
+      }));
+    });
+  }, [publishIntent, publishQuery]);
 
   const handleCategoryChange = async (catId: string) => {
     const category = categories.find(c => c.id === catId);
@@ -140,6 +185,33 @@ export default function PublicarPage() {
           </div>
 
           <form onSubmit={handlePublish} className="space-y-10">
+            {publishIntent === "vender" && publishQuery && (
+              <section className="rounded-3xl border border-blue-100 bg-blue-50 p-5">
+                <p className="text-xs font-black uppercase tracking-widest text-blue-700">Asistente de publicación</p>
+                <h2 className="mt-2 text-lg font-semibold text-slate-950">
+                  Te ayudo a publicar: {publishQuery}
+                </h2>
+                <div className="mt-4 grid gap-3 text-sm text-slate-700">
+                  <p><span className="font-semibold text-slate-950">Título sugerido:</span> {buildPublishSuggestion(publishQuery).title}</p>
+                  <p><span className="font-semibold text-slate-950">Descripción:</span> {buildPublishSuggestion(publishQuery).description}</p>
+                  <p><span className="font-semibold text-slate-950">Precio sugerido:</span> {buildPublishSuggestion(publishQuery).priceRange}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const suggestion = buildPublishSuggestion(publishQuery);
+                    setFormData((current) => ({
+                      ...current,
+                      title: suggestion.title,
+                      description: suggestion.description,
+                    }));
+                  }}
+                  className="mt-4 rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700"
+                >
+                  Usar sugerencia
+                </button>
+              </section>
+            )}
             
             {error && (
               <div className="bg-red-50 border border-red-100 p-4 rounded-2xl text-red-800 text-sm font-bold">
@@ -335,5 +407,13 @@ export default function PublicarPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function PublicarPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50 p-12 text-center text-sm font-semibold text-slate-500">Cargando publicación...</div>}>
+      <PublicarContent />
+    </Suspense>
   );
 }
