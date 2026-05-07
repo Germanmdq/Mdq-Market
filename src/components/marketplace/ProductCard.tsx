@@ -5,26 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 import { Product } from "@/types";
-import { formatPrice } from "@/lib/utils";
-
-const FALLBACK_BY_CAT: Record<string, string> = {
-  "cat-1": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=600&auto=format&fit=crop",
-  "cat-2": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=600&auto=format&fit=crop",
-  "cat-3": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop",
-  "cat-4": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=600&auto=format&fit=crop",
-  "cat-5": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=600&auto=format&fit=crop",
-  "cat-6": "https://images.unsplash.com/photo-1515488764276-beab7607c1e6?q=80&w=600&auto=format&fit=crop",
-  "cat-7": "https://images.unsplash.com/photo-1485965120184-e220f721d03e?q=80&w=600&auto=format&fit=crop",
-  "cat-8": "https://images.unsplash.com/photo-1513519245088-0e12902e35ca?q=80&w=600&auto=format&fit=crop",
-  "cat-9": "https://images.unsplash.com/photo-1534723452862-4c874e70d6f3?q=80&w=600&auto=format&fit=crop",
-  "cat-10": "https://images.unsplash.com/photo-1459156212016-c812468e2115?q=80&w=600&auto=format&fit=crop",
-};
-const FALLBACK_DEFAULT = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600&auto=format&fit=crop";
+import { formatPrice, getProductImage } from "@/lib/utils";
 
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const [isFav, setIsFav] = useState(false);
-  const fallback = FALLBACK_BY_CAT[product.category] || FALLBACK_DEFAULT;
-  const [imgSrc, setImgSrc] = useState(product.images?.[0] || fallback);
+  const [imgSrc, setImgSrc] = useState(getProductImage(product));
 
   const discount =
     product.discount ||
@@ -42,7 +27,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
             fill
             sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 22vw"
             className="object-cover transition duration-300 group-hover:scale-105"
-            onError={() => setImgSrc(fallback)}
+            onError={() => setImgSrc("https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600&auto=format&fit=crop")}
           />
 
           <button

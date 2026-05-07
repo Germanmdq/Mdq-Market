@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Product } from "@/types";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, getProductImage } from "@/lib/utils";
 import { Truck, Star } from "lucide-react";
 
 interface AutoProductSliderProps {
@@ -23,7 +23,7 @@ const SliderProductCard = ({ product }: { product: Product }) => {
     >
       <div className="aspect-square rounded-2xl overflow-hidden mb-3 bg-gray-50 relative">
         <Image
-          src={imgError ? fallback : (product.images?.[0] || fallback)}
+          src={imgError ? fallback : getProductImage(product)}
           alt={product.title}
           fill
           className="object-cover group-hover:scale-110 transition-transform duration-700"

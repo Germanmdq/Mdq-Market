@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Trash2, ArrowRight, ShieldCheck } from "lucide-react";
 import { MOCK_PRODUCTS } from "@/data/mockData";
 import { formatPrice } from "@/lib/utils";
+import { getProductImage } from "@/lib/utils";
 import Header from "@/components/layout/Header";
 
 export default function CartPage() {
@@ -40,7 +41,7 @@ export default function CartPage() {
               {items.map((item) => (
                 <div key={item.id} className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row gap-6 items-start sm:items-center">
                   <div className="w-24 h-24 rounded-xl bg-slate-50 border border-slate-100 overflow-hidden shrink-0 relative">
-                    <Image src={item.images?.[0] || item.image || ""} alt={item.title} fill className="object-cover" />
+                    <Image src={getProductImage(item)} alt={item.title} fill className="object-cover" />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-base font-medium text-slate-950 line-clamp-2 mb-1">{item.title}</h3>

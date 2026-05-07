@@ -8,7 +8,7 @@ import {
   ShieldCheck, ArrowLeft, CheckCircle2, Lock, Loader2, MapPin
 } from "lucide-react";
 import { MOCK_PRODUCTS, MOCK_SERVICES } from "@/data/mockData";
-import { formatPrice, cn } from "@/lib/utils";
+import { formatPrice, cn, getProductImage } from "@/lib/utils";
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
@@ -155,7 +155,7 @@ function CheckoutContent() {
               
               <div className="flex gap-4 mb-6 pb-6 border-b border-slate-100">
                 <div className="w-16 h-16 rounded-xl bg-slate-50 border border-slate-200 shrink-0 overflow-hidden">
-                  <img src={(item as any).images ? (item as any).images[0] : (item as any).image} alt="" className="w-full h-full object-cover" />
+                  <img src={type === "product" ? getProductImage(item as any) : (item as any).image} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h4 className="font-medium text-slate-950 text-sm line-clamp-2">{item.title}</h4>
