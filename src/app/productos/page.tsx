@@ -20,35 +20,37 @@ export default async function ProductsPage({
 }) {
   const params = await searchParams;
 
-  const categoryAliases: Record<string, string[]> = {
-    "celulares-y-telefonos": ["Tecnología y celulares"],
-    "computacion": ["Tecnología y celulares"],
-    "electrodomesticos": ["Electrodomésticos"],
-    "hogar-muebles-y-jardin": ["Hogar y muebles", "Decoración y jardín"],
-    "herramientas": ["Herramientas y construcción"],
-    "ropa-y-accesorios": ["Indumentaria y accesorios"],
-    "bebes": ["Bebés, niños y juguetes"],
-    "animales-y-mascotas": ["Mascotas"],
-    "deportes-y-fitness": ["Bicicletas y movilidad"],
-  };
-
   let query = supabase
     .from("products")
     .select("*")
     .eq("status", "published");
 
-  // Apply filters from searchParams
+  // Apply category filter using ID lookup
   if (typeof params.category === "string") {
-    const alias = categoryAliases[params.category];
-    if (alias) {
-      query = query.in("category", alias);
-    } else {
-      query = query.eq("category", params.category);
+    // Look up category by slug to get ID
+    const { data: categoryData } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("slug", params.category)
+      .single();
+
+    if (categoryData) {
+      query = query.eq("category_id", categoryData.id);
     }
   }
 
+  // Apply subcategory filter using ID lookup
   if (typeof params.subcategory === "string") {
-    query = query.eq("subcategory", params.subcategory);
+    // Look up subcategory by slug to get ID
+    const { data: subcategoryData } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("slug", params.subcategory)
+      .single();
+
+    if (subcategoryData) {
+      query = query.eq("subcategory_id", subcategoryData.id);
+    }
   }
 
   if (typeof params.zone === "string") {
