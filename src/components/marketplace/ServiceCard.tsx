@@ -14,7 +14,7 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
 
   return (
     <Link href={`/servicios/${service.slug}`} className="block h-full group">
-      <article className="h-full overflow-hidden rounded-[28px] border border-slate-200/60 bg-white shadow-[0_8px_28px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_44px_rgba(15,23,42,0.10)] flex flex-col">
+      <article className="h-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_34px_rgba(15,23,42,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_56px_rgba(15,23,42,0.12)] flex flex-col">
         <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50">
           <Image
             src={imgSrc}

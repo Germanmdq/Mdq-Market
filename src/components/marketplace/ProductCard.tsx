@@ -33,7 +33,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
       : undefined);
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md h-full flex flex-col">
+    <article className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_34px_rgba(15,23,42,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_56px_rgba(15,23,42,0.12)] h-full flex flex-col">
       <Link href={`/productos/${product.slug}`} className="block flex-1 flex flex-col">
         <div className="relative aspect-square w-full overflow-hidden bg-slate-100 shrink-0">
           <Image

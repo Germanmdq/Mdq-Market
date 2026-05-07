@@ -71,7 +71,7 @@ const Header = () => {
               3
             </span>
           </Link>
-          <Link href="/perfil" className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full text-slate-500 hover:bg-slate-50 transition-colors">
+          <Link href="/mi-cuenta" className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full text-slate-500 hover:bg-slate-50 transition-colors">
             <User className="h-5 w-5" />
           </Link>
           <button 
@@ -104,7 +104,7 @@ const Header = () => {
             { label: "Profesionales", href: "/profesionales" },
             { label: "Ofertas", href: "/productos?ofertas=true" },
             { label: "Vender", href: "/vender" },
-            { label: "Mi cuenta", href: "/perfil" },
+            { label: "Mi cuenta", href: "/mi-cuenta" },
           ].map(l => (
             <Link key={l.label} href={l.href} className="block px-4 py-3 rounded-2xl text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
               {l.label}
