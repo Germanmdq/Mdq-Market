@@ -177,7 +177,7 @@ export type Professional = {
   services: string[]; // IDs or titles of services
   priceFrom: number;
   availability: string;
-  faq: string[];
+  faq?: (string | { question: string; answer: string })[];
   portfolio?: ProfessionalPortfolioItem[];
   credentials?: {
     type: string;
