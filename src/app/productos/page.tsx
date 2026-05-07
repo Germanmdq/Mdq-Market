@@ -20,92 +20,124 @@ export default async function ProductsPage({
 }) {
   const params = await searchParams;
 
+  // Pagination
+  const PRODUCTS_PER_PAGE = 24;
+  const page = typeof params.page === "string" ? parseInt(params.page, 10) : 1;
+  const from = (page - 1) * PRODUCTS_PER_PAGE;
+  const to = from + PRODUCTS_PER_PAGE - 1;
+
+  // Count query for total
+  let countQuery = supabase
+    .from("products")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "published");
+
   let query = supabase
     .from("products")
     .select("*")
     .eq("status", "published");
 
-  // Apply category filter using ID lookup
-  if (typeof params.category === "string") {
-    // Look up category by slug to get ID
-    const { data: categoryData } = await supabase
-      .from("categories")
-      .select("id")
-      .eq("slug", params.category)
-      .single();
+  // Apply filters (to both query and countQuery)
+  const applyFilters = async (q: typeof query, qCount: typeof countQuery) => {
+    if (typeof params.category === "string") {
+      const { data: categoryData } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("slug", params.category)
+        .single();
 
-    if (categoryData) {
-      query = query.eq("category_id", categoryData.id);
+      if (categoryData) {
+        q = q.eq("category_id", categoryData.id);
+        qCount = qCount.eq("category_id", categoryData.id);
+      }
     }
-  }
 
-  // Apply subcategory filter using ID lookup
-  if (typeof params.subcategory === "string") {
-    // Look up subcategory by slug to get ID
-    const { data: subcategoryData } = await supabase
-      .from("categories")
-      .select("id")
-      .eq("slug", params.subcategory)
-      .single();
+    if (typeof params.subcategory === "string") {
+      const { data: subcategoryData } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("slug", params.subcategory)
+        .single();
 
-    if (subcategoryData) {
-      query = query.eq("subcategory_id", subcategoryData.id);
+      if (subcategoryData) {
+        q = q.eq("subcategory_id", subcategoryData.id);
+        qCount = qCount.eq("subcategory_id", subcategoryData.id);
+      }
     }
-  }
 
-  if (typeof params.zone === "string") {
-    query = query.eq("zone", params.zone);
-  }
+    if (typeof params.zone === "string") {
+      q = q.eq("zone", params.zone);
+      qCount = qCount.eq("zone", params.zone);
+    }
 
-  if (typeof params.sellerType === "string") {
-    query = query.eq("seller_type", params.sellerType);
-  }
+    if (typeof params.sellerType === "string") {
+      q = q.eq("seller_type", params.sellerType);
+      qCount = qCount.eq("seller_type", params.sellerType);
+    }
 
-  if (typeof params.condition === "string") {
-    query = query.eq("condition", params.condition);
-  }
+    if (typeof params.condition === "string") {
+      q = q.eq("condition", params.condition);
+      qCount = qCount.eq("condition", params.condition);
+    }
 
-  if (params.ofertas === "true") {
-    query = query.or("featured_deal.eq.true,discount.gt.0");
-  }
+    if (params.ofertas === "true") {
+      const filter = "featured_deal.eq.true,discount.gt.0";
+      q = q.or(filter);
+      qCount = qCount.or(filter);
+    }
 
-  if (params.featured === "true") {
-    query = query.eq("featured", true);
-  }
+    if (params.featured === "true") {
+      q = q.eq("featured", true);
+      qCount = qCount.eq("featured", true);
+    }
 
-  if (typeof params.minPrice === "string") {
-    query = query.gte("price", Number(params.minPrice));
-  }
+    if (typeof params.minPrice === "string") {
+      q = q.gte("price", Number(params.minPrice));
+      qCount = qCount.gte("price", Number(params.minPrice));
+    }
 
-  if (typeof params.maxPrice === "string") {
-    query = query.lte("price", Number(params.maxPrice));
-  }
+    if (typeof params.maxPrice === "string") {
+      q = q.lte("price", Number(params.maxPrice));
+      qCount = qCount.lte("price", Number(params.maxPrice));
+    }
 
-  if (params.protectedPayment === "true") {
-    query = query.eq("protected_payment", true);
-  }
+    if (params.protectedPayment === "true") {
+      q = q.eq("protected_payment", true);
+      qCount = qCount.eq("protected_payment", true);
+    }
 
-  if (params.delivery === "true") {
-    query = query.eq("mdp_delivery_available", true);
-  }
+    if (params.delivery === "true") {
+      q = q.eq("mdp_delivery_available", true);
+      qCount = qCount.eq("mdp_delivery_available", true);
+    }
 
-  if (params.verified === "true") {
-    query = query.eq("seller_verified", true);
-  }
+    if (params.verified === "true") {
+      q = q.eq("seller_verified", true);
+      qCount = qCount.eq("seller_verified", true);
+    }
 
-  if (typeof params.q === "string" && params.q.trim()) {
-    query = query.ilike("title", `%${params.q.trim()}%`);
-  }
+    if (typeof params.q === "string" && params.q.trim()) {
+      q = q.ilike("title", `%${params.q.trim()}%`);
+      qCount = qCount.ilike("title", `%${params.q.trim()}%`);
+    }
 
-  const { data, error } = await query.order("created_at", {
-    ascending: false,
-  });
+    return { q, qCount };
+  };
+
+  const { q: filteredQuery, qCount: filteredCountQuery } = await applyFilters(query, countQuery);
+
+  const [{ data, error }, { count }] = await Promise.all([
+    filteredQuery.order("created_at", { ascending: false }).range(from, to),
+    filteredCountQuery,
+  ]);
 
   if (error) {
     console.error("Error fetching products:", error);
   }
 
   const products = (data ?? []) as Product[];
+  const totalProducts = count ?? 0;
+  const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
 
   // Fetch additional content for sections below
   const dealsQuery = supabase
@@ -144,7 +176,7 @@ export default async function ProductsPage({
               Productos en Mar del Plata
             </h1>
             <p className="mt-1.5 text-sm text-slate-600">
-              {products.length} productos encontrados
+              {totalProducts} productos encontrados {totalPages > 1 && `(página ${page} de ${totalPages})`}
             </p>
           </div>
 
@@ -187,14 +219,60 @@ export default async function ProductsPage({
             </div>
 
             {products.length > 0 ? (
-              <ProductGrid products={products} />
+              <>
+                <ProductGrid products={products} />
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="mt-12 flex items-center justify-center gap-2">
+                    {page > 1 && (
+                      <Link
+                        href={`/productos?${new URLSearchParams({ ...Object.fromEntries(Object.entries(params).filter(([k]) => k !== "page")), page: String(page - 1) }).toString()}`}
+                        className="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                      >
+                        Anterior
+                      </Link>
+                    )}
+
+                    <div className="flex items-center gap-2">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        const pageNum = Math.max(1, Math.min(page - 2, totalPages - 4)) + i;
+                        if (pageNum > totalPages) return null;
+
+                        return (
+                          <Link
+                            key={pageNum}
+                            href={`/productos?${new URLSearchParams({ ...Object.fromEntries(Object.entries(params).filter(([k]) => k !== "page")), page: String(pageNum) }).toString()}`}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                              pageNum === page
+                                ? "bg-blue-600 text-white"
+                                : "border border-slate-300 text-slate-700 hover:bg-slate-50"
+                            }`}
+                          >
+                            {pageNum}
+                          </Link>
+                        );
+                      })}
+                    </div>
+
+                    {page < totalPages && (
+                      <Link
+                        href={`/productos?${new URLSearchParams({ ...Object.fromEntries(Object.entries(params).filter(([k]) => k !== "page")), page: String(page + 1) }).toString()}`}
+                        className="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                      >
+                        Siguiente
+                      </Link>
+                    )}
+                  </div>
+                )}
+              </>
             ) : (
               <div className="py-24 text-center bg-white rounded-3xl border border-slate-200 shadow-sm">
                 <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Search className="w-8 h-8 text-slate-300" />
                 </div>
                 <h3 className="text-lg font-semibold text-slate-950 mb-2">No encontramos resultados</h3>
-                <p className="text-sm text-slate-600 mb-6">Probá quitando algunos filtros o cambiando tu búsqueda.</p>
+                <p className="text-sm text-slate-600 mb-6">Probá quitando algunos filtros o cambiando tu búsqueda</p>
                 <a
                   href="/productos"
                   className="inline-block px-5 py-2.5 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"

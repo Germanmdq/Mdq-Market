@@ -4,17 +4,14 @@ import {
   Laptop, Smartphone, Shirt, Bike,
   Tv, Sofa, Hammer, Baby, Store, Wrench
 } from "lucide-react";
-import { MOCK_SERVICES, MOCK_PROFESSIONALS } from "@/data/mockData";
 import ProductCard from "@/components/marketplace/ProductCard";
 import ServiceCard from "@/components/marketplace/ServiceCard";
 import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
 import { MarketCarousel } from "@/components/ui/MarketCarousel";
 import { MarketSection } from "@/components/marketplace/MarketSection";
-import {
-  getDailyDeals,
-  getFeaturedProducts,
-  getPublishedProducts,
-} from "@/lib/products";
+import { supabase } from "@/lib/supabase/client";
+import type { Product } from "@/types/product";
+import type { Service } from "@/types";
 
 /* ── Category Chips ── */
 const CATEGORIES = [
@@ -30,22 +27,87 @@ const CATEGORIES = [
 ];
 
 export default async function HomePage() {
-  const [products, deals, featured] = await Promise.all([
-    getPublishedProducts(),
-    getDailyDeals(12),
-    getFeaturedProducts(12),
+  // Optimized parallel queries with limits
+  const [dealsResult, featuredResult, localStoresResult, entrepreneursResult, techResult, catalogResult, servicesResult, professionalsResult] = await Promise.all([
+    // Deals (limit 10)
+    supabase
+      .from("products")
+      .select("*")
+      .eq("status", "published")
+      .or("featured_deal.eq.true,discount.gt.0")
+      .order("created_at", { ascending: false })
+      .limit(10),
+
+    // Featured (limit 10)
+    supabase
+      .from("products")
+      .select("*")
+      .eq("status", "published")
+      .eq("featured", true)
+      .order("created_at", { ascending: false })
+      .limit(10),
+
+    // Local stores (limit 10)
+    supabase
+      .from("products")
+      .select("*")
+      .eq("status", "published")
+      .eq("seller_type", "commerce")
+      .order("created_at", { ascending: false })
+      .limit(10),
+
+    // Entrepreneurs (limit 10)
+    supabase
+      .from("products")
+      .select("*")
+      .eq("status", "published")
+      .eq("seller_type", "entrepreneur")
+      .order("created_at", { ascending: false })
+      .limit(10),
+
+    // Tech products (limit 10)
+    supabase
+      .from("products")
+      .select("*")
+      .eq("status", "published")
+      .eq("category", "Tecnología y celulares")
+      .order("created_at", { ascending: false })
+      .limit(10),
+
+    // Catalog products (limit 10)
+    supabase
+      .from("products")
+      .select("*")
+      .eq("status", "published")
+      .order("created_at", { ascending: false })
+      .range(0, 9),
+
+    // Services available today (limit 6)
+    supabase
+      .from("services")
+      .select("*")
+      .eq("status", "published")
+      .eq("availability", "Hoy")
+      .order("created_at", { ascending: false })
+      .limit(6),
+
+    // Verified professionals (limit 6)
+    supabase
+      .from("professionals")
+      .select("*")
+      .eq("verified", true)
+      .order("rating", { ascending: false })
+      .limit(6),
   ]);
 
-  const lastViewed = products.slice(12, 24);
-  const localStores = products.filter((p) => p.seller_type === "commerce").slice(0, 12);
-  const entrepreneurs = products.filter((p) => p.seller_type === "entrepreneur").slice(0, 12);
-  const techProducts = products.filter((p) => p.category === "Tecnología y celulares").slice(0, 12);
-  
-  // Keep mocks for services/pros until migrated
-  const servicesToday = MOCK_SERVICES.slice(0, 12);
-  const verifiedPros = MOCK_PROFESSIONALS.slice(0, 12);
-  
-  const catalogProducts = products.slice(24, 34);
+  const deals = (dealsResult.data ?? []) as Product[];
+  const featured = (featuredResult.data ?? []) as Product[];
+  const localStores = (localStoresResult.data ?? []) as Product[];
+  const entrepreneurs = (entrepreneursResult.data ?? []) as Product[];
+  const techProducts = (techResult.data ?? []) as Product[];
+  const catalogProducts = (catalogResult.data ?? []) as Product[];
+  const servicesToday = (servicesResult.data ?? []) as Service[];
+  const verifiedPros = professionalsResult.data ?? [];
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -182,20 +244,7 @@ export default async function HomePage() {
         </MarketSection>
       )}
 
-      {/* ═══ VISTOS RECIENTEMENTE ═══ */}
-      {lastViewed.length > 0 && (
-        <MarketSection eyebrow="Para vos" title="Basado en tu última visita" href="/productos" className="border-t border-slate-200">
-          <MarketCarousel>
-            {lastViewed.map(p => (
-              <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
-                <ProductCard product={p} />
-              </div>
-            ))}
-          </MarketCarousel>
-        </MarketSection>
-      )}
-
-      {/* ═══ SERVICIOS ═══ */}
+      {/* ═══ SERVICIOS DISPONIBLES HOY ═══ */}
       {servicesToday.length > 0 && (
         <MarketSection eyebrow="Soluciones locales" title="Servicios disponibles hoy" description="Profesionales listos para asistirte." href="/servicios" linkLabel="Ver todos" className="border-t border-slate-200 bg-white">
           <MarketCarousel>
