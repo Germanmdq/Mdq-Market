@@ -11,6 +11,18 @@ export default async function ProductsPage({
 }) {
   const params = await searchParams;
 
+  const categoryAliases: Record<string, string[]> = {
+    "celulares-y-telefonos": ["Tecnología y celulares"],
+    "computacion": ["Tecnología y celulares"],
+    "electrodomesticos": ["Electrodomésticos"],
+    "hogar-muebles-y-jardin": ["Hogar y muebles", "Decoración y jardín"],
+    "herramientas": ["Herramientas y construcción"],
+    "ropa-y-accesorios": ["Indumentaria y accesorios"],
+    "bebes": ["Bebés, niños y juguetes"],
+    "animales-y-mascotas": ["Mascotas"],
+    "deportes-y-fitness": ["Bicicletas y movilidad"],
+  };
+
   let query = supabase
     .from("products")
     .select("*")
@@ -18,7 +30,12 @@ export default async function ProductsPage({
 
   // Apply filters from searchParams
   if (typeof params.category === "string") {
-    query = query.eq("category", params.category);
+    const alias = categoryAliases[params.category];
+    if (alias) {
+      query = query.in("category", alias);
+    } else {
+      query = query.eq("category", params.category);
+    }
   }
 
   if (typeof params.subcategory === "string") {
