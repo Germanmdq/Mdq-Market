@@ -1,10 +1,8 @@
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  Star, ShieldCheck, Heart, ChevronLeft, ChevronRight, CheckCircle2,
-  Truck, ArrowRight
+  Star, ShieldCheck, Heart, Truck, ArrowRight
 } from "lucide-react";
 import { getProductBySlug, getRelatedProducts } from "@/lib/products";
 import { getProductGallery, getProductMainImage } from "@/lib/product-images";
@@ -63,11 +61,10 @@ export default async function ProductDetailPage({
                 </div>
               )}
               
-              <Image 
+              <img 
                 src={mainImage} 
                 alt={product.title} 
-                fill 
-                className="object-contain p-4 transition-transform duration-500" 
+                className="h-full w-full object-contain p-4 transition-transform duration-500" 
               />
               
               {product.discount ? (
@@ -81,7 +78,7 @@ export default async function ProductDetailPage({
               <div className="flex gap-4 overflow-x-auto no-scrollbar py-2">
                 {gallery.map((img, i) => (
                   <div key={i} className={cn("relative w-20 h-20 rounded-xl overflow-hidden border shrink-0 transition-all bg-slate-50", i === 0 ? "border-slate-950" : "border-slate-200 hover:border-slate-400")}>
-                    <Image src={img} alt="" fill className="object-cover" />
+                    <img src={img} alt="" className="h-full w-full object-cover" />
                   </div>
                 ))}
               </div>

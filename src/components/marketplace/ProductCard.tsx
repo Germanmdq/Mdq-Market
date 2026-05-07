@@ -1,9 +1,8 @@
 "use client";
 
-import Image from "next/image";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import React, { useState } from "react";
 import type { Product } from "@/types/product";
 import { getProductMainImage } from "@/lib/product-images";
 
@@ -20,18 +19,21 @@ export default function ProductCard({ product }: { product: Product }) {
   const imageSrc = getProductMainImage(product);
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md h-full flex flex-col">
+    <article className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_32px_rgba(15,23,42,0.07)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_48px_rgba(15,23,42,0.11)] h-full flex flex-col">
       <Link href={`/productos/${product.slug}`} className="block flex-1 flex flex-col">
         <div className="relative aspect-square overflow-hidden bg-slate-100">
-          <Image
+          <img
             src={imageSrc}
             alt={product.title}
-            fill
-            className="object-cover transition duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            loading="lazy"
+            onError={(event) => {
+              event.currentTarget.src = "/fallbacks/producto.svg";
+            }}
           />
 
           {product.discount ? (
-            <span className="absolute left-3 top-3 rounded-full bg-red-600 px-2.5 py-1 text-xs font-medium text-white z-10">
+            <span className="absolute left-3 top-3 rounded-full bg-red-600 px-2.5 py-1 text-xs font-medium text-white z-10 shadow-sm">
               {product.discount}% off
             </span>
           ) : null}
@@ -64,12 +66,12 @@ export default function ProductCard({ product }: { product: Product }) {
             ) : null}
           </div>
 
-          <p className="mt-3 text-lg font-semibold tracking-tight text-slate-950">
+          <p className="mt-3 text-lg font-semibold tracking-tight text-slate-950 leading-tight">
             {formatPrice(product.price)}
           </p>
 
           {product.old_price ? (
-            <p className="text-sm text-slate-400 line-through">
+            <p className="text-sm text-slate-400 line-through mt-0.5">
               {formatPrice(product.old_price)}
             </p>
           ) : null}
@@ -79,7 +81,9 @@ export default function ProductCard({ product }: { product: Product }) {
           </h3>
 
           <div className="mt-auto pt-4 flex items-center justify-between text-xs text-slate-500">
-            <span>{product.seller_verified ? "Vendedor verificado" : "Vendedor"}</span>
+            <span>
+              {product.seller_verified ? "Vendedor verificado" : "Vendedor"}
+            </span>
             <span className="truncate ml-2">{product.zone}</span>
           </div>
         </div>

@@ -2,10 +2,10 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
-import { Product } from "@/types";
-import { formatPrice, getProductImage } from "@/lib/utils";
+import type { Product } from "@/types/product";
+import { formatPrice, cn } from "@/lib/utils";
+import { getProductMainImage } from "@/lib/product-images";
 import { Truck, Star } from "lucide-react";
 
 interface AutoProductSliderProps {
@@ -13,8 +13,7 @@ interface AutoProductSliderProps {
 }
 
 const SliderProductCard = ({ product }: { product: Product }) => {
-  const [imgError, setImgError] = React.useState(false);
-  const fallback = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800&auto=format&fit=crop";
+  const imageSrc = getProductMainImage(product);
 
   return (
     <Link
@@ -22,21 +21,23 @@ const SliderProductCard = ({ product }: { product: Product }) => {
       className="w-48 shrink-0 bg-white rounded-3xl border border-gray-100 p-2 shadow-sm hover:shadow-2xl hover:border-blue-200 transition-all duration-500 group"
     >
       <div className="aspect-square rounded-2xl overflow-hidden mb-3 bg-gray-50 relative">
-        <Image
-          src={imgError ? fallback : getProductImage(product)}
+        <img
+          src={imageSrc}
           alt={product.title}
-          fill
-          className="object-cover group-hover:scale-110 transition-transform duration-700"
-          onError={() => setImgError(true)}
+          className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
+          loading="lazy"
+          onError={(event) => {
+            event.currentTarget.src = "/fallbacks/producto.svg";
+          }}
         />
-        {product.oldPrice && (
-          <div className="absolute top-2 left-2 bg-red-600 text-white text-[8px] font-black px-2 py-1 rounded-full shadow-lg">
-            {Math.round((1 - product.price / product.oldPrice) * 100)}% OFF
+        {product.old_price && (
+          <div className="absolute top-2 left-2 bg-red-600 text-white text-[8px] font-black px-2 py-1 rounded-full shadow-lg z-10">
+            OFERTA
           </div>
         )}
-        <div className="absolute bottom-2 right-2 flex items-center gap-0.5 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-lg shadow-sm border border-white/20">
+        <div className="absolute bottom-2 right-2 flex items-center gap-0.5 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-lg shadow-sm border border-white/20 z-10">
           <Star className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
-          <span className="text-[9px] font-black text-gray-900">{product.sellerRating}</span>
+          <span className="text-[9px] font-black text-gray-900">4.8</span>
         </div>
       </div>
       
@@ -45,9 +46,9 @@ const SliderProductCard = ({ product }: { product: Product }) => {
           <span className="text-sm font-black text-gray-900 tracking-tight">
             {formatPrice(product.price)}
           </span>
-          {product.oldPrice && (
+          {product.old_price && (
             <span className="text-[10px] text-gray-400 line-through">
-              {formatPrice(product.oldPrice)}
+              {formatPrice(product.old_price)}
             </span>
           )}
         </div>
@@ -58,7 +59,7 @@ const SliderProductCard = ({ product }: { product: Product }) => {
            <div className="flex items-center gap-1 text-[8px] font-black text-green-600 uppercase">
               <Truck className="w-2.5 h-2.5" /> MDP
            </div>
-           <span className="text-[8px] font-bold text-gray-300 uppercase tracking-tighter">
+           <span className="text-[8px] font-bold text-gray-300 uppercase tracking-tighter truncate ml-2">
               {product.zone}
            </span>
         </div>
