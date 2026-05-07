@@ -1,18 +1,20 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import {
-  Laptop, Smartphone, Home as HomeIcon, Shirt, Bike,
-  LayoutGrid, Tv, Sofa, Hammer, Baby, Store, Wrench
+  Laptop, Smartphone, Shirt, Bike,
+  Tv, Sofa, Hammer, Baby, Store, Wrench
 } from "lucide-react";
-import { MOCK_PRODUCTS, MOCK_SERVICES, MOCK_PROFESSIONALS } from "@/data/mockData";
+import { MOCK_SERVICES, MOCK_PROFESSIONALS } from "@/data/mockData";
 import ProductCard from "@/components/marketplace/ProductCard";
 import ServiceCard from "@/components/marketplace/ServiceCard";
 import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
 import { MarketCarousel } from "@/components/ui/MarketCarousel";
 import { MarketSection } from "@/components/marketplace/MarketSection";
-import { cn } from "@/lib/utils";
+import {
+  getDailyDeals,
+  getFeaturedProducts,
+  getPublishedProducts,
+} from "@/lib/products";
 
 /* ── Category Chips ── */
 const CATEGORIES = [
@@ -27,22 +29,23 @@ const CATEGORIES = [
   { name: "Profesionales", icon: Store, href: "/profesionales" },
 ];
 
-import { DataShuffler } from "@/lib/dataUtils";
+export default async function HomePage() {
+  const [products, deals, featured] = await Promise.all([
+    getPublishedProducts(),
+    getDailyDeals(12),
+    getFeaturedProducts(12),
+  ]);
 
-export default function HomePage() {
-  const shuffler = new DataShuffler();
-
-  const dailyDeals = shuffler.getDailyDeals(MOCK_PRODUCTS, 10);
-  const featuredProducts = shuffler.getFeaturedProducts(MOCK_PRODUCTS, 10);
-  const lastViewed = shuffler.getLastViewedProducts(MOCK_PRODUCTS, 10);
-  const techProducts = shuffler.getProductsByCategory(MOCK_PRODUCTS, "Tecnología y celulares", 10);
-  const entrepreneurs = shuffler.getProductsBySellerType(MOCK_PRODUCTS, "Emprendedor", 10);
-  const localStores = shuffler.getProductsBySellerType(MOCK_PRODUCTS, "Comercio", 10);
+  const lastViewed = products.slice(12, 24);
+  const localStores = products.filter((p) => p.seller_type === "commerce").slice(0, 12);
+  const entrepreneurs = products.filter((p) => p.seller_type === "entrepreneur").slice(0, 12);
+  const techProducts = products.filter((p) => p.category === "Tecnología y celulares").slice(0, 12);
   
-  const servicesToday = shuffler.getServicesAvailableToday(MOCK_SERVICES, 12);
-  const verifiedPros = shuffler.getVerifiedProfessionals(MOCK_PROFESSIONALS, 12);
+  // Keep mocks for services/pros until migrated
+  const servicesToday = MOCK_SERVICES.slice(0, 12);
+  const verifiedPros = MOCK_PROFESSIONALS.slice(0, 12);
   
-  const catalogProducts = shuffler.getRemainingProducts(MOCK_PRODUCTS, 10);
+  const catalogProducts = products.slice(24, 34);
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -154,10 +157,10 @@ export default function HomePage() {
       </section>
 
       {/* ═══ OFERTAS DEL DÍA ═══ */}
-      {dailyDeals.length > 0 && (
+      {deals.length > 0 && (
         <MarketSection eyebrow="Exclusivo" title="Ofertas del día" description="Productos locales con precio especial por tiempo limitado." href="/productos?ofertas=true" linkLabel="Ver todas" className="border-t border-slate-200">
           <MarketCarousel>
-            {dailyDeals.map(p => (
+            {deals.map(p => (
               <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
                 <ProductCard product={p} />
               </div>
@@ -167,10 +170,10 @@ export default function HomePage() {
       )}
 
       {/* ═══ DESTACADOS ═══ */}
-      {featuredProducts.length > 0 && (
-        <MarketSection eyebrow="Tendencias" title="Productos destacados" href="/productos" className="border-t border-slate-200">
+      {featured.length > 0 && (
+        <MarketSection eyebrow="Tendencias" title="Productos destacados" href="/productos?featured=true" className="border-t border-slate-200">
           <MarketCarousel>
-            {featuredProducts.map(p => (
+            {featured.map(p => (
               <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
                 <ProductCard product={p} />
               </div>
@@ -181,7 +184,7 @@ export default function HomePage() {
 
       {/* ═══ VISTOS RECIENTEMENTE ═══ */}
       {lastViewed.length > 0 && (
-        <MarketSection eyebrow="Para vos" title="Última visita" href="/productos" className="border-t border-slate-200">
+        <MarketSection eyebrow="Para vos" title="Basado en tu última visita" href="/productos" className="border-t border-slate-200">
           <MarketCarousel>
             {lastViewed.map(p => (
               <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
@@ -233,7 +236,7 @@ export default function HomePage() {
       
       {/* ═══ COMERCIOS LOCALES ═══ */}
       {localStores.length > 0 && (
-        <MarketSection eyebrow="De la zona" title="Comercios locales" href="/productos" className="border-t border-slate-200 bg-white">
+        <MarketSection eyebrow="De la zona" title="Comercios locales" href="/productos?sellerType=commerce" className="border-t border-slate-200 bg-white">
           <MarketCarousel>
             {localStores.map(p => (
               <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
@@ -246,7 +249,7 @@ export default function HomePage() {
 
       {/* ═══ EMPRENDEDORES ═══ */}
       {entrepreneurs.length > 0 && (
-        <MarketSection eyebrow="Artesanal" title="Emprendedores marplatenses" href="/productos" className="border-t border-slate-200 bg-white">
+        <MarketSection eyebrow="Artesanal" title="Emprendedores marplatenses" href="/productos?sellerType=entrepreneur" className="border-t border-slate-200 bg-white">
           <MarketCarousel>
             {entrepreneurs.map(p => (
               <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">

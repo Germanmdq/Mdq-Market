@@ -1,14 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
 import { 
   ShieldCheck, ArrowLeft, CheckCircle2, Lock, Loader2, MapPin
 } from "lucide-react";
-import { MOCK_PRODUCTS, MOCK_SERVICES } from "@/data/mockData";
-import { formatPrice, cn, getProductImage } from "@/lib/utils";
+import { MOCK_SERVICES } from "@/data/mockData";
+import { getProductById } from "@/lib/products";
+import { getProductMainImage } from "@/lib/product-images";
+import type { Product } from "@/types/product";
+import { cn } from "@/lib/utils";
+
+function formatPrice(value: number) {
+  return new Intl.NumberFormat("es-AR", {
+    style: "currency",
+    currency: "ARS",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
@@ -18,24 +29,50 @@ function CheckoutContent() {
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [method, setMethod] = useState("mp");
-  const [step, setStep] = useState(1);
+  const [item, setItem] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  const item = type === "product" 
-    ? MOCK_PRODUCTS.find(p => p.id === id) 
-    : MOCK_SERVICES.find(s => s.id === id);
+  useEffect(() => {
+    async function loadItem() {
+      if (!id) {
+        setLoading(false);
+        return;
+      }
+
+      if (type === "product") {
+        const prod = await getProductById(id);
+        setItem(prod);
+      } else {
+        // Services still use mock for now
+        const service = MOCK_SERVICES.find(s => s.id === id);
+        setItem(service);
+      }
+      setLoading(false);
+    }
+    loadItem();
+  }, [id, type]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
 
   if (!item) {
     return <div className="p-20 text-center font-semibold text-xl text-slate-500">Producto no encontrado</div>;
   }
 
-  const price = type === "product" ? (item as any).price : (item as any).priceFrom;
+  const price = type === "product" ? (item as Product).price : (item as any).priceFrom;
   const total = price;
+  const title = item.title;
+  const image = type === "product" ? getProductMainImage(item as Product) : (item as any).image;
 
   const handlePayment = () => {
     setIsProcessing(true);
     setTimeout(() => {
       setIsProcessing(false);
-      // Instead of showing a local success state, route to the operations tracker
       router.push(`/operaciones/MDP-882193`);
     }, 2000);
   };
@@ -57,13 +94,9 @@ function CheckoutContent() {
       <div className="max-w-[1280px] mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] gap-10 items-start">
           
-          {/* Left Form */}
           <div className="space-y-6">
-            
-            {/* Delivery Address & Schedule */}
-            <section className="bg-white rounded-3xl p-8 border border-slate-200 shadow-[0_10px_32px_rgba(15,23,42,0.07)]">
+            <section className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
               <h2 className="text-xl font-semibold text-slate-950 mb-6">1. Entrega</h2>
-              
               <div className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
@@ -81,18 +114,6 @@ function CheckoutContent() {
                     <input type="text" required placeholder="Ej. Av. Colón 2350" className="w-full h-12 rounded-xl border border-slate-200 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
                   </div>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Piso / Depto (Opcional)</label>
-                    <input type="text" placeholder="Ej. 4ºB" className="w-full h-12 rounded-xl border border-slate-200 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Teléfono de contacto</label>
-                    <input type="tel" required placeholder="223..." className="w-full h-12 rounded-xl border border-slate-200 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                  </div>
-                </div>
-
                 <div className="pt-4 border-t border-slate-100">
                   <label className="block text-sm font-medium text-slate-700 mb-2">Día y horario de disponibilidad</label>
                   <select required className="w-full h-12 rounded-xl border border-slate-200 px-4 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -101,20 +122,12 @@ function CheckoutContent() {
                     <option value="hoy-13-16">Hoy 13:00 a 16:00 hs</option>
                     <option value="hoy-16-19">Hoy 16:00 a 19:00 hs</option>
                     <option value="manana-10-13">Mañana 10:00 a 13:00 hs</option>
-                    <option value="manana-13-16">Mañana 13:00 a 16:00 hs</option>
-                    <option value="coordinar">Coordinar con el soporte/vendedor</option>
                   </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Referencia o nota para la entrega</label>
-                  <textarea rows={2} placeholder="Ej. Tocar timbre 2, rejas negras..." className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
               </div>
             </section>
 
-            {/* Payment Method */}
-            <section className="bg-white rounded-3xl p-8 border border-slate-200 shadow-[0_10px_32px_rgba(15,23,42,0.07)]">
+            <section className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
               <h2 className="text-xl font-semibold text-slate-950 mb-6">2. Método de pago</h2>
               <div className="space-y-3">
                 {[
@@ -141,7 +154,6 @@ function CheckoutContent() {
               </div>
             </section>
 
-            {/* Protected Info */}
             <section className="bg-blue-50/50 rounded-3xl p-6 border border-blue-100 flex items-start gap-4">
               <ShieldCheck className="w-8 h-8 text-blue-600 shrink-0" strokeWidth={2} />
               <div>
@@ -153,17 +165,16 @@ function CheckoutContent() {
             </section>
           </div>
 
-          {/* Right Summary */}
           <aside className="lg:sticky lg:top-28">
-            <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-[0_10px_34px_rgba(15,23,42,0.07)]">
+            <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
               <h3 className="text-lg font-semibold text-slate-950 mb-6">Resumen de compra</h3>
               
               <div className="flex gap-4 mb-6 pb-6 border-b border-slate-100">
-                <div className="w-16 h-16 rounded-xl bg-slate-50 border border-slate-200 shrink-0 overflow-hidden">
-                  <img src={type === "product" ? getProductImage(item as any) : (item as any).image} alt="" className="w-full h-full object-cover" />
+                <div className="w-16 h-16 rounded-xl bg-slate-50 border border-slate-200 shrink-0 overflow-hidden relative">
+                  <img src={image} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <h4 className="font-medium text-slate-950 text-sm line-clamp-2">{item.title}</h4>
+                  <h4 className="font-medium text-slate-950 text-sm line-clamp-2">{title}</h4>
                   <p className="text-sm text-slate-500 mt-1">{formatPrice(price)}</p>
                 </div>
               </div>
@@ -176,10 +187,6 @@ function CheckoutContent() {
                 <div className="flex justify-between text-emerald-600 font-medium">
                   <span>Entrega MDP</span>
                   <span>Coordinar</span>
-                </div>
-                <div className="flex justify-between text-blue-600 font-medium">
-                  <span>Pago Protegido</span>
-                  <span>Incluido</span>
                 </div>
               </div>
 
@@ -195,10 +202,6 @@ function CheckoutContent() {
               >
                 {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Lock className="w-4 h-4" /> Confirmar pago</>}
               </button>
-              
-              <p className="text-xs text-center text-slate-400 mt-4">
-                Transacción mock. No se realizan cobros.
-              </p>
             </div>
           </aside>
         </div>
