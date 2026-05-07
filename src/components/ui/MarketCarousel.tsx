@@ -3,20 +3,23 @@
 import React, { useCallback, useEffect, useState, ReactNode } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 type MarketCarouselProps = {
   children: ReactNode;
   className?: string;
-  options?: any;
 };
 
-export function MarketCarousel({ children, className = "", options = { align: "start", dragFree: true, containScroll: "trimSnaps" } }: MarketCarouselProps) {
-  const [emblaRef, emblaApi] = useEmblaCarousel(options);
+export function MarketCarousel({ children, className = "" }: MarketCarouselProps) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "start",
+    dragFree: true,
+    containScroll: "trimSnaps",
+  });
+
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
 
-  const updateButtons = useCallback(() => {
+  const update = useCallback(() => {
     if (!emblaApi) return;
     setCanPrev(emblaApi.canScrollPrev());
     setCanNext(emblaApi.canScrollNext());
@@ -24,27 +27,25 @@ export function MarketCarousel({ children, className = "", options = { align: "s
 
   useEffect(() => {
     if (!emblaApi) return;
-    updateButtons();
-    emblaApi.on("select", updateButtons);
-    emblaApi.on("reInit", updateButtons);
-  }, [emblaApi, updateButtons]);
+    update();
+    emblaApi.on("select", update);
+    emblaApi.on("reInit", update);
+  }, [emblaApi, update]);
 
   return (
-    <div className={cn("relative w-full group/carousel", className)}>
-      <div ref={emblaRef} className="overflow-hidden px-1">
-        <div className="flex gap-4 sm:gap-6">
-          {children}
-        </div>
+    <div className={`relative w-full ${className}`}>
+      <div ref={emblaRef} className="overflow-hidden">
+        <div className="flex gap-4 sm:gap-5">{children}</div>
       </div>
 
       {canPrev && (
         <button
           type="button"
           onClick={() => emblaApi?.scrollPrev()}
-          className="absolute left-0 top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 -translate-x-1/2 items-center justify-center rounded-full border border-slate-200 bg-white shadow-xl transition-all hover:bg-slate-50 hover:scale-110 active:scale-95 lg:flex"
+          className="absolute -left-3 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/70 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition hover:shadow-md lg:flex"
           aria-label="Anterior"
         >
-          <ChevronLeft className="h-5 w-5 text-slate-700" strokeWidth={3} />
+          <ChevronLeft className="h-4 w-4 text-slate-700" />
         </button>
       )}
 
@@ -52,16 +53,12 @@ export function MarketCarousel({ children, className = "", options = { align: "s
         <button
           type="button"
           onClick={() => emblaApi?.scrollNext()}
-          className="absolute right-0 top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border border-slate-200 bg-white shadow-xl transition-all hover:bg-slate-50 hover:scale-110 active:scale-95 lg:flex"
+          className="absolute -right-3 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/70 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition hover:shadow-md lg:flex"
           aria-label="Siguiente"
         >
-          <ChevronRight className="h-5 w-5 text-slate-700" strokeWidth={3} />
+          <ChevronRight className="h-4 w-4 text-slate-700" />
         </button>
       )}
-
-      {/* Side Gradients for visual rhythm */}
-      <div className="pointer-events-none absolute left-0 top-0 z-10 hidden h-full w-12 bg-gradient-to-r from-[#f8fafc] to-transparent lg:block" />
-      <div className="pointer-events-none absolute right-0 top-0 z-10 hidden h-full w-12 bg-gradient-to-l from-[#f8fafc] to-transparent lg:block" />
     </div>
   );
 }
