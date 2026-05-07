@@ -131,6 +131,15 @@ export type Service = {
   };
 };
 
+export type ProfessionalPortfolioItem = {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  completedAt?: string;
+  location?: string;
+};
+
 export type Professional = {
   id: string;
   name: string;
@@ -169,6 +178,25 @@ export type Professional = {
   priceFrom: number;
   availability: string;
   faq: string[];
+  portfolio?: ProfessionalPortfolioItem[];
+  credentials?: {
+    type: string;
+    name: string;
+    status: string;
+    verifiedAt?: string;
+  }[];
+  experience?: {
+    years: number;
+    summary: string;
+    specialties: string[];
+    education: string[];
+    certifications: string[];
+    workHistory: {
+      title: string;
+      description: string;
+      year: string;
+    }[];
+  };
   imagePrompts?: {
     main: string;
   };

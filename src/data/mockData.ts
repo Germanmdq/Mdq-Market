@@ -4173,6 +4173,26 @@ export const MOCK_PROFESSIONAL_DETAILS = MOCK_PROFESSIONALS.map((professional) =
     professional.bio ||
     `${professional.profession} con experiencia comprobable, atención por zonas y reserva protegida dentro de MDP Market.`,
   coverImage: `https://images.unsplash.com/photo-1541888941257-18202532bc13?q=80&w=1200&auto=format&fit=crop`,
+  portfolio: (professional as any).portfolio || [
+    {
+      id: `${professional.id}-portfolio-1`,
+      title: "Trabajo domiciliario realizado",
+      description:
+        "Servicio realizado en Mar del Plata con coordinación previa, atención puntual y seguimiento por MDP Market.",
+      image: professional.coverImage || professional.avatar || "/fallbacks/servicio.jpg",
+      completedAt: "2026",
+      location: professional.zones?.[0] || "Mar del Plata",
+    },
+    {
+      id: `${professional.id}-portfolio-2`,
+      title: "Servicio verificado",
+      description:
+        "Trabajo completado con reserva protegida, comunicación interna y calificación del cliente.",
+      image: professional.coverImage || professional.avatar || "/fallbacks/servicio.jpg",
+      completedAt: "2026",
+      location: professional.zones?.[1] || "Mar del Plata",
+    },
+  ],
   credentials: (professional as any).credentials || [
     {
       type: "Identidad verificada",

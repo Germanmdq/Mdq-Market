@@ -14,6 +14,20 @@ import { formatPrice, cn } from "@/lib/utils";
 export default function ProfessionalDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = React.use(params);
   const professional = MOCK_PROFESSIONAL_DETAILS.find((p) => p.slug === slug) || MOCK_PROFESSIONAL_DETAILS[0];
+
+  // Defensive fallbacks
+  const portfolio = (professional as any).portfolio ?? [];
+  const credentials = (professional as any).credentials ?? [];
+  const experience = (professional as any).experience ?? null;
+  const services = (professional as any).services ?? [];
+  const zones = (professional as any).zones ?? [];
+  const reviews = (professional as any).reviews ?? [];
+  const faq = (professional as any).faq ?? [];
+  
+  const headline = professional.headline || `${professional.profession} verificado en Mar del Plata`;
+  const bio = professional.bio || "Profesional verificado en MDP Market, con atención por zonas, reputación visible y reserva protegida.";
+  const coverImage = professional.coverImage || professional.avatar || "/fallbacks/profesional.jpg";
+
   // Normalizing availability
   const availabilityIsObject = typeof professional.availability !== "string";
   const schedule = availabilityIsObject ? (professional.availability as any).schedule : [];
@@ -33,7 +47,7 @@ export default function ProfessionalDetailPage({ params }: { params: Promise<{ s
   };
 
   // Normalizing services (ensure they are objects for the UI)
-  const normalizedServices = professional.services.map((s: any) => {
+  const normalizedServices = services.map((s: any) => {
     if (typeof s === "string") {
       // Try to find full service details if available, otherwise mock
       const fullService = MOCK_SERVICES.find(ms => ms.id === s);
@@ -52,7 +66,7 @@ export default function ProfessionalDetailPage({ params }: { params: Promise<{ s
     return s;
   });
 
-  const selectedService = normalizedServices.find(s => s.id === selectedServiceId) || normalizedServices[0];
+  const selectedService = normalizedServices.find((s: any) => s.id === selectedServiceId) || normalizedServices[0];
   const currentSchedule = schedule.find((s: any) => s.day === selectedDay);
 
   const similarProfessionals = MOCK_PROFESSIONALS.filter(p => p.id !== professional.id).slice(0, 4);
@@ -77,9 +91,9 @@ export default function ProfessionalDetailPage({ params }: { params: Promise<{ s
           
           {/* 2. Header Profesional */}
           <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm relative">
-            {professional?.coverImage ? (
+            {coverImage ? (
               <div className="h-32 w-full relative bg-blue-900">
-                <Image src={professional.coverImage} alt="Cover" fill className="object-cover opacity-80" />
+                <Image src={coverImage} alt="Cover" fill className="object-cover opacity-80" />
               </div>
             ) : (
               <div className="h-32 w-full bg-gradient-to-r from-blue-600 to-blue-800" />
@@ -106,7 +120,7 @@ export default function ProfessionalDetailPage({ params }: { params: Promise<{ s
                   {professional.verified && <CheckCircle2 className="w-5 h-5 text-blue-600" />}
                 </div>
                 <p className="text-lg font-bold text-gray-700">{professional.profession}</p>
-                <p className="text-sm text-gray-500 mt-1">{professional.headline}</p>
+                <p className="text-sm text-gray-500 mt-1">{headline}</p>
 
                 <div className="flex flex-wrap items-center gap-3 mt-4 text-xs">
                   <div className="flex items-center gap-1 font-black text-gray-900 bg-yellow-50 px-2 py-1 rounded-lg">
@@ -215,22 +229,22 @@ export default function ProfessionalDetailPage({ params }: { params: Promise<{ s
           {/* 8. Experiencia (Bio) & Zonas */}
           <section className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
             <h2 className="text-lg font-black text-gray-900 mb-4">Sobre el profesional</h2>
-            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mb-6">{professional.bio}</p>
+            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mb-6">{bio}</p>
             
             <h3 className="text-sm font-black text-gray-900 mb-3 flex items-center gap-1.5"><MapPin className="w-4 h-4 text-gray-400" />Zonas de cobertura</h3>
             <div className="flex flex-wrap gap-2">
-              {professional.zones.map((z: string) => (
+              {zones.map((z: string) => (
                 <span key={z} className="text-xs font-bold text-gray-600 bg-gray-100 px-3 py-1 rounded-full">{z}</span>
               ))}
             </div>
           </section>
 
           {/* 9. Trabajos realizados (Portfolio) */}
-          {professional.portfolio && professional.portfolio.length > 0 && (
-            <section className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-              <h2 className="text-lg font-black text-gray-900 mb-4">Trabajos realizados</h2>
+          <section className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+            <h2 className="text-lg font-black text-gray-900 mb-4">Trabajos realizados</h2>
+            {portfolio.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {professional.portfolio.map((item: any) => (
+                {portfolio.map((item: any) => (
                   <div key={item.id} className="rounded-xl border border-gray-100 overflow-hidden group">
                     <div className="relative h-40 bg-gray-100 overflow-hidden">
                       <Image src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -244,15 +258,20 @@ export default function ProfessionalDetailPage({ params }: { params: Promise<{ s
                       <h3 className="font-bold text-gray-900 text-sm mb-1">{item.title}</h3>
                       <p className="text-xs text-gray-500 line-clamp-2 mb-2">{item.description}</p>
                       <div className="flex items-center justify-between text-[10px] text-gray-400 font-medium">
-                        <span>{item.zone}</span>
-                        <span>{item.date}</span>
+                        <span>{item.location || item.zone}</span>
+                        <span>{item.completedAt || item.date}</span>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-            </section>
-          )}
+            ) : (
+              <div className="py-12 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                <Briefcase className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                <p className="text-sm text-gray-500">Todavía no hay trabajos cargados para este profesional.</p>
+              </div>
+            )}
+          </section>
 
           {/* 7. Verificaciones */}
           <section className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
@@ -294,7 +313,7 @@ export default function ProfessionalDetailPage({ params }: { params: Promise<{ s
             </div>
 
             <div className="space-y-6">
-              {professional.reviews.map((review: any) => (
+              {reviews.map((review: any) => (
                 <div key={review.id} className="border-b border-gray-50 pb-6 last:border-0 last:pb-0">
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex items-center gap-2">
@@ -323,11 +342,11 @@ export default function ProfessionalDetailPage({ params }: { params: Promise<{ s
           </section>
 
           {/* 12. FAQ */}
-          {professional.faq && professional.faq.length > 0 && (
+          {faq.length > 0 && (
             <section className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
               <h2 className="text-lg font-black text-gray-900 mb-4">Preguntas frecuentes</h2>
               <div className="space-y-4">
-                {professional.faq.map((item: any, i: number) => {
+                {faq.map((item: any, i: number) => {
                   const q = typeof item === 'string' ? item : item.question;
                   const a = typeof item === 'string' ? "" : item.answer;
                   return (
