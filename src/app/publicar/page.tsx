@@ -1,412 +1,339 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase/client";
 import { 
   Package, 
-  Wrench, 
-  UserCheck, 
-  ArrowRight, 
-  ShieldCheck, 
-  Zap, 
-  Camera,
-  MapPin,
-  ChevronRight,
-  Info,
-  DollarSign,
-  Truck,
-  FileText,
-  Clock,
-  Shield,
-  Layers,
-  Barcode,
-  Settings,
-  Scale,
-  Calendar,
-  CheckSquare
+  Tag, 
+  DollarSign, 
+  Info, 
+  MapPin, 
+  Image as ImageIcon, 
+  Plus, 
+  Loader2, 
+  CheckCircle2, 
+  ChevronLeft,
+  ArrowRight
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-type PublishType = "producto" | "servicio" | "profesional" | null;
+import Link from "next/link";
+import { slugify } from "@/lib/utils";
 
 export default function PublicarPage() {
-  const [selectedType, setSelectedType] = useState<PublishType>(null);
-  const [step, setStep] = useState(1);
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [subcategories, setSubcategories] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  const options = [
-    { 
-      id: "producto", 
-      title: "Vender un Producto", 
-      desc: "Stock físico, herramientas, materiales o equipos.", 
-      icon: <Package className="w-8 h-8" />,
-      color: "blue",
-      features: ["Control de Stock", "Ficha Técnica Pro", "Garantía"]
-    },
-    { 
-      id: "servicio", 
-      title: "Servicios y Gremios", 
-      desc: "Reparaciones, instalaciones y mantenimiento técnico.", 
-      icon: <Wrench className="w-8 h-8" />,
-      color: "orange",
-      features: ["Presupuestos Directos", "Matrícula Validada", "Zonas"]
-    },
-    { 
-      id: "profesional", 
-      title: "Perfil Profesional", 
-      desc: "Abogados, contadores, arquitectos o prestadores certificados.", 
-      icon: <UserCheck className="w-8 h-8" />,
-      color: "purple",
-      features: ["Agenda Online", "Reputación Pro", "Certificados"]
+  const [formData, setFormData] = useState({
+    title: "",
+    category: "",
+    subcategory: "",
+    price: "",
+    description: "",
+    condition: "Nuevo",
+    zone: "",
+    stock: "1",
+    images: [""]
+  });
+
+  useEffect(() => {
+    async function loadCategories() {
+      const { data } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("is_root", true)
+        .order("name");
+      if (data) setCategories(data);
     }
-  ];
+    loadCategories();
+  }, []);
 
-  const handleNext = () => setStep(step + 1);
-  const handleBack = () => step > 1 ? setStep(step - 1) : setSelectedType(null);
+  const handleCategoryChange = async (catId: string) => {
+    const category = categories.find(c => c.id === catId);
+    setFormData({ ...formData, category: category?.name || "", subcategory: "" });
+    
+    if (catId) {
+      const { data } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("parent_id", catId)
+        .order("name");
+      setSubcategories(data || []);
+    } else {
+      setSubcategories([]);
+    }
+  };
 
-  if (selectedType === "producto") {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <header className="mb-12 flex items-center justify-between">
-           <button onClick={handleBack} className="flex items-center gap-2 text-gray-500 hover:text-gray-900 font-bold text-xs uppercase tracking-widest transition-all">
-              <ChevronRight className="w-4 h-4 rotate-180" /> Volver
-           </button>
-           <div className="flex gap-2">
-              {[1, 2, 3].map(i => (
-                <div key={i} className={cn("w-12 h-1.5 rounded-full transition-all", i <= step ? "bg-blue-600" : "bg-gray-200")} />
-              ))}
-           </div>
-        </header>
+  const handlePublish = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-        <div className="bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-           <div className="p-10 border-b border-gray-50 bg-gray-50/50">
-              <div className="flex items-center gap-4 mb-2">
-                 <Package className="w-6 h-6 text-blue-600" />
-                 <h1 className="text-3xl font-black text-gray-900 tracking-tight">Formulario Técnico de Producto</h1>
-              </div>
-              <p className="text-gray-500 font-medium">Completá la información para la venta directa y gestión de inventario.</p>
-           </div>
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      router.push("/login");
+      return;
+    }
 
-           <div className="p-10 space-y-12">
-              {/* Sección A: Datos de Identidad */}
-              <div className="space-y-6">
-                 <div className="flex items-center gap-3 border-l-4 border-blue-600 pl-4">
-                    <FileText className="w-5 h-5 text-blue-600" />
-                    <h3 className="font-black text-gray-900 uppercase text-xs tracking-widest">A. Datos de Identidad</h3>
-                 </div>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Título de la Publicación</label>
-                       <input type="text" placeholder="Ej: Taladro Percutor Bosch GSB 13 RE 650W" className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600/10 focus:border-blue-600 outline-none transition-all font-bold" />
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Categoría Jerárquica</label>
-                       <select className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600/10 focus:border-blue-600 outline-none transition-all font-bold appearance-none">
-                          <option>Herramientas &gt; Eléctricas</option>
-                          <option>Hogar &gt; Muebles</option>
-                          <option>Tecnología &gt; Celulares</option>
-                       </select>
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Código SKU / Referencia</label>
-                       <div className="relative">
-                          <Layers className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                          <input type="text" placeholder="ID-INTERNO-001" className="w-full pl-12 pr-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600/10 focus:border-blue-600 outline-none transition-all font-bold" />
-                       </div>
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">GTIN / Código de Barras</label>
-                       <div className="relative">
-                          <Barcode className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                          <input type="text" placeholder="EAN-13 o UPC" className="w-full pl-12 pr-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600/10 focus:border-blue-600 outline-none transition-all font-bold" />
-                       </div>
-                    </div>
-                 </div>
-              </div>
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
 
-              {/* Sección B: Ficha Técnica */}
-              <div className="space-y-6">
-                 <div className="flex items-center gap-3 border-l-4 border-blue-600 pl-4">
-                    <Settings className="w-5 h-5 text-blue-600" />
-                    <h3 className="font-black text-gray-900 uppercase text-xs tracking-widest">B. Ficha Técnica (Atributos)</h3>
-                 </div>
-                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Estado</label>
-                       <select className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold">
-                          <option>Nuevo</option>
-                          <option>Usado</option>
-                          <option>Reacondicionado</option>
-                       </select>
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Marca</label>
-                       <input type="text" placeholder="Ej: Bosch" className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" />
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Modelo Exacto</label>
-                       <input type="text" placeholder="Ej: GSB 13 RE" className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" />
-                    </div>
-                 </div>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Dimensiones y Peso</label>
-                       <div className="grid grid-cols-4 gap-2">
-                          <input type="text" placeholder="Al" className="w-full px-2 py-4 bg-gray-50 border border-gray-100 rounded-xl text-center font-bold" />
-                          <input type="text" placeholder="An" className="w-full px-2 py-4 bg-gray-50 border border-gray-100 rounded-xl text-center font-bold" />
-                          <input type="text" placeholder="Pr" className="w-full px-2 py-4 bg-gray-50 border border-gray-100 rounded-xl text-center font-bold" />
-                          <input type="text" placeholder="Kg" className="w-full px-2 py-4 bg-gray-50 border border-gray-100 rounded-xl text-center font-bold" />
-                       </div>
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Alimentación / Voltaje</label>
-                       <input type="text" placeholder="Ej: 220V / Batería 18V" className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" />
-                    </div>
-                 </div>
-              </div>
+    const slug = `${slugify(formData.title)}-${Math.random().toString(36).slice(2, 7)}`;
 
-              {/* Sección C: Comercial y Entrega */}
-              <div className="space-y-6">
-                 <div className="flex items-center gap-3 border-l-4 border-blue-600 pl-4">
-                    <DollarSign className="w-5 h-5 text-blue-600" />
-                    <h3 className="font-black text-gray-900 uppercase text-xs tracking-widest">C. Comercial y Entrega</h3>
-                 </div>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Precio Final de Lista</label>
-                       <div className="relative">
-                          <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-gray-400">$</span>
-                          <input type="number" placeholder="0.00" className="w-full pl-10 pr-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-lg" />
-                       </div>
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Stock Real</label>
-                       <input type="number" placeholder="Unidades disponibles" className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" />
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Logística de Entrega</label>
-                       <div className="flex gap-2">
-                          <div className="flex-grow py-3 bg-blue-50 border border-blue-100 rounded-xl text-[10px] font-black text-blue-700 uppercase tracking-widest text-center flex items-center justify-center gap-2">
-                             <CheckSquare className="w-3 h-3" /> Gestionada por Entrega MDP
-                          </div>
-                       </div>
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Garantía (Meses)</label>
-                       <div className="relative">
-                          <Shield className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                          <input type="text" placeholder="Ej: 12 meses de fábrica" className="w-full pl-12 pr-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" />
-                       </div>
-                    </div>
-                 </div>
-              </div>
+    const productData = {
+      seller_profile_id: user.id,
+      title: formData.title,
+      slug: slug,
+      category: formData.category,
+      subcategory: formData.subcategory,
+      description: formData.description,
+      price: parseFloat(formData.price),
+      condition: formData.condition,
+      seller_type: profile?.role === 'vendedor' ? 'Particular' : 'Particular', // Defaulting for now
+      seller_name: profile?.full_name || "Vendedor",
+      seller_verified: profile?.is_verified || false,
+      zone: formData.zone,
+      city: "Mar del Plata",
+      images: formData.images.filter(img => img.trim() !== ""),
+      status: 'published', // Published for demo purposes
+      stock: parseInt(formData.stock),
+      protected_payment: true,
+      mdp_delivery_available: true
+    };
 
-              <div className="pt-10 flex justify-end gap-4 border-t border-gray-50">
-                 <button className="px-10 py-5 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all active:scale-95 shadow-xl">
-                    Publicar Producto
-                 </button>
-              </div>
-           </div>
-        </div>
-      </div>
-    );
-  }
+    const { error } = await supabase
+      .from("products")
+      .insert(productData);
 
-  if (selectedType === "servicio") {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <header className="mb-12 flex items-center justify-between">
-           <button onClick={handleBack} className="flex items-center gap-2 text-gray-500 hover:text-gray-900 font-bold text-xs uppercase tracking-widest transition-all">
-              <ChevronRight className="w-4 h-4 rotate-180" /> Volver
-           </button>
-        </header>
-
-        <div className="bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-           <div className="p-10 border-b border-gray-50 bg-orange-50/30">
-              <div className="flex items-center gap-4 mb-2">
-                 <Wrench className="w-6 h-6 text-orange-600" />
-                 <h1 className="text-3xl font-black text-gray-900 tracking-tight">Formulario para Servicios y Gremios</h1>
-              </div>
-              <p className="text-gray-500 font-medium">Validación de autoridad profesional y estructura de presupuestos.</p>
-           </div>
-
-           <div className="p-10 space-y-12">
-              {/* Sección A: Perfil del Prestador */}
-              <div className="space-y-6">
-                 <div className="flex items-center gap-3 border-l-4 border-orange-600 pl-4">
-                    <UserCheck className="w-5 h-5 text-orange-600" />
-                    <h3 className="font-black text-gray-900 uppercase text-xs tracking-widest">A. Perfil del Prestador</h3>
-                 </div>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Nombre / Razón Social</label>
-                       <input type="text" placeholder="Nombre legal de la empresa o profesional" className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" />
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Especialidad (Rubro)</label>
-                       <select className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold appearance-none">
-                          <option>Plomería</option>
-                          <option>Refrigeración</option>
-                          <option>Gas</option>
-                          <option>Electricidad</option>
-                       </select>
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Matrícula Profesional</label>
-                       <input type="text" placeholder="Número oficial y ente emisor" className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" />
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona de Cobertura (MDP)</label>
-                       <input type="text" placeholder="Ej: Barrios o radio en Km" className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" />
-                    </div>
-                 </div>
-              </div>
-
-              {/* Sección B: Definición del Servicio */}
-              <div className="space-y-6">
-                 <div className="flex items-center gap-3 border-l-4 border-orange-600 pl-4">
-                    <CheckSquare className="w-5 h-5 text-orange-600" />
-                    <h3 className="font-black text-gray-900 uppercase text-xs tracking-widest">B. Definición del Servicio Técnico</h3>
-                 </div>
-                 <div className="space-y-4">
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Nombre de la Prestación</label>
-                       <input type="text" placeholder="Ej: Mantenimiento integral de calderas duales" className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                       <div className="space-y-2">
-                          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Checklist de Tareas</label>
-                          <textarea placeholder="Detallá los puntos que ejecutás en el trabajo..." className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold h-32 resize-none"></textarea>
-                       </div>
-                       <div className="space-y-2">
-                          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Exclusiones</label>
-                          <textarea placeholder="¿Qué NO está incluido? (Ej: repuestos, materiales)" className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold h-32 resize-none"></textarea>
-                       </div>
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Disponibilidad Horaria</label>
-                       <div className="relative">
-                          <Calendar className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                          <input type="text" placeholder="Ej: Lunes a Viernes 08:00 a 18:00hs" className="w-full pl-12 pr-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" />
-                       </div>
-                    </div>
-                 </div>
-              </div>
-
-              {/* Sección C: Estructura de Cobro */}
-              <div className="space-y-6">
-                 <div className="flex items-center gap-3 border-l-4 border-orange-600 pl-4">
-                    <DollarSign className="w-5 h-5 text-orange-600" />
-                    <h3 className="font-black text-gray-900 uppercase text-xs tracking-widest">C. Estructura de Cobro Directo</h3>
-                 </div>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Costo de Diagnóstico (Visita)</label>
-                       <div className="relative">
-                          <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-gray-400">$</span>
-                          <input type="number" placeholder="Valor fijo visita inicial" className="w-full pl-10 pr-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" />
-                       </div>
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Valor Hora Hombre</label>
-                       <div className="relative">
-                          <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-gray-400">$</span>
-                          <input type="number" placeholder="Para trabajos sin precio cerrado" className="w-full pl-10 pr-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" />
-                       </div>
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Método de Pago</label>
-                       <div className="flex gap-2">
-                          <div className="flex-grow py-3 bg-blue-50 border border-blue-100 rounded-xl text-[10px] font-black text-blue-700 uppercase tracking-widest text-center flex items-center justify-center gap-2">
-                             <Shield className="w-3 h-3" /> Pago Protegido por MDP Market
-                          </div>
-                       </div>
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Condición de Anticipo (%)</label>
-                       <input type="text" placeholder="Ej: 50% para inicio o insumos" className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" />
-                    </div>
-                 </div>
-              </div>
-
-              <div className="pt-10 flex justify-end gap-4 border-t border-gray-50">
-                 <button className="px-10 py-5 bg-orange-600 text-white font-black rounded-2xl hover:bg-orange-700 transition-all active:scale-95 shadow-xl shadow-orange-100">
-                    Publicar Servicio
-                 </button>
-              </div>
-           </div>
-        </div>
-      </div>
-    );
-  }
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    } else {
+      router.push("/mis-publicaciones");
+      router.refresh();
+    }
+  };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-20 min-h-[80vh] flex flex-col items-center justify-center">
-      <div className="text-center mb-16 space-y-4">
-         <h1 className="text-5xl md:text-6xl font-black text-gray-900 tracking-tighter leading-none">¿Qué vas a ofrecer hoy?</h1>
-         <p className="text-gray-500 text-xl font-medium max-w-2xl mx-auto">Elegí la estructura técnica que mejor se adapte a tu rubro para una publicación profesional.</p>
-      </div>
+    <div className="bg-slate-50 min-h-screen pb-20">
+      <main className="max-w-[800px] mx-auto w-full px-4 pt-12">
+        
+        <Link href="/mi-cuenta" className="inline-flex items-center gap-2 text-slate-500 font-bold hover:text-slate-900 transition-colors mb-8">
+          <ChevronLeft className="w-5 h-5" />
+          Volver a Mi Cuenta
+        </Link>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
-        {options.map((opt) => (
-          <button 
-            key={opt.id}
-            onClick={() => setSelectedType(opt.id as any)}
-            className="bg-white rounded-[3rem] border-2 border-gray-100 p-10 text-left hover:border-blue-600 hover:shadow-2xl hover:shadow-blue-100 transition-all duration-500 group flex flex-col h-full relative overflow-hidden"
-          >
-             <div className={cn(
-               "w-20 h-20 rounded-[1.5rem] flex items-center justify-center mb-8 transition-all duration-500 shadow-sm",
-               opt.color === "blue" ? "bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white" : 
-               opt.color === "orange" ? "bg-orange-50 text-orange-600 group-hover:bg-orange-600 group-hover:text-white" : 
-               "bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white"
-             )}>
-                {opt.icon}
-             </div>
-             <h3 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">{opt.title}</h3>
-             <p className="text-gray-500 text-sm mb-8 leading-relaxed font-medium flex-grow">
-               {opt.desc}
-             </p>
-             
-             <ul className="space-y-4 mb-10">
-                {opt.features.map((feat, i) => (
-                  <li key={i} className="flex items-center gap-3 text-xs font-black text-gray-700 uppercase tracking-tight">
-                     <div className={cn("w-2 h-2 rounded-full", 
-                        opt.color === "blue" ? "bg-blue-500" : 
-                        opt.color === "orange" ? "bg-orange-500" : 
-                        "bg-purple-500"
-                     )}></div>
-                     {feat}
-                  </li>
-                ))}
-             </ul>
+        <div className="bg-white rounded-[2.5rem] p-8 md:p-12 border border-slate-200 shadow-[0_20px_50px_rgba(15,23,42,0.06)]">
+          <div className="flex items-center gap-6 mb-10">
+            <div className="w-20 h-20 rounded-[2rem] bg-blue-600 flex items-center justify-center text-white shadow-xl shadow-blue-100">
+              <Plus className="w-10 h-10" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-black text-slate-900 tracking-tight">Vender en MDP Market</h1>
+              <p className="text-slate-500 font-medium mt-1">Llegá a miles de compradores en toda la ciudad.</p>
+            </div>
+          </div>
 
-             <div className="mt-auto flex items-center justify-between pt-6 border-t border-gray-50">
-                <span className={cn(
-                   "font-black text-sm uppercase tracking-widest",
-                   opt.color === "blue" ? "text-blue-600" : 
-                   opt.color === "orange" ? "text-orange-600" : 
-                   "text-purple-600"
-                )}>Seleccionar</span>
-                <div className={cn(
-                   "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500",
-                   opt.color === "blue" ? "bg-gray-50 group-hover:bg-blue-600 group-hover:text-white" : 
-                   opt.color === "orange" ? "bg-gray-50 group-hover:bg-orange-600 group-hover:text-white" : 
-                   "bg-gray-50 group-hover:bg-purple-600 group-hover:text-white"
-                )}>
-                   <ArrowRight className="w-6 h-6" />
+          <form onSubmit={handlePublish} className="space-y-10">
+            
+            {error && (
+              <div className="bg-red-50 border border-red-100 p-4 rounded-2xl text-red-800 text-sm font-bold">
+                Error: {error}
+              </div>
+            )}
+
+            {/* Basic Info */}
+            <section className="space-y-6">
+              <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Información Básica</h3>
+              
+              <div>
+                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Título de la publicación</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Package className="h-5 w-5 text-slate-300" />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ej: Samsung Galaxy S23 Ultra 256GB"
+                    className="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 font-bold placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 focus:bg-white transition-all"
+                    value={formData.title}
+                    onChange={(e) => setFormData({...formData, title: e.target.value})}
+                  />
                 </div>
-             </div>
-          </button>
-        ))}
-      </div>
+              </div>
 
-      {/* Safety Badge */}
-      <div className="mt-20 flex items-center gap-4 bg-gray-900 text-white px-8 py-5 rounded-[2rem] shadow-2xl">
-         <ShieldCheck className="w-8 h-8 text-blue-400" />
-         <div className="text-left">
-            <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">Protección MDP Market</p>
-            <p className="text-sm font-medium">Tus cobros están garantizados por nuestro sistema de custodia.</p>
-         </div>
-      </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Categoría</label>
+                  <select
+                    required
+                    className="block w-full px-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 font-bold focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 focus:bg-white transition-all"
+                    onChange={(e) => handleCategoryChange(e.target.value)}
+                  >
+                    <option value="">Seleccionar...</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Subcategoría</label>
+                  <select
+                    required
+                    className="block w-full px-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 font-bold focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 focus:bg-white transition-all"
+                    value={subcategories.find(s => s.name === formData.subcategory)?.id || ""}
+                    onChange={(e) => setFormData({...formData, subcategory: subcategories.find(s => s.id === e.target.value)?.name || ""})}
+                  >
+                    <option value="">Seleccionar...</option>
+                    {subcategories.map(sub => (
+                      <option key={sub.id} value={sub.id}>{sub.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </section>
+
+            {/* Price & Stock */}
+            <section className="space-y-6">
+               <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Precio y Disponibilidad</h3>
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Precio</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <DollarSign className="h-5 w-5 text-slate-300" />
+                      </div>
+                      <input
+                        type="number"
+                        required
+                        placeholder="0.00"
+                        className="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 font-bold placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 focus:bg-white transition-all"
+                        value={formData.price}
+                        onChange={(e) => setFormData({...formData, price: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Stock</label>
+                    <input
+                      type="number"
+                      required
+                      className="block w-full px-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 font-bold focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 focus:bg-white transition-all"
+                      value={formData.stock}
+                      onChange={(e) => setFormData({...formData, stock: e.target.value})}
+                    />
+                  </div>
+               </div>
+            </section>
+
+            {/* Description */}
+            <section className="space-y-6">
+              <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Detalles del Producto</h3>
+              <div>
+                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Descripción</label>
+                <textarea
+                  required
+                  rows={5}
+                  placeholder="Contá los detalles, uso, fallas, accesorios incluidos..."
+                  className="block w-full px-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 font-bold placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 focus:bg-white transition-all resize-none"
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div>
+                    <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Condición</label>
+                    <select
+                      className="block w-full px-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 font-bold focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 focus:bg-white transition-all"
+                      value={formData.condition}
+                      onChange={(e) => setFormData({...formData, condition: e.target.value})}
+                    >
+                      <option>Nuevo</option>
+                      <option>Usado como nuevo</option>
+                      <option>Usado bueno</option>
+                      <option>Usado con detalles</option>
+                      <option>Reacondicionado</option>
+                    </select>
+                 </div>
+                 <div>
+                    <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Barrio / Zona de retiro</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <MapPin className="h-5 w-5 text-slate-300" />
+                      </div>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Ej: Macrocentro, Güemes, La Perla..."
+                        className="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 font-bold placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 focus:bg-white transition-all"
+                        value={formData.zone}
+                        onChange={(e) => setFormData({...formData, zone: e.target.value})}
+                      />
+                    </div>
+                 </div>
+              </div>
+            </section>
+
+            {/* Images */}
+            <section className="space-y-6">
+               <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Imágenes (URLs)</h3>
+               <div className="space-y-4">
+                  {formData.images.map((img, index) => (
+                    <div key={index} className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <ImageIcon className="h-5 w-5 text-slate-300" />
+                      </div>
+                      <input
+                        type="url"
+                        placeholder="https://..."
+                        className="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 font-bold placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 focus:bg-white transition-all"
+                        value={img}
+                        onChange={(e) => {
+                          const newImages = [...formData.images];
+                          newImages[index] = e.target.value;
+                          setFormData({...formData, images: newImages});
+                        }}
+                      />
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setFormData({...formData, images: [...formData.images, ""]})}
+                    className="flex items-center gap-2 text-blue-600 font-black text-[10px] uppercase tracking-widest hover:text-blue-700 transition-colors ml-1"
+                  >
+                    <Plus className="w-4 h-4" /> Agregar otra imagen
+                  </button>
+               </div>
+            </section>
+
+            <div className="pt-10 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-3 bg-emerald-50 px-6 py-3 rounded-2xl border border-emerald-100">
+                 <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                 <span className="text-[10px] font-black text-emerald-900 uppercase tracking-widest leading-none pt-0.5">Publicación Protegida por MDP Market</span>
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-12 py-5 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-50"
+              >
+                {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (
+                  <>
+                    Publicar Ahora
+                    <ArrowRight className="w-5 h-5" />
+                  </>
+                )}
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </main>
     </div>
   );
 }
