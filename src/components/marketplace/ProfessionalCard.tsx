@@ -10,7 +10,7 @@ const ProfessionalCard: React.FC<{ professional: Professional }> = ({ profession
 
   return (
     <Link href={`/profesionales/${professional.slug}`} className="block h-full group">
-      <article className="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_10px_34px_rgba(15,23,42,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_56px_rgba(15,23,42,0.12)] flex flex-col">
+      <article className="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_10px_32px_rgba(15,23,42,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_48px_rgba(15,23,42,0.11)] flex flex-col">
         {/* Header */}
         <div className="flex items-start gap-3.5 mb-4">
           <div className="relative shrink-0">

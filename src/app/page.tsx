@@ -51,10 +51,9 @@ export default function HomePage() {
       </section>
 
       {/* ═══ HERO INTEGRADO ═══ */}
-      <section className="bg-slate-50">
+      <section className="w-full bg-slate-50">
         <div className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-[32px] bg-slate-950 shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.35),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.18),transparent_30%)] pointer-events-none" />
+          <div className="relative overflow-hidden rounded-[32px] bg-[radial-gradient(circle_at_top_right,#1d4ed8_0%,#020617_42%,#020617_100%)] shadow-[0_24px_80px_rgba(15,23,42,0.18)]">
             <div className="relative grid gap-8 p-8 sm:p-10 lg:grid-cols-[1.1fr_0.9fr] lg:p-12">
               <div>
                 <p className="text-sm font-medium text-blue-200">
@@ -69,26 +68,26 @@ export default function HomePage() {
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Link
                     href="/productos"
-                    className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+                    className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100 shadow-sm"
                   >
                     Ver productos
                   </Link>
                   <Link
                     href="/servicios"
-                    className="rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"
+                    className="rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/15"
                   >
                     Buscar servicios
                   </Link>
                   <Link
                     href="/vender"
-                    className="rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"
+                    className="rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/15"
                   >
                     Publicar gratis
                   </Link>
                 </div>
               </div>
               <div className="grid content-end gap-3 sm:grid-cols-2 lg:grid-cols-1">
-                <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur transition hover:bg-white/10">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.12)] transition hover:bg-white/[0.08]">
                   <p className="text-sm font-semibold text-white flex items-center gap-2">
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500/20 text-blue-300 text-xs">🛡</span>
                     Pago protegido
@@ -97,7 +96,7 @@ export default function HomePage() {
                     El dinero queda resguardado hasta que la operación se confirma.
                   </p>
                 </div>
-                <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur transition hover:bg-white/10">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.12)] transition hover:bg-white/[0.08]">
                   <p className="text-sm font-semibold text-white flex items-center gap-2">
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-300 text-xs">🚚</span>
                     Entrega MDP
@@ -106,7 +105,7 @@ export default function HomePage() {
                     Coordinación local para productos dentro de Mar del Plata.
                   </p>
                 </div>
-                <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur transition hover:bg-white/10 sm:col-span-2 lg:col-span-1">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.12)] transition hover:bg-white/[0.08] sm:col-span-2 lg:col-span-1">
                   <p className="text-sm font-semibold text-white flex items-center gap-2">
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-purple-500/20 text-purple-300 text-xs">✓</span>
                     Servicios verificados

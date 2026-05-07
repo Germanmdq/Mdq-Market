@@ -35,41 +35,10 @@ function CheckoutContent() {
     setIsProcessing(true);
     setTimeout(() => {
       setIsProcessing(false);
-      setStep(2);
+      // Instead of showing a local success state, route to the operations tracker
+      router.push(`/operaciones/MDP-882193`);
     }, 2000);
   };
-
-  if (step === 2) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-8 shadow-sm">
-          <CheckCircle2 className="w-10 h-10 text-emerald-600" />
-        </div>
-        <h1 className="text-3xl md:text-4xl font-semibold text-slate-950 mb-4 tracking-tight">¡Operación fondeada!</h1>
-        <p className="text-base text-slate-500 max-w-lg mx-auto mb-10 leading-relaxed">
-          El dinero está protegido por MDP Market. El {type === "product" ? "vendedor" : "profesional"} fue notificado y se coordinará la entrega/servicio.
-        </p>
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-10 w-full max-w-sm">
-           <div className="flex justify-between items-center mb-3 text-sm">
-              <span className="font-medium text-slate-500">Orden ID</span>
-              <span className="font-semibold text-slate-950">#MDP-882193</span>
-           </div>
-           <div className="flex justify-between items-center text-sm">
-              <span className="font-medium text-slate-500">Estado</span>
-              <span className="font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">Fondeado</span>
-           </div>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
-          <Link href="/mi-cuenta" className="flex-1 bg-slate-950 text-white font-semibold py-3.5 rounded-full transition-colors hover:bg-slate-800">
-            Ver mis compras
-          </Link>
-          <Link href="/" className="flex-1 bg-white border border-slate-300 text-slate-950 font-semibold py-3.5 rounded-full transition-colors hover:bg-slate-50">
-            Volver al inicio
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -91,25 +60,61 @@ function CheckoutContent() {
           {/* Left Form */}
           <div className="space-y-6">
             
-            {/* Delivery Address */}
-            <section className="bg-white rounded-3xl p-8 border border-slate-200 shadow-[0_10px_34px_rgba(15,23,42,0.07)]">
+            {/* Delivery Address & Schedule */}
+            <section className="bg-white rounded-3xl p-8 border border-slate-200 shadow-[0_10px_32px_rgba(15,23,42,0.07)]">
               <h2 className="text-xl font-semibold text-slate-950 mb-6">1. Entrega</h2>
-              <div className="rounded-2xl border border-blue-200 bg-blue-50/50 p-5 flex justify-between items-center cursor-pointer transition hover:border-blue-300">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-blue-600 shrink-0">
-                    <MapPin className="w-5 h-5" />
+              
+              <div className="space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Zona / Barrio</label>
+                    <select required className="w-full h-12 rounded-xl border border-slate-200 px-4 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                      <option value="">Seleccionar zona...</option>
+                      <option value="centro">Centro / Macrocentro</option>
+                      <option value="guemes">Güemes / Chauvín</option>
+                      <option value="puerto">Puerto / Punta Mogotes</option>
+                      <option value="constitucion">Constitución / La Perla</option>
+                    </select>
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-950 text-base">Av. Colón 2350, 4ºB</p>
-                    <p className="text-sm text-slate-500 mt-0.5">Mar del Plata, Buenos Aires</p>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Dirección exacta</label>
+                    <input type="text" required placeholder="Ej. Av. Colón 2350" className="w-full h-12 rounded-xl border border-slate-200 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
                   </div>
                 </div>
-                <button className="text-sm font-semibold text-blue-600 hover:underline">Cambiar</button>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Piso / Depto (Opcional)</label>
+                    <input type="text" placeholder="Ej. 4ºB" className="w-full h-12 rounded-xl border border-slate-200 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Teléfono de contacto</label>
+                    <input type="tel" required placeholder="223..." className="w-full h-12 rounded-xl border border-slate-200 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-100">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Día y horario de disponibilidad</label>
+                  <select required className="w-full h-12 rounded-xl border border-slate-200 px-4 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Seleccionar franja horaria...</option>
+                    <option value="hoy-10-13">Hoy 10:00 a 13:00 hs</option>
+                    <option value="hoy-13-16">Hoy 13:00 a 16:00 hs</option>
+                    <option value="hoy-16-19">Hoy 16:00 a 19:00 hs</option>
+                    <option value="manana-10-13">Mañana 10:00 a 13:00 hs</option>
+                    <option value="manana-13-16">Mañana 13:00 a 16:00 hs</option>
+                    <option value="coordinar">Coordinar con el soporte/vendedor</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Referencia o nota para la entrega</label>
+                  <textarea rows={2} placeholder="Ej. Tocar timbre 2, rejas negras..." className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
               </div>
             </section>
 
             {/* Payment Method */}
-            <section className="bg-white rounded-3xl p-8 border border-slate-200 shadow-[0_10px_34px_rgba(15,23,42,0.07)]">
+            <section className="bg-white rounded-3xl p-8 border border-slate-200 shadow-[0_10px_32px_rgba(15,23,42,0.07)]">
               <h2 className="text-xl font-semibold text-slate-950 mb-6">2. Método de pago</h2>
               <div className="space-y-3">
                 {[
