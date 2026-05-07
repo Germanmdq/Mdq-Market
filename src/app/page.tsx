@@ -27,11 +27,22 @@ const CATEGORIES = [
   { name: "Profesionales", icon: Store, href: "/profesionales" },
 ];
 
+import { DataShuffler } from "@/lib/dataUtils";
+
 export default function HomePage() {
-  const dailyDeals = MOCK_PRODUCTS.filter(p => p.oldPrice || p.discount);
-  const dealsToShow = Array.from(
-    new Map([...dailyDeals, ...MOCK_PRODUCTS.filter(p => p.featured)].map(item => [item.id, item])).values()
-  ).slice(0, 12);
+  const shuffler = new DataShuffler();
+
+  const dailyDeals = shuffler.getDailyDeals(MOCK_PRODUCTS, 10);
+  const featuredProducts = shuffler.getFeaturedProducts(MOCK_PRODUCTS, 10);
+  const lastViewed = shuffler.getLastViewedProducts(MOCK_PRODUCTS, 10);
+  const techProducts = shuffler.getProductsByCategory(MOCK_PRODUCTS, "Tecnología y celulares", 10);
+  const entrepreneurs = shuffler.getProductsBySellerType(MOCK_PRODUCTS, "Emprendedor", 10);
+  const localStores = shuffler.getProductsBySellerType(MOCK_PRODUCTS, "Comercio", 10);
+  
+  const servicesToday = shuffler.getServicesAvailableToday(MOCK_SERVICES, 12);
+  const verifiedPros = shuffler.getVerifiedProfessionals(MOCK_PROFESSIONALS, 12);
+  
+  const catalogProducts = shuffler.getRemainingProducts(MOCK_PRODUCTS, 10);
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -143,48 +154,108 @@ export default function HomePage() {
       </section>
 
       {/* ═══ OFERTAS DEL DÍA ═══ */}
-      <MarketSection eyebrow="Exclusivo" title="Ofertas del día" description="Productos locales con precio especial por tiempo limitado." href="/productos?ofertas=true" linkLabel="Ver todas" className="border-t border-slate-200">
-        <MarketCarousel>
-          {dealsToShow.map(p => (
-            <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
-              <ProductCard product={p} />
-            </div>
-          ))}
-        </MarketCarousel>
-      </MarketSection>
+      {dailyDeals.length > 0 && (
+        <MarketSection eyebrow="Exclusivo" title="Ofertas del día" description="Productos locales con precio especial por tiempo limitado." href="/productos?ofertas=true" linkLabel="Ver todas" className="border-t border-slate-200">
+          <MarketCarousel>
+            {dailyDeals.map(p => (
+              <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
+                <ProductCard product={p} />
+              </div>
+            ))}
+          </MarketCarousel>
+        </MarketSection>
+      )}
 
       {/* ═══ DESTACADOS ═══ */}
-      <MarketSection eyebrow="Tendencias" title="Productos destacados" href="/productos" className="border-t border-slate-200">
-        <MarketCarousel>
-          {MOCK_PRODUCTS.filter(p => p.featured).slice(0, 12).map(p => (
-            <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
-              <ProductCard product={p} />
-            </div>
-          ))}
-        </MarketCarousel>
-      </MarketSection>
+      {featuredProducts.length > 0 && (
+        <MarketSection eyebrow="Tendencias" title="Productos destacados" href="/productos" className="border-t border-slate-200">
+          <MarketCarousel>
+            {featuredProducts.map(p => (
+              <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
+                <ProductCard product={p} />
+              </div>
+            ))}
+          </MarketCarousel>
+        </MarketSection>
+      )}
+
+      {/* ═══ VISTOS RECIENTEMENTE ═══ */}
+      {lastViewed.length > 0 && (
+        <MarketSection eyebrow="Para vos" title="Última visita" href="/productos" className="border-t border-slate-200">
+          <MarketCarousel>
+            {lastViewed.map(p => (
+              <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
+                <ProductCard product={p} />
+              </div>
+            ))}
+          </MarketCarousel>
+        </MarketSection>
+      )}
 
       {/* ═══ SERVICIOS ═══ */}
-      <MarketSection eyebrow="Soluciones locales" title="Servicios disponibles hoy" description="Profesionales listos para asistirte." href="/servicios" linkLabel="Ver todos" className="border-t border-slate-200 bg-white">
-        <MarketCarousel>
-          {MOCK_SERVICES.slice(0, 12).map(s => (
-            <div key={s.id} className="min-w-0 flex-[0_0_86%] sm:flex-[0_0_48%] lg:flex-[0_0_31%] xl:flex-[0_0_24%] py-4">
-              <ServiceCard service={s} />
-            </div>
-          ))}
-        </MarketCarousel>
-      </MarketSection>
+      {servicesToday.length > 0 && (
+        <MarketSection eyebrow="Soluciones locales" title="Servicios disponibles hoy" description="Profesionales listos para asistirte." href="/servicios" linkLabel="Ver todos" className="border-t border-slate-200 bg-white">
+          <MarketCarousel>
+            {servicesToday.map(s => (
+              <div key={s.id} className="min-w-0 flex-[0_0_86%] sm:flex-[0_0_48%] lg:flex-[0_0_31%] xl:flex-[0_0_24%] py-4">
+                <ServiceCard service={s} />
+              </div>
+            ))}
+          </MarketCarousel>
+        </MarketSection>
+      )}
+
+      {/* ═══ TECNOLOGÍA ═══ */}
+      {techProducts.length > 0 && (
+        <MarketSection eyebrow="Novedades" title="Tecnología y Celulares" href="/productos?category=tecnologia" className="border-t border-slate-200 bg-white">
+          <MarketCarousel>
+            {techProducts.map(p => (
+              <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
+                <ProductCard product={p} />
+              </div>
+            ))}
+          </MarketCarousel>
+        </MarketSection>
+      )}
 
       {/* ═══ PROFESIONALES ═══ */}
-      <MarketSection eyebrow="Confianza" title="Profesionales verificados" description="Con identidad validada por MDP Market." href="/profesionales" linkLabel="Ver listado" className="border-t border-slate-200 bg-white">
-        <MarketCarousel>
-          {MOCK_PROFESSIONALS.filter(p => p.verified).slice(0, 12).map(p => (
-            <div key={p.id} className="min-w-0 flex-[0_0_86%] sm:flex-[0_0_48%] lg:flex-[0_0_31%] xl:flex-[0_0_24%] py-4">
-              <ProfessionalCard professional={p} />
-            </div>
-          ))}
-        </MarketCarousel>
-      </MarketSection>
+      {verifiedPros.length > 0 && (
+        <MarketSection eyebrow="Confianza" title="Profesionales verificados" description="Con identidad validada por MDP Market." href="/profesionales" linkLabel="Ver listado" className="border-t border-slate-200 bg-white">
+          <MarketCarousel>
+            {verifiedPros.map(p => (
+              <div key={p.id} className="min-w-0 flex-[0_0_86%] sm:flex-[0_0_48%] lg:flex-[0_0_31%] xl:flex-[0_0_24%] py-4">
+                <ProfessionalCard professional={p} />
+              </div>
+            ))}
+          </MarketCarousel>
+        </MarketSection>
+      )}
+      
+      {/* ═══ COMERCIOS LOCALES ═══ */}
+      {localStores.length > 0 && (
+        <MarketSection eyebrow="De la zona" title="Comercios locales" href="/productos" className="border-t border-slate-200 bg-white">
+          <MarketCarousel>
+            {localStores.map(p => (
+              <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
+                <ProductCard product={p} />
+              </div>
+            ))}
+          </MarketCarousel>
+        </MarketSection>
+      )}
+
+      {/* ═══ EMPRENDEDORES ═══ */}
+      {entrepreneurs.length > 0 && (
+        <MarketSection eyebrow="Artesanal" title="Emprendedores marplatenses" href="/productos" className="border-t border-slate-200 bg-white">
+          <MarketCarousel>
+            {entrepreneurs.map(p => (
+              <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
+                <ProductCard product={p} />
+              </div>
+            ))}
+          </MarketCarousel>
+        </MarketSection>
+      )}
 
       {/* ═══ CATÁLOGO ═══ */}
       <section className="bg-slate-50 py-16 border-t border-slate-200">
@@ -193,7 +264,7 @@ export default function HomePage() {
             <h2 className="text-2xl font-semibold tracking-tight text-slate-950">Explorar el catálogo</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6">
-            {MOCK_PRODUCTS.slice(12, 22).map(p => (
+            {catalogProducts.map(p => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>

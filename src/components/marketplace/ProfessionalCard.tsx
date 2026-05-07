@@ -9,59 +9,65 @@ const ProfessionalCard: React.FC<{ professional: Professional }> = ({ profession
   const description = professional.bio || professional.headline || "Profesional verificado en MDP Market.";
 
   return (
-    <Link href={`/profesionales/${professional.slug}`} className="block h-full group">
-      <article className="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_10px_32px_rgba(15,23,42,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_48px_rgba(15,23,42,0.11)] flex flex-col">
-        {/* Header */}
-        <div className="flex items-start gap-3.5 mb-4">
-          <div className="relative shrink-0">
-            <div className="w-14 h-14 rounded-2xl overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50 border border-slate-200/60 shadow-inner">
-              <img
-                src={professional.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${professional.name}`}
-                alt={professional.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            {professional.verified && (
-              <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-0.5 border-2 border-white shadow-sm">
-                <CheckCircle2 className="w-2.5 h-2.5 text-white" strokeWidth={3} />
-              </div>
-            )}
-          </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-[15px] font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+    <article className="h-full rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_10px_32px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_48px_rgba(15,23,42,0.10)] flex flex-col">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-4">
+          <img 
+            src={professional.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${professional.name}`}
+            alt={professional.name}
+            className="h-16 w-16 rounded-2xl object-cover shadow-sm bg-slate-50" 
+          />
+          <div>
+            <h3 className="text-lg font-semibold text-slate-950 truncate max-w-[140px] sm:max-w-[180px]">
               {professional.name}
             </h3>
-            <p className="text-xs font-medium text-blue-600 mt-0.5">{professional.profession}</p>
-            <div className="flex items-center gap-1.5 mt-1.5">
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-600">
-                <Star className="h-3 w-3 fill-current" />{professional.rating.average}
-              </span>
-              <span className="text-[10px] font-medium text-slate-400">({professional.rating.totalReviews})</span>
-            </div>
+            <p className="text-sm font-medium text-blue-600 line-clamp-1">
+              {professional.profession}
+            </p>
           </div>
         </div>
 
-        <p className="text-[13px] text-slate-500 font-medium line-clamp-2 leading-relaxed mb-4">{description}</p>
+        {professional.verified && (
+          <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-700 tracking-wider uppercase shrink-0">
+            Verificado
+          </span>
+        )}
+      </div>
 
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1 text-[10px] font-medium text-slate-500 border border-slate-100/80">
-            <MapPin className="w-3 h-3" />{professional.zones[0]}
+      <div className="mt-4 flex items-center gap-3 text-sm text-slate-600">
+        <span className="font-semibold text-slate-900 flex items-center gap-1">
+          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" /> {professional.rating.average}
+        </span>
+        <span className="text-slate-400">•</span>
+        <span className="font-medium">{professional.stats.completedJobs} trabajos</span>
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {professional.zones.slice(0, 3).map(z => (
+          <span key={z} className="rounded-full border border-slate-200 px-2.5 py-1 text-[11px] font-medium text-slate-600 bg-slate-50">
+            {z}
           </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1 text-[10px] font-medium text-slate-500 border border-slate-100/80">
-            <Clock className="w-3 h-3" />{professional.stats.responseTime}
-          </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1 text-[10px] font-medium text-slate-500 border border-slate-100/80">
-            <Briefcase className="w-3 h-3" />{professional.stats.completedJobs} trabajos
-          </span>
+        ))}
+      </div>
+
+      <div className="mt-auto pt-6 flex items-end justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            Desde
+          </p>
+          <p className="text-xl font-semibold text-slate-950">
+            ${(professional.priceFrom || 15000).toLocaleString("es-AR")}
+          </p>
         </div>
 
-        <div className="mt-auto pt-4 border-t border-slate-100/80">
-          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 group-hover:gap-2.5 transition-all">
-            Ver perfil <ArrowRight className="w-4 h-4" />
-          </span>
-        </div>
-      </article>
-    </Link>
+        <Link 
+          href={`/profesionales/${professional.slug}`}
+          className="inline-flex h-10 items-center justify-center rounded-full bg-slate-950 px-5 text-sm font-semibold text-white transition hover:bg-slate-800 shrink-0"
+        >
+          Ver perfil
+        </Link>
+      </div>
+    </article>
   );
 };
 

@@ -79,7 +79,12 @@ export type Product = {
   questions?: Question[];
   sellerReviews?: Review[];
   createdAt: string;
-  imagePrompt?: string;
+  imagePrompts?: {
+    main: string;
+    side: string;
+    detail: string;
+    context: string;
+  };
 };
 
 export type Service = {
@@ -121,7 +126,9 @@ export type Service = {
   urgentAvailable?: boolean;
   responseTime: string;
   completedJobs: number;
-  imagePrompt?: string;
+  imagePrompts?: {
+    main: string;
+  };
 };
 
 export type Professional = {
@@ -161,6 +168,9 @@ export type Professional = {
   priceFrom: number;
   availability: string;
   faq: string[];
+  imagePrompts?: {
+    main: string;
+  };
 };
 
 export type Seller = {

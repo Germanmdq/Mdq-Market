@@ -1,13 +1,26 @@
 import React from "react";
 import { CATEGORIES, ZONES } from "@/data/mockData";
 import { cn } from "@/lib/utils";
+import { ProductFilterState } from "@/app/productos/page";
 
 interface ProductFiltersProps {
+  filters: ProductFilterState;
+  setFilters: React.Dispatch<React.SetStateAction<ProductFilterState>>;
   mobile?: boolean;
-  onClose?: () => void;
 }
 
-const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile, onClose }) => {
+const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, mobile }) => {
+  
+  const toggleArrayItem = (key: keyof ProductFilterState, val: string) => {
+    setFilters(prev => {
+      const arr = prev[key] as string[];
+      if (arr.includes(val)) {
+        return { ...prev, [key]: arr.filter(x => x !== val) };
+      }
+      return { ...prev, [key]: [...arr, val] };
+    });
+  };
+
   return (
     <div className={cn("space-y-8", mobile ? "pb-24" : "")}>
       {!mobile && (
@@ -20,7 +33,12 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile, onClose }) => {
         <div className="space-y-2">
           {CATEGORIES.filter(c => c.type === 'producto' || c.type === 'mixto').map(cat => (
             <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
-              <input type="checkbox" className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" />
+              <input 
+                type="checkbox" 
+                checked={filters.categories.includes(cat.name)}
+                onChange={() => toggleArrayItem("categories", cat.name)}
+                className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
+              />
               <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">{cat.name}</span>
             </label>
           ))}
@@ -34,11 +52,15 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile, onClose }) => {
           <input 
             type="number" 
             placeholder="Mínimo" 
+            value={filters.minPrice}
+            onChange={(e) => setFilters(f => ({ ...f, minPrice: e.target.value }))}
             className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-blue-600 focus:bg-white transition-all"
           />
           <input 
             type="number" 
             placeholder="Máximo" 
+            value={filters.maxPrice}
+            onChange={(e) => setFilters(f => ({ ...f, maxPrice: e.target.value }))}
             className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-blue-600 focus:bg-white transition-all"
           />
         </div>
@@ -50,7 +72,12 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile, onClose }) => {
         <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
           {ZONES.map(zone => (
             <label key={zone} className="flex items-center gap-3 cursor-pointer group">
-              <input type="checkbox" className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" />
+              <input 
+                type="checkbox" 
+                checked={filters.zones.includes(zone)}
+                onChange={() => toggleArrayItem("zones", zone)}
+                className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
+              />
               <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">{zone}</span>
             </label>
           ))}
@@ -63,7 +90,12 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile, onClose }) => {
         <div className="space-y-2">
           {["Nuevo", "Usado como nuevo", "Usado bueno", "Usado con detalles", "Reacondicionado"].map(status => (
             <label key={status} className="flex items-center gap-3 cursor-pointer group">
-              <input type="checkbox" className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" />
+              <input 
+                type="checkbox" 
+                checked={filters.conditions.includes(status)}
+                onChange={() => toggleArrayItem("conditions", status)}
+                className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
+              />
               <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">{status}</span>
             </label>
           ))}
@@ -74,9 +106,14 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile, onClose }) => {
       <div>
         <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4">Vendedor</h3>
         <div className="space-y-2">
-          {["Verificado", "Comercio", "Emprendedor", "Particular"].map(type => (
+          {["Comercio", "Emprendedor", "Particular"].map(type => (
             <label key={type} className="flex items-center gap-3 cursor-pointer group">
-              <input type="checkbox" className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" />
+              <input 
+                type="checkbox" 
+                checked={filters.sellerTypes.includes(type)}
+                onChange={() => toggleArrayItem("sellerTypes", type)}
+                className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
+              />
               <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">{type}</span>
             </label>
           ))}
@@ -87,18 +124,39 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile, onClose }) => {
       <div>
         <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4">Operación</h3>
         <div className="space-y-2">
-          {[
-            { label: "Pago protegido", icon: "🛡️" },
-            { label: "Entrega MDP", icon: "🚚" },
-            { label: "Destacados", icon: "⭐" }
-          ].map(op => (
-            <label key={op.label} className="flex items-center gap-3 cursor-pointer group">
-              <input type="checkbox" className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" />
-              <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">
-                {op.icon} {op.label}
-              </span>
-            </label>
-          ))}
+          <label className="flex items-center gap-3 cursor-pointer group">
+            <input 
+              type="checkbox" 
+              checked={filters.protectedPaymentOnly}
+              onChange={() => setFilters(f => ({ ...f, protectedPaymentOnly: !f.protectedPaymentOnly }))}
+              className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
+            />
+            <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">
+              🛡️ Pago protegido
+            </span>
+          </label>
+          <label className="flex items-center gap-3 cursor-pointer group">
+            <input 
+              type="checkbox" 
+              checked={filters.deliveryOnly}
+              onChange={() => setFilters(f => ({ ...f, deliveryOnly: !f.deliveryOnly }))}
+              className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
+            />
+            <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">
+              🚚 Entrega MDP
+            </span>
+          </label>
+          <label className="flex items-center gap-3 cursor-pointer group">
+            <input 
+              type="checkbox" 
+              checked={filters.verifiedOnly}
+              onChange={() => setFilters(f => ({ ...f, verifiedOnly: !f.verifiedOnly }))}
+              className="w-5 h-5 rounded-lg border-2 border-slate-200 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer" 
+            />
+            <span className="text-sm font-bold text-slate-600 group-hover:text-blue-600 transition-colors">
+              ✅ Vendedor Verificado
+            </span>
+          </label>
         </div>
       </div>
     </div>

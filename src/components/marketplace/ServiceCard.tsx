@@ -67,7 +67,7 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
             </span>
           </div>
 
-          <div className="mt-4 flex h-10 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(37,99,235,0.3)] transition hover:bg-blue-700 hover:shadow-[0_6px_20px_rgba(37,99,235,0.4)]">
+          <div className="mt-4 flex h-10 items-center justify-center rounded-full bg-slate-950 px-4 text-sm font-medium text-white transition hover:bg-slate-800">
             Reservar
           </div>
         </div>
