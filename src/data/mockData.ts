@@ -4073,3 +4073,89 @@ export const MOCK_PRODUCTS: Product[] = [
     }
 }
 ];
+
+export const CURRENT_USER = {
+  id: "user-001",
+  name: "Germán",
+  email: "german@mdpmarket.com",
+  avatar: "/avatars/user-german.jpg",
+  role: "buyer",
+  location: "Mar del Plata",
+  zone: "Centro",
+  phone: "+54 223 000 0000",
+  verified: true,
+  memberSince: "2026-01-01",
+  stats: {
+    purchases: 8,
+    activeOrders: 2,
+    completedOrders: 6,
+    claims: 0,
+    favorites: 14,
+  },
+};
+
+export const MOCK_PROFESSIONAL_DETAILS = MOCK_PROFESSIONALS.map((professional) => ({
+  ...professional,
+  headline:
+    professional.headline ||
+    `${professional.profession} verificado en Mar del Plata`,
+  bio:
+    professional.bio ||
+    `${professional.profession} con experiencia comprobable, atención por zonas y reserva protegida dentro de MDP Market.`,
+  credentials: (professional as any).credentials || [
+    {
+      type: "Identidad verificada",
+      name: "DNI verificado",
+      status: "Verificada",
+      verifiedAt: "2026-05-01",
+    },
+    {
+      type: "Oficio verificado",
+      name: professional.profession,
+      status: "Verificada",
+      verifiedAt: "2026-05-01",
+    },
+  ],
+  experience: (professional as any).experience || {
+    years: 8,
+    summary:
+      "Profesional con experiencia en atención domiciliaria, trabajos coordinados por zona y reputación validada por clientes.",
+    specialties: professional.services || ["Atención domiciliaria", "Urgencias", "Presupuestos"],
+    education: ["Formación técnica/profesional verificada"],
+    certifications: ["Identidad validada por MDP Market"],
+    workHistory: [
+      {
+        title: "Atención a clientes particulares",
+        description:
+          "Trabajos realizados en distintos barrios de Mar del Plata con seguimiento y reserva protegida.",
+        year: "2020 - Actualidad",
+      },
+    ],
+  },
+  availability: [
+    {
+      id: `${professional.id}-slot-1`,
+      day: "Hoy",
+      date: "2026-05-06",
+      startTime: "16:00",
+      endTime: "19:00",
+      status: "Disponible",
+    },
+    {
+      id: `${professional.id}-slot-2`,
+      day: "Mañana",
+      date: "2026-05-07",
+      startTime: "10:00",
+      endTime: "13:00",
+      status: "Disponible",
+    },
+    {
+      id: `${professional.id}-slot-3`,
+      day: "Mañana",
+      date: "2026-05-07",
+      startTime: "14:00",
+      endTime: "17:00",
+      status: "Disponible",
+    },
+  ],
+}));
