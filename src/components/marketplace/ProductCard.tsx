@@ -19,13 +19,13 @@ export default function ProductCard({ product }: { product: Product }) {
   const imageSrc = getProductMainImage(product);
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(15,23,42,0.10)] h-full flex flex-col">
+    <article className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_16px_44px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_26px_76px_rgba(15,23,42,0.18)] h-full flex flex-col">
       <Link href={`/productos/${product.slug}`} className="block flex-1 flex flex-col">
-        <div className="relative aspect-square overflow-hidden bg-slate-50">
+        <div className="relative aspect-square overflow-hidden rounded-t-[inherit] bg-slate-50">
           <img
             src={imageSrc}
             alt={product.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full rounded-t-[inherit] object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
             onError={(event) => {
               const fallback = "/fallbacks/producto.svg";

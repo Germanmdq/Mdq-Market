@@ -13,12 +13,12 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
 
   return (
     <Link href={`/servicios/${service.slug}`} className="block h-full group">
-      <article className="h-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(15,23,42,0.10)] flex flex-col">
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-50">
+      <article className="h-full overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_16px_44px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_26px_76px_rgba(15,23,42,0.18)] flex flex-col">
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-[inherit] bg-slate-50">
           <img
             src={imgSrc}
             alt={service.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full rounded-t-[inherit] object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
             onError={(e) => {
               if (!e.currentTarget.src.includes(FALLBACK)) {

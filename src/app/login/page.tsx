@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { Mail, Lock, AlertCircle, Loader2, ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") || "/mi-cuenta";
+  const rawNext = searchParams.get("next") || "/cuenta";
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/cuenta";
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,11 +28,11 @@ function LoginForm() {
     });
 
     if (error) {
-      setError(error.message);
+      setError(error.message === "Invalid login credentials" ? "Email o contraseña incorrectos." : error.message);
       setLoading(false);
     } else {
-      router.push(next);
       router.refresh();
+      window.location.assign(next);
     }
   };
 

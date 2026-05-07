@@ -21,13 +21,13 @@ const ProfessionalCard: React.FC<{ professional: ProfessionalCardData }> = ({ pr
   const zones = Array.isArray(professional.zones) ? professional.zones : [];
 
   return (
-    <article className="h-full rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_10px_32px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_48px_rgba(15,23,42,0.10)] flex flex-col">
+    <article className="h-full rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_16px_44px_rgba(15,23,42,0.12)] transition hover:-translate-y-0.5 hover:shadow-[0_26px_76px_rgba(15,23,42,0.18)] flex flex-col">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
           <img 
             src={professional.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${professional.name}`}
             alt={professional.name}
-            className="h-16 w-16 rounded-2xl object-cover shadow-sm bg-slate-50" 
+            className="h-16 w-16 rounded-2xl object-cover shadow-md bg-slate-50"
           />
           <div>
             <h3 className="text-lg font-semibold text-slate-950 truncate max-w-[140px] sm:max-w-[180px]">

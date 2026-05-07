@@ -65,7 +65,7 @@ export default function ProductPurchasePanel({
 
   return (
     <div className="grid gap-4">
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
         <p className="text-sm font-semibold text-slate-950">¿Cuándo podés recibirlo?</p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
           {DELIVERY_SLOTS.map((deliverySlot) => (

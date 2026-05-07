@@ -33,9 +33,9 @@
   --black-deep: #020617;
 
   /* Sombras */
-  --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.06);
-  --shadow-card-hover: 0 18px 50px rgba(15, 23, 42, 0.10);
-  --shadow-mega: 0 24px 80px rgba(15, 23, 42, 0.16);
+  --shadow-card: 0 16px 42px rgba(15, 23, 42, 0.12);
+  --shadow-card-hover: 0 24px 70px rgba(15, 23, 42, 0.18);
+  --shadow-mega: 0 28px 90px rgba(15, 23, 42, 0.20);
 }
 
 .dark {
@@ -99,3 +99,16 @@ body {
 @utility bg-card { background-color: var(--card); }
 @utility text-card-foreground { color: var(--card-foreground); }
 @utility rounded-pill { border-radius: 9999px; }
+
+.shadow-sm {
+  box-shadow: var(--shadow-card) !important;
+}
+
+.shadow-md,
+.hover\:shadow-md:hover {
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.14) !important;
+}
+
+.shadow-xl {
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18) !important;
+}

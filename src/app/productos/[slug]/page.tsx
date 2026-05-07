@@ -58,7 +58,7 @@ export default async function ProductDetailPage({
           
           {/* ═══ LEFT: Gallery ═══ */}
           <div className="space-y-4">
-            <div className="relative aspect-square bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden group">
+            <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_22px_70px_rgba(15,23,42,0.16)] group">
               {product.status === "sold" && (
                 <div className="absolute inset-0 bg-slate-950/40 z-10 flex items-center justify-center backdrop-blur-sm">
                   <span className="text-white text-lg font-semibold tracking-widest bg-slate-950 px-6 py-3 rounded-full">VENDIDO</span>
@@ -68,7 +68,7 @@ export default async function ProductDetailPage({
               <img 
                 src={mainImage} 
                 alt={product.title} 
-                className="h-full w-full object-contain p-4 transition-transform duration-500" 
+                className="aspect-[4/3] h-full w-full rounded-[inherit] object-cover transition-transform duration-500 group-hover:scale-[1.02]"
               />
               
               {product.discount ? (
@@ -81,7 +81,7 @@ export default async function ProductDetailPage({
             {gallery.length > 1 && (
               <div className="flex gap-4 overflow-x-auto no-scrollbar py-2">
                 {gallery.map((img, i) => (
-                  <div key={i} className={cn("relative w-20 h-20 rounded-xl overflow-hidden border shrink-0 transition-all bg-slate-50", i === 0 ? "border-slate-950" : "border-slate-200 hover:border-slate-400")}>
+                  <div key={i} className={cn("relative w-20 h-20 rounded-2xl overflow-hidden border shrink-0 transition-all bg-slate-50 shadow-sm", i === 0 ? "border-slate-950" : "border-slate-200 hover:border-slate-400")}>
                     <img src={img} alt="" className="h-full w-full object-cover" />
                   </div>
                 ))}
@@ -115,7 +115,7 @@ export default async function ProductDetailPage({
 
             {/* Seller & Safety */}
             <div className="space-y-4 pt-6 border-t border-slate-200">
-              <div className="rounded-2xl border border-slate-200 p-5 bg-white shadow-sm flex items-start gap-4">
+              <div className="rounded-3xl border border-slate-200 p-5 bg-white shadow-sm flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
                   <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${product.seller_name || "Vendedor"}`} alt="" className="w-full h-full object-cover" />
                 </div>
@@ -128,7 +128,7 @@ export default async function ProductDetailPage({
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 p-5 bg-white shadow-sm">
+              <div className="rounded-3xl border border-slate-200 p-5 bg-white shadow-sm">
                 <p className="text-sm font-semibold text-slate-950 flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-blue-600" /> Compra protegida
                 </p>
@@ -138,7 +138,7 @@ export default async function ProductDetailPage({
               </div>
               
               {product.mdp_delivery_available && (
-                <div className="rounded-2xl border border-slate-200 p-5 bg-white shadow-sm">
+                <div className="rounded-3xl border border-slate-200 p-5 bg-white shadow-sm">
                   <p className="text-sm font-semibold text-slate-950 flex items-center gap-2">
                     <Truck className="w-5 h-5 text-emerald-600" /> Entrega MDP
                   </p>
@@ -209,7 +209,7 @@ export default async function ProductDetailPage({
                 "Recibís el producto.",
                 "Confirmás recepción y se libera el pago.",
               ].map((step, index) => (
-                <li key={step} className="flex gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+                <li key={step} className="flex gap-3 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white">
                     {index + 1}
                   </span>
