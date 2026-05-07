@@ -25,10 +25,10 @@ export default async function MisPublicacionesPage() {
         
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
           <div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Mis Publicaciones</h1>
-            <p className="text-slate-500 font-medium mt-1">Gestioná tus productos a la venta en Mar del Plata.</p>
+            <h1 className="text-3xl font-semibold text-slate-950 tracking-tight">Mis Publicaciones</h1>
+            <p className="text-slate-500 mt-1">Gestioná tus productos a la venta en Mar del Plata</p>
           </div>
-          <Link href="/publicar" className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all">
+          <Link href="/publicar" className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white font-medium rounded-xl shadow-sm hover:bg-blue-700 transition-all">
             <PlusCircle className="w-5 h-5" />
             Publicar Nuevo Producto
           </Link>
@@ -38,7 +38,7 @@ export default async function MisPublicacionesPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
            {[
              { label: "Publicaciones", value: products?.length || 0, icon: Package, color: "text-blue-600", bg: "bg-blue-50" },
-             { label: "Vistas Totales", value: products?.reduce((acc, p) => acc + (p.views || 0), 0) || 0, icon: Eye, color: "text-purple-600", bg: "bg-purple-50" },
+             { label: "Vistas Totales", value: products?.reduce((acc, p) => acc + (p.views || 0), 0) || 0, icon: Eye, color: "text-slate-600", bg: "bg-slate-50" },
              { label: "Ventas", value: products?.reduce((acc, p) => acc + (p.sold_count || 0), 0) || 0, icon: ShoppingCart, color: "text-emerald-600", bg: "bg-emerald-50" },
              { label: "Ingresos Est.", value: formatPrice(products?.reduce((acc, p) => acc + ((p.sold_count || 0) * p.price), 0) || 0), icon: BarChart3, color: "text-amber-600", bg: "bg-amber-50" },
            ].map((stat) => (
@@ -46,35 +46,35 @@ export default async function MisPublicacionesPage() {
                 <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center mb-3", stat.bg, stat.color)}>
                   <stat.icon className="w-5 h-5" />
                 </div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</p>
-                <p className="text-xl font-black text-slate-900 mt-1">{stat.value}</p>
+                <p className="text-[10px] font-medium text-slate-500 uppercase">{stat.label}</p>
+                <p className="text-xl font-semibold text-slate-950 mt-1">{stat.value}</p>
              </div>
            ))}
         </div>
 
         {(!products || products.length === 0) ? (
-          <div className="bg-white rounded-[2.5rem] p-20 text-center border border-slate-200 shadow-sm">
-            <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto mb-6">
+          <div className="bg-white rounded-3xl p-20 text-center border border-slate-200 shadow-sm">
+            <div className="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <LayoutDashboard className="w-10 h-10 text-slate-200" />
             </div>
-            <h2 className="text-2xl font-black text-slate-900 mb-2">No tenés publicaciones activas</h2>
-            <p className="text-slate-500 font-medium mb-10">¡Empezá a vender hoy mismo en el marketplace más grande de MDP!</p>
-            <Link href="/publicar" className="inline-flex items-center gap-2 px-10 py-4 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all">
+            <h2 className="text-2xl font-semibold text-slate-950 mb-2">No tenés publicaciones activas</h2>
+            <p className="text-slate-500 mb-10">Empezá a vender hoy mismo en el marketplace más grande de MDP</p>
+            <Link href="/publicar" className="inline-flex items-center gap-2 px-10 py-4 bg-blue-600 text-white font-medium rounded-xl shadow-sm hover:bg-blue-700 transition-all">
               <PlusCircle className="w-5 h-5" />
               Publicar mi primer producto
             </Link>
           </div>
         ) : (
-          <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50/50 border-b border-slate-100">
-                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Producto</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Estado</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Precio</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Stock</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Acciones</th>
+                    <th className="px-8 py-5 text-xs font-medium text-slate-500 uppercase">Producto</th>
+                    <th className="px-8 py-5 text-xs font-medium text-slate-500 uppercase">Estado</th>
+                    <th className="px-8 py-5 text-xs font-medium text-slate-500 uppercase">Precio</th>
+                    <th className="px-8 py-5 text-xs font-medium text-slate-500 uppercase">Stock</th>
+                    <th className="px-8 py-5 text-xs font-medium text-slate-500 uppercase text-right">Acciones</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -92,24 +92,24 @@ export default async function MisPublicacionesPage() {
                             )}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-bold text-slate-900 truncate max-w-[200px]">{product.title}</p>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{product.category}</p>
+                            <p className="font-semibold text-slate-950 truncate max-w-[200px]">{product.title}</p>
+                            <p className="text-xs text-slate-500">{product.category}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-8 py-6">
                          <span className={cn(
-                           "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
+                           "px-3 py-1 rounded-full text-xs font-medium",
                            product.status === 'published' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
                          )}>
                            {product.status === 'published' ? 'Activo' : 'Pausado'}
                          </span>
                       </td>
                       <td className="px-8 py-6">
-                        <p className="font-black text-slate-900">{formatPrice(product.price)}</p>
+                        <p className="font-semibold text-slate-950">{formatPrice(product.price)}</p>
                       </td>
                       <td className="px-8 py-6">
-                        <p className="font-bold text-slate-600">{product.stock || 0}</p>
+                        <p className="font-medium text-slate-600">{product.stock || 0}</p>
                       </td>
                       <td className="px-8 py-6 text-right">
                         <div className="flex items-center justify-end gap-2">
