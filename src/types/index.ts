@@ -3,11 +3,11 @@ export type Category = {
   name: string;
   slug: string;
   type: "producto" | "servicio" | "mixto";
-  description: string;
+  description?: string;
   icon: string;
-  image: string;
-  featured: boolean;
-  subcategories: Subcategory[];
+  image?: string;
+  featured?: boolean;
+  subcategories?: Subcategory[];
 };
 
 export type Subcategory = {

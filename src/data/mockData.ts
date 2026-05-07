@@ -3,16 +3,16 @@ import { Category, Product, Service, Professional } from "@/types";
 export const ZONES = ["Centro", "Macrocentro", "G\u00fcemes", "Playa Grande", "Punta Mogotes", "Puerto", "Constituci\u00f3n", "La Perla", "Chauv\u00edn", "San Juan", "San Jos\u00e9"];
 
 export const CATEGORIES = [
-  { id: "c1", name: "Tecnología y celulares", slug: "tecnologia", icon: "Laptop", type: "producto" },
-  { id: "c2", name: "Electrodomésticos", slug: "electrodomesticos", icon: "Tv", type: "producto" },
-  { id: "c3", name: "Hogar y muebles", slug: "hogar", icon: "Sofa", type: "producto" },
-  { id: "c4", name: "Herramientas y construcción", slug: "herramientas", icon: "Hammer", type: "producto" },
-  { id: "c5", name: "Indumentaria y accesorios", slug: "indumentaria", icon: "Shirt", type: "producto" },
-  { id: "c6", name: "Bebés, niños y juguetes", slug: "bebes", icon: "Baby", type: "producto" },
-  { id: "c7", name: "Bicicletas y movilidad", slug: "movilidad", icon: "Bike", type: "producto" },
-  { id: "s1", name: "Mantenimiento y Reparación", slug: "mantenimiento", icon: "Wrench", type: "servicio" },
-  { id: "s2", name: "Servicios Profesionales", slug: "profesionales", icon: "Briefcase", type: "servicio" },
-  { id: "s3", name: "Salud y Bienestar", slug: "salud", icon: "Heart", type: "servicio" }
+  { id: "c1", name: "Tecnología y celulares", slug: "tecnologia", icon: "Laptop", type: "producto", description: "Celulares, notebooks, accesorios y productos tecnológicos en Mar del Plata." },
+  { id: "c2", name: "Electrodomésticos", slug: "electrodomesticos", icon: "Tv", type: "producto", description: "Electrodomésticos nuevos y usados con entrega local." },
+  { id: "c3", name: "Hogar y muebles", slug: "hogar", icon: "Sofa", type: "producto", description: "Muebles, decoración, bazar y productos para tu casa." },
+  { id: "c4", name: "Herramientas y construcción", slug: "herramientas", icon: "Hammer", type: "producto", description: "Herramientas, máquinas, construcción y artículos de trabajo." },
+  { id: "c5", name: "Indumentaria y accesorios", slug: "indumentaria", icon: "Shirt", type: "producto", description: "Indumentaria, calzado, accesorios y productos de moda local." },
+  { id: "c6", name: "Bebés, niños y juguetes", slug: "bebes", icon: "Baby", type: "producto", description: "Productos para bebés, niños, juguetes y artículos familiares." },
+  { id: "c7", name: "Bicicletas y movilidad", slug: "movilidad", icon: "Bike", type: "producto", description: "Bicicletas, monopatines, accesorios y movilidad sustentable." },
+  { id: "s1", name: "Mantenimiento y Reparación", slug: "mantenimiento", icon: "Wrench", type: "servicio", description: "Prestadores verificados para resolver mantenimiento general." },
+  { id: "s2", name: "Servicios Profesionales", slug: "profesionales", icon: "Briefcase", type: "servicio", description: "Profesionales con reputación, matrícula y reserva protegida." },
+  { id: "s3", name: "Salud y Bienestar", slug: "salud", icon: "Heart", type: "servicio", description: "Servicios orientados al bienestar, deporte y calidad de vida." }
 ];
 
 export const MOCK_PROFESSIONALS: Professional[] = [
