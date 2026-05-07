@@ -83,7 +83,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
       {/* Zone */}
       <div>
         <h3 className="text-sm font-semibold text-slate-900 mb-3">Zona</h3>
-        <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+        <div className="space-y-1.5">
           {ZONES.map((zone) => (
             <label key={zone} className="flex items-center gap-2.5 cursor-pointer group">
               <input

@@ -1,9 +1,17 @@
 import React, { Suspense } from "react";
+import Link from "next/link";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import type { Product } from "@/types/product";
 import { ProductGrid } from "@/components/marketplace/ProductGrid";
 import ProductFilters from "@/components/marketplace/ProductFilters";
+import ProductCard from "@/components/marketplace/ProductCard";
+import ServiceCard from "@/components/marketplace/ServiceCard";
+import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
+import { MarketCarousel } from "@/components/ui/MarketCarousel";
+import { MarketSection } from "@/components/marketplace/MarketSection";
+import { getPublishedServices } from "@/lib/services";
+import { MOCK_PROFESSIONALS } from "@/data/mockData";
 
 export default async function ProductsPage({
   searchParams,
@@ -97,6 +105,33 @@ export default async function ProductsPage({
 
   const products = (data ?? []) as Product[];
 
+  // Fetch additional content for sections below
+  const dealsQuery = supabase
+    .from("products")
+    .select("*")
+    .eq("status", "published")
+    .or("featured_deal.eq.true,discount.gt.0")
+    .order("created_at", { ascending: false })
+    .limit(8);
+
+  const featuredQuery = supabase
+    .from("products")
+    .select("*")
+    .eq("status", "published")
+    .eq("featured", true)
+    .order("created_at", { ascending: false })
+    .limit(8);
+
+  const [dealsResult, featuredResult] = await Promise.all([
+    dealsQuery,
+    featuredQuery,
+  ]);
+
+  const deals = (dealsResult.data ?? []) as Product[];
+  const featured = (featuredResult.data ?? []) as Product[];
+  const services = await getPublishedServices();
+  const professionals = MOCK_PROFESSIONALS.slice(0, 8);
+
   return (
     <main className="min-h-screen bg-slate-50">
       {/* Header */}
@@ -168,6 +203,86 @@ export default async function ProductsPage({
             )}
           </div>
         </div>
+      </div>
+
+      {/* Additional Sections */}
+      <div className="bg-white border-t border-slate-200">
+        {/* Ofertas del día */}
+        {deals.length > 0 && (
+          <MarketSection
+            eyebrow="Exclusivo"
+            title="Ofertas del día"
+            description="Productos locales con precio especial por tiempo limitado"
+            href="/productos?ofertas=true"
+            linkLabel="Ver todas"
+          >
+            <MarketCarousel>
+              {deals.map(p => (
+                <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
+                  <ProductCard product={p} />
+                </div>
+              ))}
+            </MarketCarousel>
+          </MarketSection>
+        )}
+
+        {/* Productos destacados */}
+        {featured.length > 0 && (
+          <MarketSection
+            eyebrow="Tendencias"
+            title="Productos destacados"
+            href="/productos?featured=true"
+            className="border-t border-slate-200"
+          >
+            <MarketCarousel>
+              {featured.map(p => (
+                <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
+                  <ProductCard product={p} />
+                </div>
+              ))}
+            </MarketCarousel>
+          </MarketSection>
+        )}
+
+        {/* Servicios */}
+        {services.length > 0 && (
+          <MarketSection
+            eyebrow="Soluciones locales"
+            title="Servicios disponibles"
+            description="Profesionales listos para asistirte"
+            href="/servicios"
+            linkLabel="Ver todos"
+            className="border-t border-slate-200 bg-slate-50"
+          >
+            <MarketCarousel>
+              {services.slice(0, 8).map(s => (
+                <div key={s.id} className="min-w-0 flex-[0_0_86%] sm:flex-[0_0_48%] lg:flex-[0_0_31%] xl:flex-[0_0_24%] py-4">
+                  <ServiceCard service={s} />
+                </div>
+              ))}
+            </MarketCarousel>
+          </MarketSection>
+        )}
+
+        {/* Profesionales */}
+        {professionals.length > 0 && (
+          <MarketSection
+            eyebrow="Confianza"
+            title="Profesionales verificados"
+            description="Con identidad validada por MDP Market"
+            href="/profesionales"
+            linkLabel="Ver listado"
+            className="border-t border-slate-200 bg-white"
+          >
+            <MarketCarousel>
+              {professionals.map(p => (
+                <div key={p.id} className="min-w-0 flex-[0_0_86%] sm:flex-[0_0_48%] lg:flex-[0_0_31%] xl:flex-[0_0_24%] py-4">
+                  <ProfessionalCard professional={p} />
+                </div>
+              ))}
+            </MarketCarousel>
+          </MarketSection>
+        )}
       </div>
     </main>
   );

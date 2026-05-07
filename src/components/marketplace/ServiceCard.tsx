@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Star, Clock, MapPin, CheckCircle2 } from "lucide-react";
 import { Service } from "@/types";
 import { formatPrice } from "@/lib/utils";
@@ -14,17 +13,19 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
 
   return (
     <Link href={`/servicios/${service.slug}`} className="block h-full group">
-      <article className="h-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_32px_rgba(15,23,42,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_48px_rgba(15,23,42,0.11)] flex flex-col">
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50">
-          <Image
+      <article className="h-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(15,23,42,0.10)] flex flex-col">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-50">
+          <img
             src={imgSrc}
             alt={service.title}
-            fill
-            sizes="(max-width: 640px) 86vw, (max-width: 1024px) 48vw, 28vw"
-            className="object-cover group-hover:scale-105 transition duration-500"
-            onError={() => setImgSrc(FALLBACK)}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+            onError={(e) => {
+              if (!e.currentTarget.src.includes(FALLBACK)) {
+                e.currentTarget.src = FALLBACK;
+              }
+            }}
           />
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
 
           {service.availability === "Hoy" && (
             <span className="absolute top-3 left-3 flex items-center gap-1.5 bg-emerald-600 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
