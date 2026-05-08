@@ -28,16 +28,19 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   }
 
   // Defensive fallbacks
-  const completedJobs = service.completedJobs ?? 0;
-  const rating = service.rating ?? 0;
+  const serviceAny = service as any;
+  const completedJobs = service.completedJobs ?? serviceAny.completed_jobs ?? 0;
+  const rating = Number(service.rating ?? 0);
   const reviewsCount = Array.isArray(service.reviews) ? service.reviews.length : (service.reviews ?? 0);
   const mainImage = service.image_url || service.image || "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?q=80&w=1200&auto=format&fit=crop";
   const gallery = service.gallery?.length ? service.gallery : [mainImage];
-  const zones = service.zones ?? [];
-  const responseTime = service.responseTime || "Menos de 2 horas";
+  const zones = Array.isArray(service.zones) ? service.zones : (serviceAny.zone ? [serviceAny.zone] : []);
+  const responseTime = service.responseTime || serviceAny.response_time || "A coordinar";
   const availability = service.availability || "Disponible";
   const specialty = service.specialty || service.subcategory || service.category;
   const description = service.description || "Servicio profesional verificado en MDP Market con reserva protegida.";
+  const professionalName = service.professionalName || serviceAny.professional_name || "Profesional MDP";
+  const priceFrom = Number(service.priceFrom ?? serviceAny.price_from ?? 0);
 
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
@@ -96,14 +99,14 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-100">
                         <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-white shadow-sm">
                            <Image 
-                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${service.professionalName}`} 
-                            alt={service.professionalName}
+                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${professionalName}`} 
+                            alt={professionalName}
                             fill
                            />
                         </div>
                         <div className="flex flex-col">
                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Profesional</span>
-                           <span className="font-bold text-gray-900">{service.professionalName}</span>
+                           <span className="font-bold text-gray-900">{professionalName}</span>
                         </div>
                      </div>
                   </div>
@@ -164,8 +167,8 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                <div className="flex flex-col mb-8">
                   <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Presupuesto inicial desde</span>
                   <div className="flex items-baseline gap-2">
-                     <span className="text-4xl font-black text-blue-900">{formatPrice(service.priceFrom)}</span>
-                     <span className="text-gray-400 text-sm">/ visita</span>
+                     <span className="text-4xl font-black text-blue-900">{priceFrom > 0 ? formatPrice(priceFrom) : "A presupuestar"}</span>
+                     {priceFrom > 0 && <span className="text-gray-400 text-sm">/ visita</span>}
                   </div>
                </div>
 
@@ -181,7 +184,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
                <div className="flex flex-col gap-3">
                   <Link 
-                    href={`/checkout/profesional?service=${service.id}&title=${encodeURIComponent(service.title)}&professionalName=${encodeURIComponent(service.professionalName || "Profesional MDP")}&price=${service.priceFrom || 0}`}
+                    href={`/checkout/profesional?service=${service.id}&title=${encodeURIComponent(service.title)}&professionalName=${encodeURIComponent(professionalName)}&price=${priceFrom || 0}`}
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-xl transition-all text-center flex items-center justify-center gap-2"
                   >
                      <Calendar className="w-5 h-5" />

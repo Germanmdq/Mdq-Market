@@ -1,532 +1,276 @@
-"use client";
-
-import React, { useEffect, useState, use } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import {
-  Star, MapPin, ShieldCheck, Share2, Heart, MessageCircle,
-  CheckCircle2, Clock, Flag, Award, Calendar, Check,
-  FileText, Briefcase
+  ArrowRight,
+  Award,
+  Briefcase,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  FileText,
+  MapPin,
+  MessageCircle,
+  ShieldCheck,
+  Star,
 } from "lucide-react";
-import { MOCK_PROFESSIONAL_DETAILS, MOCK_SERVICES, MOCK_PROFESSIONALS } from "@/data/mockData";
 import { supabase } from "@/lib/supabase/client";
-import { formatPrice, cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 
-export default function ProfessionalDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params);
-  const [remoteProfessional, setRemoteProfessional] = useState<any>(null);
+type ProfessionalRow = Record<string, any>;
 
-  useEffect(() => {
-    async function loadProfessional() {
-      const { data } = await supabase
-        .from("professionals")
-        .select("*")
-        .or(`slug.eq.${slug},id.eq.${slug}`)
-        .maybeSingle();
-      if (data) setRemoteProfessional(data);
-    }
+function ratingValue(professional: ProfessionalRow) {
+  if (typeof professional.rating === "number") return professional.rating;
+  return professional.rating?.average ?? 0;
+}
 
-    loadProfessional();
-  }, [slug]);
+function normalizeProfessional(row: ProfessionalRow) {
+  const rating = ratingValue(row);
+  const zones = Array.isArray(row.zones) ? row.zones : (row.zone ? [row.zone] : []);
+  const priceFrom = Number(row.priceFrom ?? row.price_from ?? 0);
+  const completedJobs = Number(row.completedJobs ?? row.completed_jobs ?? row.stats?.completedJobs ?? 0);
 
-  const mockProfessional = MOCK_PROFESSIONAL_DETAILS.find((p) => p.slug === slug);
-  const professional = remoteProfessional
-    ? {
-        ...MOCK_PROFESSIONAL_DETAILS[0],
-        ...remoteProfessional,
-        avatar: remoteProfessional.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${remoteProfessional.name}`,
-        profession: remoteProfessional.profession || remoteProfessional.category || "Profesional local",
-        headline: remoteProfessional.headline || `${remoteProfessional.profession || remoteProfessional.category || "Profesional"} en Mar del Plata`,
-        bio: remoteProfessional.bio || "Profesional verificado en MDP Market, con atención por zonas, reputación visible y reserva protegida.",
-        priceFrom: remoteProfessional.priceFrom ?? remoteProfessional.price_from ?? MOCK_PROFESSIONAL_DETAILS[0].priceFrom,
-        zones: remoteProfessional.zones || (remoteProfessional.zone ? [remoteProfessional.zone] : []),
-        rating: typeof remoteProfessional.rating === "number"
-          ? {
-              average: remoteProfessional.rating,
-              totalReviews: 0,
-              punctuality: remoteProfessional.rating,
-              quality: remoteProfessional.rating,
-              communication: remoteProfessional.rating,
-              value: remoteProfessional.rating,
-            }
-          : remoteProfessional.rating || MOCK_PROFESSIONAL_DETAILS[0].rating,
-        stats: {
-          ...MOCK_PROFESSIONAL_DETAILS[0].stats,
-          completedJobs: remoteProfessional.completedJobs ?? remoteProfessional.completed_jobs ?? 0,
-          responseTime: remoteProfessional.responseTime ?? remoteProfessional.response_time ?? "A coordinar",
-        },
-        services: remoteProfessional.services || [],
-      }
-    : mockProfessional || MOCK_PROFESSIONAL_DETAILS[0];
-
-  // Defensive fallbacks
-  const portfolio = (professional as any).portfolio ?? [];
-  const credentials = (professional as any).credentials ?? [];
-  const experience = (professional as any).experience ?? null;
-  const services = (professional as any).services ?? [];
-  const zones = (professional as any).zones ?? [];
-  const reviews = (professional as any).reviews ?? [];
-  const faq = (professional as any).faq ?? [];
-
-  const headline = professional.headline || `${professional.profession} verificado en Mar del Plata`;
-  const bio = professional.bio || "Profesional verificado en MDP Market, con atención por zonas, reputación visible y reserva protegida.";
-  const coverImage = professional.coverImage || professional.avatar || "/fallbacks/profesional.jpg";
-
-  // Normalizing availability
-  const availabilityIsObject = typeof professional.availability !== "string";
-  const schedule = availabilityIsObject ? (professional.availability as any).schedule : [];
-  const nextAvailable = availabilityIsObject ? (professional.availability as any).nextAvailable : (typeof professional.availability === "string" ? professional.availability : "Consultar");
-
-  const [isFav, setIsFav] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
-  const [selectedDay, setSelectedDay] = useState<string>(schedule[0]?.day || "");
-  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(typeof window !== 'undefined' ? window.location.href : "");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  return {
+    id: row.id,
+    name: row.name || "Profesional MDP",
+    slug: row.slug || row.id,
+    avatar: row.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(row.name || row.id)}`,
+    coverImage: row.coverImage || row.cover_image || row.avatar || `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(row.name || row.id)}`,
+    profession: row.profession || row.category || "Profesional local",
+    category: row.category || "Servicios",
+    headline: row.headline || `${row.profession || row.category || "Profesional"} en Mar del Plata`,
+    bio: row.bio || "Profesional verificado en MDP Market, con atención por zonas, reputación visible y reserva protegida.",
+    verified: Boolean(row.verified),
+    featured: Boolean(row.featured),
+    rating,
+    totalReviews: row.rating?.totalReviews ?? row.total_reviews ?? 0,
+    responseTime: row.responseTime ?? row.response_time ?? row.stats?.responseTime ?? "A coordinar",
+    completedJobs,
+    zones,
+    priceFrom,
+    services: Array.isArray(row.services) ? row.services : [],
+    portfolio: Array.isArray(row.portfolio) ? row.portfolio : [],
+    credentials: Array.isArray(row.credentials) ? row.credentials : [],
   };
+}
 
-  // Normalizing services
-  const normalizedServices = services.map((s: any) => {
-    if (typeof s === "string") {
-      const fullService = MOCK_SERVICES.find(ms => ms.id === s);
-      return fullService || {
-        id: s,
-        title: "Servicio Profesional",
-        description: "Detalles del servicio a consultar con el profesional.",
-        priceFrom: professional.priceFrom || 0,
-        priceType: "Desde",
-        estimatedDuration: "A convenir",
-        directBooking: true,
-        requiresQuote: false,
-        urgentAvailable: false
+export default async function ProfessionalDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
+  const { data, error } = await supabase
+    .from("professionals")
+    .select("*")
+    .or(`slug.eq.${slug},id.eq.${slug}`)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Error loading professional detail:", error);
+  }
+
+  if (!data) {
+    notFound();
+  }
+
+  const professional = normalizeProfessional(data);
+  const serviceCards = professional.services.map((service: any, index: number) => {
+    if (typeof service === "string") {
+      return {
+        id: `${professional.id}-service-${index}`,
+        title: service,
+        description: "Servicio disponible con presupuesto y coordinación protegida.",
+        priceFrom: professional.priceFrom,
       };
     }
-    return s;
+    return {
+      id: service.id || `${professional.id}-service-${index}`,
+      title: service.title || service.name || "Servicio profesional",
+      description: service.description || "Servicio disponible con presupuesto y coordinación protegida.",
+      priceFrom: Number(service.priceFrom ?? service.price_from ?? professional.priceFrom ?? 0),
+    };
   });
 
-  const selectedService = normalizedServices.find((s: any) => s.id === selectedServiceId) || normalizedServices[0];
-  const currentSchedule = schedule.find((s: any) => s.day === selectedDay);
-
-  const similarProfessionals = MOCK_PROFESSIONALS.filter(p => p.id !== professional.id).slice(0, 4);
-
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 pb-24 lg:pb-6">
-      {/* Breadcrumb */}
-      <nav className="flex flex-wrap items-center text-xs text-slate-400 mb-6 gap-1.5">
-        <Link href="/" className="hover:text-blue-600 transition-colors">Inicio</Link>
-        <span>›</span>
-        <Link href="/profesionales" className="hover:text-blue-600 transition-colors">Profesionales</Link>
-        <span>›</span>
-        <span className="text-slate-600 font-medium truncate max-w-[200px]">{professional.name}</span>
-      </nav>
+    <main className="min-h-screen bg-slate-50">
+      <div className="mx-auto max-w-[1280px] px-4 py-8 sm:px-6 lg:px-8">
+        <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+          <Link href="/" className="hover:text-blue-600">Inicio</Link>
+          <span>/</span>
+          <Link href="/profesionales" className="hover:text-blue-600">Profesionales</Link>
+          <span>/</span>
+          <span className="font-medium text-slate-900">{professional.name}</span>
+        </nav>
 
-      {/* Main grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-
-        {/* LEFT: Full Profile */}
-        <div className="lg:col-span-8 space-y-8">
-
-          {/* Header Profesional */}
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm relative">
-            {coverImage ? (
-              <div className="h-32 w-full relative bg-blue-900">
-                <Image src={coverImage} alt="Cover" fill className="object-cover opacity-80" />
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
+          <section className="space-y-6">
+            <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.12)]">
+              <div className="relative h-44 bg-slate-200">
+                <img src={professional.coverImage} alt="" className="h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/45 to-transparent" />
               </div>
-            ) : (
-              <div className="h-32 w-full bg-gradient-to-r from-blue-600 to-blue-800" />
-            )}
-
-            <div className="px-6 pb-6 pt-0 relative">
-              <div className="flex justify-between items-start">
-                <div className="relative -mt-12 w-24 h-24 rounded-2xl border-4 border-white bg-white overflow-hidden shadow-md">
-                  <Image src={professional.avatar} alt={professional.name} fill className="object-cover" />
-                </div>
-                <div className="flex gap-2 mt-4">
-                  <button onClick={() => setIsFav(!isFav)} className={cn("p-2 rounded-full border transition-all", isFav ? "border-red-200 text-red-600 bg-red-50" : "border-slate-200 text-slate-400 hover:bg-slate-50")}>
-                    <Heart className={cn("w-5 h-5", isFav && "fill-red-500")} />
-                  </button>
-                  <button onClick={handleCopyLink} className="p-2 rounded-full border border-slate-200 text-slate-400 hover:bg-slate-50 transition-all">
-                    {copied ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Share2 className="w-5 h-5" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <h1 className="text-2xl font-semibold text-slate-950">{professional.name}</h1>
-                  {professional.verified && <CheckCircle2 className="w-5 h-5 text-blue-600" />}
-                </div>
-                <p className="text-lg font-medium text-slate-700">{professional.profession}</p>
-                <p className="text-sm text-slate-500 mt-1">{headline}</p>
-
-                <div className="flex flex-wrap items-center gap-3 mt-4 text-xs">
-                  <div className="flex items-center gap-1 font-semibold text-slate-900 bg-amber-50 px-2 py-1 rounded-lg">
-                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    {professional.rating.average} <span className="text-slate-500 font-medium ml-1">({professional.rating.totalReviews} opiniones)</span>
+              <div className="p-6">
+                <div className="-mt-16 mb-5 flex items-end justify-between gap-4">
+                  <div className="h-28 w-28 overflow-hidden rounded-3xl border-4 border-white bg-white shadow-lg">
+                    <img src={professional.avatar} alt={professional.name} className="h-full w-full object-cover" />
                   </div>
-                  <div className="flex items-center gap-1 text-slate-600 bg-slate-50 px-2 py-1 rounded-lg">
-                    <Briefcase className="w-4 h-4 text-slate-400" />
-                    <span className="font-medium">{professional.stats.completedJobs}</span> trabajos
-                  </div>
-                  <div className="flex items-center gap-1 text-slate-600 bg-slate-50 px-2 py-1 rounded-lg">
-                    <Clock className="w-4 h-4 text-slate-400" />
-                    Responde en <span className="font-medium">{professional.stats.responseTime}</span>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {professional.verified && <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded">Verificado MDP</span>}
-                  {professional.license?.status === "Activa" && <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded">{professional.license.type}</span>}
-                  {professional.featured && <span className="text-[10px] font-semibold text-purple-700 bg-purple-50 border border-purple-100 px-2.5 py-1 rounded">Profesional destacado</span>}
-                  <span className="text-[10px] font-semibold text-orange-700 bg-orange-50 border border-orange-100 px-2.5 py-1 rounded">Disponible hoy</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Servicios */}
-          <section id="servicios" className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-950 mb-4">Servicios ofrecidos</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {normalizedServices.map((service: any) => (
-                <div
-                  key={service.id}
-                  onClick={() => setSelectedServiceId(service.id)}
-                  className={cn(
-                    "border-2 rounded-xl p-4 cursor-pointer transition-all",
-                    selectedServiceId === service.id ? "border-blue-600 bg-blue-50/50" : "border-slate-200 hover:border-blue-200 bg-white"
-                  )}
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-slate-900 leading-tight pr-4">{service.title}</h3>
-                    <div className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0", selectedServiceId === service.id ? "border-blue-600 bg-blue-600" : "border-slate-300")}>
-                      {selectedServiceId === service.id && <Check className="w-3 h-3 text-white" />}
-                    </div>
-                  </div>
-                  <p className="text-xs text-slate-500 mb-3 line-clamp-2">{service.description}</p>
-
-                  <div className="flex flex-wrap items-center gap-2 mb-3">
-                    <span className="text-sm font-semibold text-slate-900">{service.priceType === "Desde" ? "Desde " : ""}{service.priceType === "A presupuestar" ? "A cotizar" : formatPrice(service.priceFrom)}</span>
-                    <span className="text-[10px] text-slate-400 font-medium bg-slate-100 px-1.5 py-0.5 rounded flex items-center gap-1"><Clock className="w-3 h-3" />{service.estimatedDuration}</span>
-                  </div>
-
-                  <div className="flex flex-wrap gap-1">
-                    {service.directBooking && <span className="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">Reserva directa</span>}
-                    {service.requiresQuote && <span className="text-[10px] font-medium text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded">Requiere presupuesto</span>}
-                    {service.urgentAvailable && <span className="text-[10px] font-medium text-red-700 bg-red-50 px-1.5 py-0.5 rounded">Urgencia disponible</span>}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Disponibilidad */}
-          <section id="disponibilidad" className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-slate-950">Disponibilidad</h2>
-              <span className="text-xs font-medium text-emerald-600 flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-lg">Próximo turno: {nextAvailable}</span>
-            </div>
-
-            <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
-              {schedule.map((dayItem: any) => (
-                <button
-                  key={dayItem.day}
-                  onClick={() => { setSelectedDay(dayItem.day); setSelectedSlot(null); }}
-                  className={cn(
-                    "px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors",
-                    selectedDay === dayItem.day ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  )}
-                >
-                  {dayItem.day}
-                </button>
-              ))}
-            </div>
-
-            {currentSchedule && currentSchedule.slots.length > 0 ? (
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
-                {currentSchedule.slots.map((slot: string) => (
-                  <button
-                    key={slot}
-                    onClick={() => setSelectedSlot(slot)}
-                    className={cn(
-                      "py-2 rounded-lg text-sm font-medium border-2 transition-all",
-                      selectedSlot === slot ? "border-blue-600 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-600 hover:border-slate-300"
+                  <div className="flex flex-wrap gap-2 pb-2">
+                    {professional.verified && (
+                      <span className="rounded-full bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm">Verificado</span>
                     )}
-                  >
-                    {slot}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-6 bg-slate-50 rounded-xl">
-                <p className="text-sm text-slate-500 font-medium">No hay horarios disponibles para este día.</p>
-                <p className="text-xs text-slate-400 mt-1">Podés solicitar un presupuesto o consultar por chat.</p>
-              </div>
-            )}
-          </section>
-
-          {/* Sobre el profesional */}
-          <section className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-950 mb-4">Sobre el profesional</h2>
-            <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap mb-6">{bio}</p>
-
-            <h3 className="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-1.5"><MapPin className="w-4 h-4 text-slate-400" />Zonas de cobertura</h3>
-            <div className="flex flex-wrap gap-2">
-              {zones.map((z: string) => (
-                <span key={z} className="text-xs font-medium text-slate-600 bg-slate-100 px-3 py-1 rounded-full">{z}</span>
-              ))}
-            </div>
-          </section>
-
-          {/* Trabajos realizados */}
-          <section className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-950 mb-4">Trabajos realizados</h2>
-            {portfolio.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {portfolio.map((item: any) => (
-                  <div key={item.id} className="rounded-xl border border-slate-200 overflow-hidden group">
-                    <div className="relative h-40 bg-slate-100 overflow-hidden">
-                      <Image src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                      {item.verified && (
-                        <span className="absolute top-2 right-2 bg-white/90 backdrop-blur text-[9px] font-semibold text-blue-700 px-2 py-1 rounded shadow-sm flex items-center gap-1">
-                          <CheckCircle2 className="w-3 h-3" /> Verificado
-                        </span>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold text-slate-900 text-sm mb-1">{item.title}</h3>
-                      <p className="text-xs text-slate-500 line-clamp-2 mb-2">{item.description}</p>
-                      <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium">
-                        <span>{item.location || item.zone}</span>
-                        <span>{item.completedAt || item.date}</span>
-                      </div>
-                    </div>
+                    {professional.featured && (
+                      <span className="rounded-full bg-slate-800 px-3 py-1.5 text-xs font-semibold text-white shadow-sm">Destacado</span>
+                    )}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="py-12 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                <Briefcase className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                <p className="text-sm text-slate-500">Todavía no hay trabajos cargados para este profesional.</p>
-              </div>
-            )}
-          </section>
+                </div>
 
-          {/* Verificaciones */}
-          <section className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-950 mb-4 flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-blue-600" />Verificaciones</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-              <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" /> Identidad verificada</div>
-              <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" /> Teléfono validado</div>
-              <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" /> Email validado</div>
-              <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" /> Documentación revisada</div>
-              {professional.license && professional.license.status === "Activa" && (
-                <div className="flex items-center gap-2 text-slate-900 font-medium sm:col-span-2 mt-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                  <Award className="w-5 h-5 text-blue-600 shrink-0" />
-                  <div>
-                    <span className="block text-sm">{professional.license.type}</span>
-                    <span className="text-xs text-slate-500 font-normal">Verificada por MDP Market</span>
+                <p className="text-sm font-medium text-blue-600">{professional.profession}</p>
+                <h1 className="mt-1 text-3xl font-semibold tracking-tight text-slate-950">{professional.name}</h1>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{professional.headline}</p>
+
+                <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <Star className="mb-2 h-5 w-5 fill-amber-400 text-amber-400" />
+                    <p className="text-lg font-semibold text-slate-950">{professional.rating.toFixed(1)}</p>
+                    <p className="text-xs text-slate-500">{professional.totalReviews} opiniones</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <Briefcase className="mb-2 h-5 w-5 text-blue-600" />
+                    <p className="text-lg font-semibold text-slate-950">{professional.completedJobs}</p>
+                    <p className="text-xs text-slate-500">trabajos realizados</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <Clock className="mb-2 h-5 w-5 text-emerald-600" />
+                    <p className="text-lg font-semibold text-slate-950">{professional.responseTime}</p>
+                    <p className="text-xs text-slate-500">tiempo de respuesta</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_16px_44px_rgba(15,23,42,0.10)]">
+              <h2 className="text-xl font-semibold tracking-tight text-slate-950">Sobre el profesional</h2>
+              <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-600">{professional.bio}</p>
+              {professional.zones.length > 0 && (
+                <div className="mt-5">
+                  <p className="mb-3 text-sm font-semibold text-slate-900">Zonas de atención</p>
+                  <div className="flex flex-wrap gap-2">
+                    {professional.zones.map((zone: string) => (
+                      <span key={zone} className="rounded-full bg-slate-700 px-3 py-1 text-xs font-semibold text-white shadow-sm">{zone}</span>
+                    ))}
                   </div>
                 </div>
               )}
-            </div>
-          </section>
-
-          {/* Rating y Opiniones */}
-          <section className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-            <div className="flex flex-col md:flex-row gap-8 mb-8 border-b border-slate-100 pb-8">
-              <div className="text-center md:text-left shrink-0">
-                <h2 className="text-lg font-semibold text-slate-950 mb-2">Opiniones</h2>
-                <div className="text-5xl font-semibold text-slate-950 mb-2">{professional.rating.average}</div>
-                <div className="flex justify-center md:justify-start gap-1 mb-1">
-                  {[1, 2, 3, 4, 5].map((s: number) => <Star key={s} className={cn("w-4 h-4", s <= Math.round(professional.rating.average) ? "fill-amber-400 text-amber-400" : "text-slate-200")} />)}
-                </div>
-                <p className="text-xs text-slate-500 font-medium">{professional.rating.totalReviews} opiniones verificadas</p>
-              </div>
-              <div className="flex-1 space-y-2 text-xs font-medium text-slate-600">
-                <div className="flex items-center gap-3"><span className="w-24 shrink-0">Puntualidad</span><div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-amber-400 rounded-full" style={{ width: `${(professional.rating.punctuality / 5) * 100}%` }} /></div><span className="w-6 text-right">{professional.rating.punctuality}</span></div>
-                <div className="flex items-center gap-3"><span className="w-24 shrink-0">Calidad</span><div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-amber-400 rounded-full" style={{ width: `${(professional.rating.quality / 5) * 100}%` }} /></div><span className="w-6 text-right">{professional.rating.quality}</span></div>
-                <div className="flex items-center gap-3"><span className="w-24 shrink-0">Comunicación</span><div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-amber-400 rounded-full" style={{ width: `${(professional.rating.communication / 5) * 100}%` }} /></div><span className="w-6 text-right">{professional.rating.communication}</span></div>
-                <div className="flex items-center gap-3"><span className="w-24 shrink-0">Precio</span><div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-amber-400 rounded-full" style={{ width: `${(professional.rating.value / 5) * 100}%` }} /></div><span className="w-6 text-right">{professional.rating.value}</span></div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              {reviews.map((review: any) => (
-                <div key={review.id} className="border-b border-slate-50 pb-6 last:border-0 last:pb-0">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center font-medium text-xs text-slate-600">{review.userName.charAt(0)}</div>
-                      <div>
-                        <span className="text-sm font-medium text-slate-900 block leading-tight">{review.userName}</span>
-                        <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
-                          <span className="flex gap-0.5">{[1, 2, 3, 4, 5].map((s: number) => <Star key={s} className={cn("w-3 h-3", s <= review.rating ? "fill-amber-400 text-amber-400" : "text-slate-200")} />)}</span>
-                          <span>· {review.date}</span>
-                        </div>
-                      </div>
-                    </div>
-                    {review.verified && <span className="bg-blue-50 text-blue-700 text-[9px] font-semibold px-2 py-1 rounded flex items-center gap-1"><CheckCircle2 className="w-3 h-3" />Operación verificada</span>}
-                  </div>
-                  <p className="text-xs text-slate-500 font-medium bg-slate-50 inline-block px-2 py-1 rounded mb-2">Servicio: {review.serviceName}</p>
-                  <p className="text-sm text-slate-700">{review.comment}</p>
-                  {review.professionalResponse && (
-                    <div className="mt-3 pl-4 border-l-2 border-slate-200">
-                      <span className="text-xs font-medium text-slate-900 mb-1 block">Respuesta de {professional.name}:</span>
-                      <p className="text-sm text-slate-600">{review.professionalResponse}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* FAQ */}
-          {faq.length > 0 && (
-            <section className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-950 mb-4">Preguntas frecuentes</h2>
-              <div className="space-y-4">
-                {faq.map((item: any, i: number) => {
-                  const q = typeof item === 'string' ? item : item.question;
-                  const a = typeof item === 'string' ? "" : item.answer;
-                  return (
-                    <div key={i}>
-                      <h3 className="font-medium text-sm text-slate-900 mb-1">{q}</h3>
-                      {a && <p className="text-sm text-slate-600">{a}</p>}
-                    </div>
-                  );
-                })}
-              </div>
             </section>
-          )}
 
-          {/* Otros profesionales */}
-          {similarProfessionals.length > 0 && (
-            <section>
-              <h2 className="text-lg font-semibold text-slate-950 mb-4">Otros profesionales sugeridos</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                {similarProfessionals.map((p: any) => (
-                  <Link key={p.id} href={`/profesionales/${p.slug}`} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg transition-all group flex flex-col items-center text-center">
-                    <div className="w-16 h-16 rounded-full overflow-hidden mb-3 group-hover:scale-105 transition-transform bg-slate-50">
-                      <Image src={p.avatar} alt={p.name} width={64} height={64} className="object-cover" />
-                    </div>
-                    <h3 className="font-medium text-slate-900 text-sm mb-1">{p.name}</h3>
-                    <p className="text-xs text-slate-500 line-clamp-1 mb-2">{p.profession}</p>
-                    <div className="flex items-center gap-1 text-xs font-medium text-slate-900 bg-amber-50 px-2 py-0.5 rounded">
-                      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />{p.rating.average}
-                    </div>
-                  </Link>
+            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_16px_44px_rgba(15,23,42,0.10)]">
+              <h2 className="text-xl font-semibold tracking-tight text-slate-950">Servicios ofrecidos</h2>
+              {serviceCards.length > 0 ? (
+                <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                  {serviceCards.map((service: any) => (
+                    <article key={service.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <h3 className="font-semibold text-slate-950">{service.title}</h3>
+                      <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-600">{service.description}</p>
+                      <p className="mt-4 text-lg font-semibold text-slate-950">
+                        {service.priceFrom > 0 ? `Desde ${formatPrice(service.priceFrom)}` : "A presupuestar"}
+                      </p>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <div className="mt-5 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6">
+                  <p className="text-sm font-medium text-slate-700">Este profesional todavía no cargó servicios específicos.</p>
+                  <p className="mt-1 text-sm text-slate-500">Podés consultar por chat o pedir presupuesto protegido.</p>
+                </div>
+              )}
+            </section>
+
+            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_16px_44px_rgba(15,23,42,0.10)]">
+              <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-slate-950">
+                <ShieldCheck className="h-5 w-5 text-blue-600" />
+                Verificaciones
+              </h2>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                {["Identidad revisada", "Perfil activo", "Contacto validado", "Operación protegida disponible"].map((item) => (
+                  <div key={item} className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3 text-sm font-medium text-slate-700">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                    {item}
+                  </div>
                 ))}
               </div>
+              {professional.credentials.length > 0 && (
+                <div className="mt-5 space-y-2">
+                  {professional.credentials.map((credential: any, index: number) => (
+                    <div key={credential.name || index} className="flex items-center gap-3 rounded-2xl border border-slate-200 p-3">
+                      <Award className="h-5 w-5 text-blue-600" />
+                      <div>
+                        <p className="text-sm font-semibold text-slate-950">{credential.name || credential.type}</p>
+                        <p className="text-xs text-slate-500">{credential.status || "Verificado"}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
-          )}
+          </section>
 
-        </div>
+          <aside className="lg:sticky lg:top-24">
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(15,23,42,0.14)]">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Presupuesto inicial</p>
+              <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+                {professional.priceFrom > 0 ? `Desde ${formatPrice(professional.priceFrom)}` : "A presupuestar"}
+              </p>
 
-        {/* RIGHT: Sticky Card de Reserva */}
-        <div className="lg:col-span-4 relative">
-          <div className="sticky top-24 space-y-4">
-
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
-              <div className="p-6">
-
-                {selectedService ? (
-                  <div className="mb-6">
-                    <span className="text-[10px] font-semibold text-blue-600 block mb-1">Servicio seleccionado</span>
-                    <h3 className="text-base font-semibold text-slate-900 leading-tight mb-2">{selectedService.title}</h3>
-                    <div className="text-3xl font-semibold text-slate-950 mb-1">
-                      {selectedService.priceType === "Desde" ? <span className="text-base text-slate-500 font-medium">Desde </span> : ""}
-                      {selectedService.priceType === "A presupuestar" ? "A cotizar" : formatPrice(selectedService.priceFrom)}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="mb-6">
-                    <h3 className="text-base font-semibold text-slate-900 leading-tight mb-2">Servicios profesionales</h3>
-                    <div className="text-3xl font-semibold text-slate-950 mb-1">
-                      <span className="text-base text-slate-500 font-medium">Desde </span>{formatPrice(professional.priceFrom || 0)}
-                    </div>
-                  </div>
-                )}
-
-                <div className="space-y-3 mb-6 bg-slate-50 rounded-xl p-4 border border-slate-200">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-500 flex items-center gap-1.5"><Calendar className="w-4 h-4" />Día</span>
-                    <span className="font-medium text-slate-900">{selectedDay || "-"}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-500 flex items-center gap-1.5"><Clock className="w-4 h-4" />Horario</span>
-                    <span className={cn("font-medium text-slate-900", !selectedSlot && "text-red-500")}>{selectedSlot || "Seleccionar"}</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3 mb-6">
-                  <Link
-                    href={selectedSlot && selectedService ? `/checkout/profesional?professional=${professional.id}&service=${selectedService.id}&title=${encodeURIComponent(selectedService.title)}&professionalName=${encodeURIComponent(professional.name)}&price=${selectedService.priceFrom || professional.priceFrom || 0}&day=${encodeURIComponent(selectedDay)}&slot=${encodeURIComponent(selectedSlot)}` : "#disponibilidad"}
-                    className={cn(
-                      "w-full py-4 rounded-xl font-medium text-center flex items-center justify-center gap-2 transition-all text-sm",
-                      selectedSlot && selectedService
-                        ? "bg-blue-600 hover:bg-blue-700 text-white active:scale-[0.98]"
-                        : "bg-slate-950 hover:bg-slate-800 text-white"
-                    )}
-                  >
-                    {selectedSlot ? "Reservar turno ahora" : "Seleccionar horario"}
-                  </Link>
-
-                  <Link
-                    href={`/presupuesto?id=${professional.id}&service=${selectedService?.id || ""}`}
-                    className="w-full py-3.5 rounded-xl font-medium text-slate-700 border-2 border-slate-200 hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 text-sm"
-                  >
-                    <FileText className="w-4 h-4" /> Solicitar presupuesto
-                  </Link>
-
-                  <button className="w-full py-3.5 rounded-xl font-medium text-blue-600 border-2 border-blue-100 bg-blue-50 hover:bg-blue-100 transition-colors flex items-center justify-center gap-2 text-sm">
-                    <MessageCircle className="w-4 h-4" /> Consultar por chat
-                  </button>
-                </div>
-
-                <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100">
-                  <div className="flex items-start gap-2">
-                    <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                    <div>
-                      <span className="text-sm font-semibold text-blue-900 block mb-1">Reserva protegida</span>
-                      <p className="text-[11px] text-blue-800/80 leading-relaxed">Tu pago queda protegido por MDP Market hasta que confirmes la asistencia del profesional o finalización del trabajo.</p>
-                    </div>
-                  </div>
-                </div>
+              <div className="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                <p className="flex items-center gap-2 text-sm font-semibold text-blue-900">
+                  <ShieldCheck className="h-5 w-5 text-blue-600" />
+                  Reserva protegida
+                </p>
+                <p className="mt-2 text-sm leading-6 text-blue-800/80">
+                  El pago queda protegido hasta que confirmes el servicio realizado.
+                </p>
               </div>
 
-              <div className="bg-slate-50 p-4 text-[10px] text-slate-500 text-center border-t border-slate-100">
-                Por seguridad, no se comparten datos de contacto (teléfono, email) antes de confirmar la reserva. Toda comunicación debe realizarse a través del chat protegido.
+              <div className="mt-6 grid gap-3">
+                <Link
+                  href={`/checkout/profesional?professional=${professional.id}&title=${encodeURIComponent(professional.profession)}&professionalName=${encodeURIComponent(professional.name)}&price=${professional.priceFrom || 0}`}
+                  className={cn(
+                    "flex h-12 items-center justify-center gap-2 rounded-full bg-blue-600 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  )}
+                >
+                  <Calendar className="h-4 w-4" />
+                  Reservar profesional
+                </Link>
+                <Link
+                  href={`/chat?professional=${professional.id}`}
+                  className="flex h-12 items-center justify-center gap-2 rounded-full border border-slate-200 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Consultar
+                </Link>
+                <Link
+                  href={`/pedir-servicio?professional=${professional.id}`}
+                  className="flex h-12 items-center justify-center gap-2 rounded-full border border-slate-200 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+                >
+                  <FileText className="h-4 w-4" />
+                  Solicitar presupuesto
+                </Link>
+              </div>
+
+              <div className="mt-6 border-t border-slate-100 pt-5 text-sm text-slate-600">
+                <p className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-slate-400" />
+                  {professional.zones[0] || "Mar del Plata"}
+                </p>
+                <Link href="/profesionales" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-blue-600">
+                  Ver más profesionales <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
-
-            {/* Reportar */}
-            <button className="w-full text-center text-[11px] font-medium text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center gap-1.5 py-2">
-              <Flag className="w-3.5 h-3.5" />Reportar perfil profesional
-            </button>
-
-          </div>
+          </aside>
         </div>
-
       </div>
-
-      {/* Mobile Sticky CTA */}
-      <div className="fixed bottom-16 left-0 right-0 p-4 bg-white border-t border-slate-200 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] lg:hidden z-50 flex gap-2">
-        <Link
-          href={selectedSlot && selectedService ? `/checkout/profesional?professional=${professional.id}&service=${selectedService.id}&title=${encodeURIComponent(selectedService.title)}&professionalName=${encodeURIComponent(professional.name)}&price=${selectedService.priceFrom || professional.priceFrom || 0}&day=${encodeURIComponent(selectedDay)}&slot=${encodeURIComponent(selectedSlot)}` : "#disponibilidad"}
-          className="flex-1 bg-blue-600 text-white font-medium rounded-xl py-3.5 text-center text-sm shadow-lg flex items-center justify-center"
-        >
-          {selectedSlot ? "Reservar turno" : "Seleccionar horario"}
-        </Link>
-        <button className="bg-blue-50 text-blue-600 border border-blue-100 font-medium rounded-xl px-4 py-3.5 flex items-center justify-center">
-          <MessageCircle className="w-5 h-5" />
-        </button>
-      </div>
-
-    </div>
+    </main>
   );
 }

@@ -2,7 +2,30 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ChevronRight, LayoutGrid, Search, Sparkles, ShieldCheck, Zap, Tag, TrendingUp } from "lucide-react";
+import {
+  Baby,
+  Bike,
+  BriefcaseBusiness,
+  ChevronRight,
+  Hammer,
+  Home,
+  Laptop,
+  LayoutGrid,
+  Palette,
+  PawPrint,
+  Search,
+  Shirt,
+  ShoppingBag,
+  Sparkles,
+  ShieldCheck,
+  Sofa,
+  Store,
+  Tag,
+  TrendingUp,
+  Utensils,
+  Wrench,
+  Zap,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Category, getMegaMenuCategories } from "@/lib/categories";
 
@@ -34,6 +57,29 @@ function getCategoryHref(category: Category): string {
 
   // Nivel 3 o más profundo
   return `/productos?subcategory=${category.slug}`;
+}
+
+function normalizeLabel(value: string) {
+  return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function getCategoryIcon(category: Category) {
+  const label = normalizeLabel(`${category.name} ${category.slug}`);
+  if (label.includes("servicio")) return Wrench;
+  if (label.includes("profesional")) return BriefcaseBusiness;
+  if (label.includes("tecnolog") || label.includes("celular") || label.includes("notebook")) return Laptop;
+  if (label.includes("hogar") || label.includes("mueble")) return Sofa;
+  if (label.includes("bici") || label.includes("movilidad")) return Bike;
+  if (label.includes("bebe") || label.includes("juguete") || label.includes("nino")) return Baby;
+  if (label.includes("herramient") || label.includes("construccion")) return Hammer;
+  if (label.includes("deco") || label.includes("jardin")) return Home;
+  if (label.includes("indumentaria") || label.includes("ropa") || label.includes("accesorio")) return Shirt;
+  if (label.includes("mascota")) return PawPrint;
+  if (label.includes("emprendedor")) return Sparkles;
+  if (label.includes("comercio") || label.includes("almacen") || label.includes("bazar")) return Store;
+  if (label.includes("cafe") || label.includes("verduleria") || label.includes("comida")) return Utensils;
+  if (label.includes("libreria") || label.includes("arte")) return Palette;
+  return ShoppingBag;
 }
 
 const MegaMenu = () => {
@@ -137,31 +183,44 @@ const MegaMenu = () => {
                   </div>
                 )}
                 {filteredCategories.map((cat) => (
-                  <button
-                    key={cat.id}
-                    className={cn(
-                      "w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all group",
-                      activeCategory?.id === cat.id
-                        ? "bg-white text-blue-700 shadow-sm"
-                        : "text-slate-700 hover:bg-white hover:text-slate-950"
-                    )}
-                    onMouseEnter={() => setActiveCategory(cat)}
-                    onClick={() => {
-                      setActiveCategory(cat);
-                      if (!cat.children || cat.children.length === 0) {
-                        window.location.href = getCategoryHref(cat);
-                        setIsOpen(false);
-                      }
-                    }}
-                  >
-                    <span className="truncate">{cat.name}</span>
-                    {cat.children && cat.children.length > 0 && (
-                      <ChevronRight className={cn(
-                        "w-4 h-4 transition-all shrink-0",
-                        activeCategory?.id === cat.id ? "translate-x-0 opacity-100" : "opacity-0 group-hover:opacity-100"
-                      )} />
-                    )}
-                  </button>
+                  (() => {
+                    const Icon = getCategoryIcon(cat);
+                    return (
+                      <button
+                        key={cat.id}
+                        className={cn(
+                          "w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group",
+                          activeCategory?.id === cat.id
+                            ? "bg-white text-blue-700 shadow-sm"
+                            : "text-slate-700 hover:bg-white hover:text-slate-950"
+                        )}
+                        onMouseEnter={() => setActiveCategory(cat)}
+                        onClick={() => {
+                          setActiveCategory(cat);
+                          if (!cat.children || cat.children.length === 0) {
+                            window.location.href = getCategoryHref(cat);
+                            setIsOpen(false);
+                          }
+                        }}
+                      >
+                        <span className="flex min-w-0 items-center gap-2">
+                          <span className={cn(
+                            "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition",
+                            activeCategory?.id === cat.id ? "bg-blue-600 text-white" : "bg-white text-slate-500 group-hover:text-blue-600"
+                          )}>
+                            <Icon className="h-4 w-4" />
+                          </span>
+                          <span className="truncate">{cat.name}</span>
+                        </span>
+                        {cat.children && cat.children.length > 0 && (
+                          <ChevronRight className={cn(
+                            "w-4 h-4 transition-all shrink-0",
+                            activeCategory?.id === cat.id ? "translate-x-0 opacity-100" : "opacity-0 group-hover:opacity-100"
+                          )} />
+                        )}
+                      </button>
+                    );
+                  })()
                 ))}
               </div>
             </aside>
@@ -178,26 +237,34 @@ const MegaMenu = () => {
 
                     <div className="grid grid-cols-2 gap-3">
                       {visibleSubcategories.map((sub) => (
-                        <Link
-                          key={sub.id}
-                          href={getCategoryHref(sub)}
-                          className="group rounded-2xl border border-slate-200 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-[0_12px_30px_rgba(15,23,42,0.08)]"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex-1 min-w-0">
-                              <div className="text-sm font-semibold text-slate-950 group-hover:text-blue-600 transition-colors truncate">
-                                {sub.name}
-                              </div>
-                              {sub.children_count > 0 && (
-                                <div className="text-xs text-slate-500 mt-1">
-                                  {sub.children_count} {sub.children_count === 1 ? 'opción' : 'opciones'}
+                        (() => {
+                          const Icon = getCategoryIcon(sub);
+                          return (
+                            <Link
+                              key={sub.id}
+                              href={getCategoryHref(sub)}
+                              className="group rounded-2xl border border-slate-200 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-[0_12px_30px_rgba(15,23,42,0.08)]"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-600 transition group-hover:bg-blue-600 group-hover:text-white">
+                                  <Icon className="h-5 w-5" />
                                 </div>
-                              )}
-                            </div>
-                            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition-colors shrink-0" />
-                          </div>
-                        </Link>
+                                <div className="min-w-0 flex-1">
+                                  <div className="truncate text-sm font-semibold text-slate-950 transition-colors group-hover:text-blue-600">
+                                    {sub.name}
+                                  </div>
+                                  {sub.children_count > 0 && (
+                                    <div className="mt-1 text-xs text-slate-500">
+                                      {sub.children_count} {sub.children_count === 1 ? 'opción' : 'opciones'}
+                                    </div>
+                                  )}
+                                </div>
+                                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition-colors shrink-0" />
+                              </div>
+                            </Link>
+                          );
+                        })()
                       ))}
                     </div>
 
