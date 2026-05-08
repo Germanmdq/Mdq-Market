@@ -21,7 +21,7 @@ export default function ProfessionalDetailPage({ params }: { params: Promise<{ s
       const { data } = await supabase
         .from("professionals")
         .select("*")
-        .eq("slug", slug)
+        .or(`slug.eq.${slug},id.eq.${slug}`)
         .maybeSingle();
       if (data) setRemoteProfessional(data);
     }

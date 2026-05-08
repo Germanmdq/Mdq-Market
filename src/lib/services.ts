@@ -20,8 +20,8 @@ export async function getServiceBySlug(slug: string) {
   const { data, error } = await supabase
     .from("services")
     .select("*")
-    .eq("slug", slug)
-    .single();
+    .or(`slug.eq.${slug},id.eq.${slug}`)
+    .maybeSingle();
 
   if (error) {
     console.error("Error fetching service by slug:", error);

@@ -177,6 +177,8 @@ function ProfessionalsContent() {
     return true;
   });
 
+  const shouldShowCategories = !selectedCategory && !searchQuery && !selectedZone && !verifiedOnly;
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="bg-white border-b border-slate-200">
@@ -212,6 +214,41 @@ function ProfessionalsContent() {
       </div>
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {shouldShowCategories ? (
+          <section>
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold tracking-tight text-slate-950">Elegí una categoría profesional</h2>
+              <p className="mt-1 text-sm text-slate-500">Primero elegís el rubro; después ves profesionales disponibles.</p>
+            </div>
+            {loading ? (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
+                  <div key={item} className="h-36 animate-pulse rounded-3xl bg-slate-100" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {categories.map((category) => {
+                  const count = professionals.filter((professional) =>
+                    normalizeText(professional.category).includes(normalizeText(category)) ||
+                    (professional.subcategories ?? []).some((subcategory) => normalizeText(subcategory).includes(normalizeText(category)))
+                  ).length;
+
+                  return (
+                    <button
+                      key={category}
+                      onClick={() => updateUrl({ category })}
+                      className="rounded-3xl border border-slate-200 bg-white p-6 text-left shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl"
+                    >
+                      <p className="text-lg font-semibold text-slate-950">{category}</p>
+                      <p className="mt-2 text-sm text-slate-500">{count} profesionales disponibles</p>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        ) : (
         <div className="lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
           <aside
             className={cn(
@@ -352,6 +389,7 @@ function ProfessionalsContent() {
             )}
           </div>
         </div>
+        )}
       </div>
     </div>
   );

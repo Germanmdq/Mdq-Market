@@ -29,6 +29,7 @@ function ServiciosContent() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "");
   const [selectedZone, setSelectedZone] = useState<string>(searchParams.get("zone") ?? "");
+  const [selectedCategory, setSelectedCategory] = useState<string>(searchParams.get("category") ?? "");
   const [availableToday, setAvailableToday] = useState(searchParams.get("availableToday") === "true");
   const [verifiedOnly, setVerifiedOnly] = useState(searchParams.get("verified") === "true");
   const [services, setServices] = useState<Service[]>([]);
@@ -48,6 +49,7 @@ function ServiciosContent() {
       const query = searchParams.get("q") ?? "";
       setSearchQuery(query);
       setSelectedZone(searchParams.get("zone") ?? "");
+      setSelectedCategory(searchParams.get("category") ?? "");
       setAvailableToday(searchParams.get("availableToday") === "true");
       setVerifiedOnly(searchParams.get("verified") === "true");
       if (query) {
@@ -65,10 +67,11 @@ function ServiciosContent() {
     });
   }, [searchParams]);
 
-  const updateUrl = (next?: { q?: string; zone?: string; availableToday?: boolean; verified?: boolean }) => {
+  const updateUrl = (next?: { q?: string; zone?: string; category?: string; availableToday?: boolean; verified?: boolean }) => {
     const params = new URLSearchParams(searchParams.toString());
     const q = next?.q ?? searchQuery;
     const zone = next?.zone ?? selectedZone;
+    const category = next?.category ?? selectedCategory;
     const today = next?.availableToday ?? availableToday;
     const verified = next?.verified ?? verifiedOnly;
 
@@ -76,6 +79,8 @@ function ServiciosContent() {
     else params.delete("q");
     if (zone) params.set("zone", zone);
     else params.delete("zone");
+    if (category) params.set("category", category);
+    else params.delete("category");
     if (today) params.set("availableToday", "true");
     else params.delete("availableToday");
     if (verified) params.set("verified", "true");
@@ -84,6 +89,9 @@ function ServiciosContent() {
   };
 
   const filteredServices = services.filter((s) => {
+    if (selectedCategory && s.category !== selectedCategory && s.subcategory !== selectedCategory) {
+      return false;
+    }
     if (searchQuery && !s.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
         !s.professionalName.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
@@ -99,6 +107,23 @@ function ServiciosContent() {
     }
     return true;
   });
+
+  const categories = Array.from(
+    new Map(
+      services
+        .filter((service) => service.category)
+        .map((service) => [
+          service.category,
+          {
+            name: service.category,
+            count: services.filter((item) => item.category === service.category).length,
+            today: services.filter((item) => item.category === service.category && item.availability === "Hoy").length,
+          },
+        ])
+    ).values()
+  ).sort((a, b) => a.name.localeCompare(b.name));
+
+  const shouldShowCategories = !selectedCategory && !searchQuery && !selectedZone && !availableToday && !verifiedOnly;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -155,6 +180,39 @@ function ServiciosContent() {
       </section>
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {shouldShowCategories ? (
+          <section>
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold tracking-tight text-slate-950">Elegí una categoría de servicio</h2>
+              <p className="mt-1 text-sm text-slate-500">Primero elegís el tipo de ayuda; después ves servicios y profesionales disponibles.</p>
+            </div>
+            {loading ? (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
+                  <div key={item} className="h-36 animate-pulse rounded-3xl bg-slate-100" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {categories.map((category) => (
+                  <button
+                    key={category.name}
+                    onClick={() => updateUrl({ category: category.name })}
+                    className="rounded-3xl border border-slate-200 bg-white p-6 text-left shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl"
+                  >
+                    <p className="text-lg font-semibold text-slate-950">{category.name}</p>
+                    <p className="mt-2 text-sm text-slate-500">{category.count} servicios disponibles</p>
+                    {category.today > 0 && (
+                      <span className="mt-4 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                        {category.today} para hoy
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+        ) : (
         <div className="lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
           {/* Sidebar Filters */}
           <aside
@@ -176,6 +234,31 @@ function ServiciosContent() {
               </div>
 
               <div className="space-y-6">
+                {/* Availability */}
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-900 mb-3">Categoría</h3>
+                  <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
+                    {categories.map((category) => (
+                      <label key={category.name} className="flex items-center gap-2.5 cursor-pointer group">
+                        <input
+                          type="radio"
+                          name="category"
+                          checked={selectedCategory === category.name}
+                          onChange={() => {
+                            const value = selectedCategory === category.name ? "" : category.name;
+                            setSelectedCategory(value);
+                            updateUrl({ category: value });
+                          }}
+                          className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
+                        />
+                        <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
+                          {category.name}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Availability */}
                 <div>
                   <h3 className="text-sm font-semibold text-slate-900 mb-3">Disponibilidad</h3>
@@ -288,6 +371,7 @@ function ServiciosContent() {
             )}
           </div>
         </div>
+        )}
       </div>
 
       {/* CTA Section */}

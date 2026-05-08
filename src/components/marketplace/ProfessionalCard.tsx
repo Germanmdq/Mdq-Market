@@ -78,8 +78,8 @@ const ProfessionalCard: React.FC<{ professional: ProfessionalCardData }> = ({ pr
           </p>
         </div>
 
-        <Link 
-          href={`/profesionales/${professional.slug}`}
+        <Link
+          href={`/profesionales/${professional.slug || professional.id}`}
           className="inline-flex h-10 items-center justify-center rounded-full bg-slate-950 px-5 text-sm font-semibold text-white transition hover:bg-slate-800 shrink-0"
         >
           Ver perfil

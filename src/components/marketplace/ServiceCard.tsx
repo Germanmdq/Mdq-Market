@@ -10,9 +10,10 @@ const FALLBACK = "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?q
 
 const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
   const [imgSrc, setImgSrc] = useState(service.image_url || service.image || FALLBACK);
+  const href = `/servicios/${service.slug || service.id}`;
 
   return (
-    <Link href={`/servicios/${service.slug}`} className="block h-full group">
+    <Link href={href} className="block h-full group">
       <article className="h-full overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_16px_44px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_26px_76px_rgba(15,23,42,0.18)] flex flex-col">
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-[inherit] bg-slate-50">
           <img
