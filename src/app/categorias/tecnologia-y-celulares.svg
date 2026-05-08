@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%" fill="none">
+  <defs>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="20" flood-color="#0F172A" flood-opacity="0.06"/>
+    </filter>
+    <linearGradient id="laptopGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="phoneGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" rx="32" fill="transparent"/>
+  
+  <g filter="url(#softShadow)" transform="translate(60, 60)">
+    <!-- Laptop -->
+    <path d="M 40 120 L 240 120 L 220 30 C 220 20 210 10 200 10 L 80 10 C 70 10 60 20 60 30 Z" fill="url(#laptopGrad)" stroke="#cbd5e1" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="70" y="25" width="140" height="85" rx="4" fill="#0f172a"/>
+    <rect x="20" y="120" width="240" height="12" rx="6" fill="#94a3b8"/>
+    <rect x="110" y="120" width="60" height="4" fill="#cbd5e1"/>
+
+    <!-- Phone -->
+    <rect x="210" y="50" width="60" height="110" rx="12" fill="url(#phoneGrad)" stroke="#ffffff" stroke-width="4"/>
+    <rect x="215" y="55" width="50" height="100" rx="8" fill="#1e293b"/>
+    <circle cx="225" cy="65" r="4" fill="#334155"/>
+    <circle cx="225" cy="75" r="4" fill="#334155"/>
+    <rect x="225" y="145" width="30" height="4" rx="2" fill="#334155"/>
+    
+    <!-- Earbuds case -->
+    <rect x="30" y="100" width="35" height="25" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <line x1="33" y1="112" x2="62" y2="112" stroke="#cbd5e1" stroke-width="2"/>
+    <circle cx="47" cy="106" r="3" fill="#3b82f6"/>
+    <circle cx="60" cy="120" r="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  </g>
+</svg>

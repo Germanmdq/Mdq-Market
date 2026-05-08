@@ -41,6 +41,7 @@ type CategoryRow = {
   is_root: boolean;
   is_active?: boolean;
   show_in_menu?: boolean;
+  image_url?: string | null;
 };
 
 type CategoryNode = CategoryRow & {
@@ -264,20 +265,24 @@ function CategoryQuickLinks({
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {categories.slice(0, 8).map((category) => {
             const meta = getProductCategoryMeta(category);
-            const Icon = meta.icon;
+            const imageUrl = category.image_url || `/category-art/${category.slug}.svg`;
             return (
               <Link
                 key={category.id}
                 href={`/productos?${category.is_root ? "category" : "subcategory"}=${category.slug}`}
-                className="group relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.10)] transition hover:-translate-y-1 hover:shadow-[0_30px_90px_rgba(15,23,42,0.16)]"
+                className="group relative flex flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.10)] transition hover:-translate-y-1 hover:shadow-[0_30px_90px_rgba(15,23,42,0.16)]"
               >
-                <div className={`absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br ${meta.color} opacity-15 transition group-hover:scale-125 group-hover:opacity-25`} />
-                <div className={`relative mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${meta.color} text-white shadow-lg transition group-hover:-rotate-3 group-hover:scale-110`}>
-                  <Icon className="h-7 w-7" />
+                <div className="relative mb-5 h-32 w-full rounded-2xl bg-slate-50/80 p-4 transition duration-500 group-hover:scale-105 group-hover:bg-slate-100">
+                  <img
+                    src={imageUrl}
+                    alt={`Ilustración de ${category.name}`}
+                    className="h-full w-full object-contain drop-shadow-sm"
+                    onError={(e) => { e.currentTarget.src = "/category-art/default.svg"; }}
+                  />
                 </div>
                 <p className="relative text-lg font-semibold text-slate-950">{category.name}</p>
                 <p className="relative mt-2 min-h-[48px] text-sm leading-6 text-slate-500">{meta.copy}</p>
-                <p className="relative mt-5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 w-fit">{category.productCount} publicaciones</p>
+                <div className="mt-auto pt-5"><p className="relative w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{category.productCount} publicaciones</p></div>
               </Link>
             );
           })}
@@ -579,7 +584,7 @@ export default async function ProductsPage({
   const [{ data: categoryRows }, { data: catalogSignals }] = await Promise.all([
     supabase
       .from("categories")
-      .select("id, name, slug, parent_id, is_root, is_active, show_in_menu")
+      .select("id, name, slug, parent_id, is_root, is_active, show_in_menu, image_url")
       .eq("is_active", true)
       .order("level", { ascending: true })
       .order("name", { ascending: true }),

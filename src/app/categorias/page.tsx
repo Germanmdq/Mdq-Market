@@ -67,8 +67,18 @@ export default async function CategoriesPage() {
               return (
                 <article
                   key={root.id}
-                  className="flex min-h-[280px] flex-col rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_16px_50px_rgba(15,23,42,0.06)]"
+                  className="group flex min-h-[320px] flex-col rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_16px_50px_rgba(15,23,42,0.06)] transition-shadow hover:shadow-[0_24px_60px_rgba(15,23,42,0.12)]"
                 >
+                  <div className="mb-6 h-40 w-full overflow-hidden rounded-2xl bg-slate-50 p-4 transition-colors group-hover:bg-slate-100">
+                    <img
+                      src={root.image_url || `/category-art/${root.slug}.svg`}
+                      alt={`Ilustración de ${root.name}`}
+                      className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => {
+                        e.currentTarget.src = "/category-art/default.svg";
+                      }}
+                    />
+                  </div>
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600">

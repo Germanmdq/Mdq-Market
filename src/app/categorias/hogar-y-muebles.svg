@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%" fill="none">
+  <defs>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="20" flood-color="#0F172A" flood-opacity="0.06"/>
+    </filter>
+    <linearGradient id="sofaGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5e6d3"/>
+      <stop offset="100%" stop-color="#e6cca3"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" rx="32" fill="transparent"/>
+  
+  <g filter="url(#softShadow)" transform="translate(50, 60)">
+    <!-- Floor lamp -->
+    <line x1="240" y1="140" x2="240" y2="30" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+    <path d="M 220 50 L 260 50 L 250 10 L 230 10 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="3" stroke-linejoin="round"/>
+    <line x1="225" y1="140" x2="255" y2="140" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+    
+    <!-- Plant -->
+    <rect x="30" y="110" width="30" height="30" rx="4" fill="#d4a373"/>
+    <path d="M 45 110 C 20 80 45 50 45 50 C 45 50 70 80 45 110" fill="#84a98c"/>
+    <path d="M 45 110 C 10 90 20 60 20 60 C 20 60 45 80 45 110" fill="#52796f"/>
+
+    <!-- Sofa -->
+    <rect x="70" y="70" width="130" height="45" rx="8" fill="url(#sofaGrad)" stroke="#c2a278" stroke-width="3"/>
+    <rect x="70" y="105" width="65" height="25" rx="6" fill="#f5e6d3" stroke="#c2a278" stroke-width="3"/>
+    <rect x="135" y="105" width="65" height="25" rx="6" fill="#f5e6d3" stroke="#c2a278" stroke-width="3"/>
+    <rect x="55" y="85" width="25" height="45" rx="6" fill="url(#sofaGrad)" stroke="#c2a278" stroke-width="3"/>
+    <rect x="190" y="85" width="25" height="45" rx="6" fill="url(#sofaGrad)" stroke="#c2a278" stroke-width="3"/>
+    <line x1="75" y1="130" x2="70" y2="145" stroke="#8b5a2b" stroke-width="4" stroke-linecap="round"/>
+    <line x1="195" y1="130" x2="200" y2="145" stroke="#8b5a2b" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Coffee Table -->
+    <ellipse cx="135" cy="155" rx="45" ry="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="3"/>
+    <line x1="105" y1="160" x2="105" y2="175" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+    <line x1="165" y1="160" x2="165" y2="175" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>
