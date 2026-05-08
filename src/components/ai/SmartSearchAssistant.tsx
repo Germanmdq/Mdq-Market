@@ -6,6 +6,7 @@ import { ArrowRight, Bot, Loader2, Search, Sparkles, X } from "lucide-react";
 import { interpretLocalIntent, type IntentResult } from "@/lib/ai/local-intent";
 import { trackActivity } from "@/lib/activity";
 import { cn } from "@/lib/utils";
+import { buildSearchHref, normalizeSearchQuery } from "@/lib/search/buildSearchHref";
 
 const CHIPS = [
   { label: "Comprar producto", value: "Busco un producto" },
@@ -55,24 +56,34 @@ export default function SmartSearchAssistant() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const value = query.trim();
-    if (!value) return;
+    const value = normalizeSearchQuery(query);
+    const href = buildSearchHref(value);
+
+    if (!value) {
+      router.push(href);
+      return;
+    }
 
     setLoading(true);
-    const nextResult = await resolveIntent(value);
-    setResult(nextResult);
-    await trackActivity({
-      event_type: "search",
-      entity_type: "search",
-      search_query: value,
-      metadata: {
-        source: "smart_search_assistant",
-        interpreted_intent: nextResult.intent,
-        href: nextResult.href,
-      },
-    });
+    const nextResult = await resolveIntent(value).catch(() => interpretLocalIntent(value));
+    const safeResult = { ...nextResult, href };
+    setResult(safeResult);
+    try {
+      await trackActivity({
+        event_type: "search",
+        entity_type: "search",
+        search_query: value,
+        metadata: {
+          source: "smart_search_assistant",
+          interpreted_intent: safeResult.intent,
+          href: safeResult.href,
+        },
+      });
+    } catch (error) {
+      console.error("Search activity tracking failed:", error);
+    }
     setLoading(false);
-    router.push(nextResult.href);
+    router.push(href);
   };
 
   return (

@@ -8,14 +8,15 @@ import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
 import SearchActivityTracker from "@/components/activity/SearchActivityTracker";
 import type { Product } from "@/types/product";
 import type { Service } from "@/types";
+import { normalizeSearchQuery, sanitizePostgrestSearchTerm } from "@/lib/search/buildSearchHref";
 
 export default async function BuscarPage({
   searchParams,
 }: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>> | Record<string, string | string[] | undefined>;
 }) {
-  const params = await searchParams;
-  const query = typeof params.q === "string" ? params.q.trim() : "";
+  const params = (await searchParams) ?? {};
+  const query = typeof params.q === "string" ? normalizeSearchQuery(params.q) : "";
 
   if (!query) {
     return (
@@ -33,6 +34,17 @@ export default async function BuscarPage({
     );
   }
 
+  const safeQuery = sanitizePostgrestSearchTerm(query);
+  const productFilter = safeQuery
+    ? `title.ilike.%${safeQuery}%,description.ilike.%${safeQuery}%,category.ilike.%${safeQuery}%,subcategory.ilike.%${safeQuery}%,zone.ilike.%${safeQuery}%`
+    : "title.ilike.%__mdp_no_query__%";
+  const serviceFilter = safeQuery
+    ? `title.ilike.%${safeQuery}%,description.ilike.%${safeQuery}%,category.ilike.%${safeQuery}%,subcategory.ilike.%${safeQuery}%`
+    : "title.ilike.%__mdp_no_query__%";
+  const professionalFilter = safeQuery
+    ? `name.ilike.%${safeQuery}%,profession.ilike.%${safeQuery}%,category.ilike.%${safeQuery}%,zone.ilike.%${safeQuery}%`
+    : "name.ilike.%__mdp_no_query__%";
+
   // Search in parallel across all tables
   const [productsResult, servicesResult, professionalsResult] = await Promise.all([
     // Search products
@@ -40,7 +52,7 @@ export default async function BuscarPage({
       .from("products")
       .select("*")
       .eq("status", "published")
-      .or(`title.ilike.%${query}%,description.ilike.%${query}%,category.ilike.%${query}%,zone.ilike.%${query}%`)
+      .or(productFilter)
       .limit(12),
 
     // Search services
@@ -48,16 +60,20 @@ export default async function BuscarPage({
       .from("services")
       .select("*")
       .eq("status", "published")
-      .or(`title.ilike.%${query}%,description.ilike.%${query}%,category.ilike.%${query}%`)
+      .or(serviceFilter)
       .limit(8),
 
     // Search professionals
     supabase
       .from("professionals")
       .select("*")
-      .or(`name.ilike.%${query}%,profession.ilike.%${query}%,category.ilike.%${query}%,zone.ilike.%${query}%`)
+      .or(professionalFilter)
       .limit(8),
   ]);
+
+  if (productsResult.error) console.error("Global product search error:", productsResult.error);
+  if (servicesResult.error) console.error("Global service search error:", servicesResult.error);
+  if (professionalsResult.error) console.error("Global professional search error:", professionalsResult.error);
 
   const products = (productsResult.data ?? []) as Product[];
   const services = (servicesResult.data ?? []) as Service[];

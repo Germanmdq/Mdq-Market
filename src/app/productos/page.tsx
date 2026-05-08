@@ -31,6 +31,7 @@ import { MarketSection } from "@/components/marketplace/MarketSection";
 import { getPublishedServices } from "@/lib/services";
 import PersonalizedProductSections from "@/components/marketplace/PersonalizedProductSections";
 import CategoryHeroSlider from "@/components/marketplace/CategoryHeroSlider";
+import { normalizeSearchQuery, sanitizePostgrestSearchTerm } from "@/lib/search/buildSearchHref";
 
 type CategoryRow = {
   id: string;
@@ -405,9 +406,10 @@ function CategoryDirectory({ categories }: { categories: CategoryNode[] }) {
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>> | Record<string, string | string[] | undefined>;
 }) {
-  const params = await searchParams;
+  const params = (await searchParams) ?? {};
+  const searchQuery = typeof params.q === "string" ? normalizeSearchQuery(params.q) : "";
 
   const normalizeFilterValue = (value: string) =>
     value
@@ -435,7 +437,8 @@ export default async function ProductsPage({
 
   // Pagination
   const PRODUCTS_PER_PAGE = 24;
-  const page = typeof params.page === "string" ? parseInt(params.page, 10) : 1;
+  const rawPage = typeof params.page === "string" ? parseInt(params.page, 10) : 1;
+  const page = Number.isFinite(rawPage) && rawPage > 0 ? rawPage : 1;
   const from = (page - 1) * PRODUCTS_PER_PAGE;
   const to = from + PRODUCTS_PER_PAGE - 1;
 
@@ -516,9 +519,18 @@ export default async function ProductsPage({
       qCount = qCount.eq("mdp_delivery_available", true);
     }
 
-    if (typeof params.q === "string" && params.q.trim()) {
-      q = q.ilike("title", `%${params.q.trim()}%`);
-      qCount = qCount.ilike("title", `%${params.q.trim()}%`);
+    if (searchQuery) {
+      const safeQ = sanitizePostgrestSearchTerm(searchQuery);
+      if (safeQ) {
+        const filter = [
+          `title.ilike.%${safeQ}%`,
+          `description.ilike.%${safeQ}%`,
+          `category.ilike.%${safeQ}%`,
+          `subcategory.ilike.%${safeQ}%`,
+        ].join(",");
+        q = q.or(filter);
+        qCount = qCount.or(filter);
+      }
     }
 
     return { q, qCount };
@@ -725,14 +737,27 @@ export default async function ProductsPage({
                 <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Search className="w-8 h-8 text-slate-300" />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-950 mb-2">No encontramos resultados</h3>
-                <p className="text-sm text-slate-600 mb-6">Probá quitando algunos filtros o cambiando tu búsqueda</p>
-                <Link
-                  href="/productos"
-                  className="inline-block px-5 py-2.5 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
-                >
-                  Limpiar todos los filtros
-                </Link>
+                <p className="text-sm font-semibold text-blue-600">Sin resultados</p>
+                <h3 className="mt-2 text-lg font-semibold text-slate-950">
+                  {searchQuery ? `No encontramos publicaciones para “${searchQuery}”` : "No encontramos resultados"}
+                </h3>
+                <p className="mx-auto mt-2 max-w-md text-sm text-slate-600">
+                  Probá con otra palabra, quitá filtros o explorá productos y servicios disponibles en Mar del Plata.
+                </p>
+                <div className="mt-6 flex flex-wrap justify-center gap-2">
+                  <Link
+                    href="/productos"
+                    className="inline-block rounded-full bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+                  >
+                    Ver productos
+                  </Link>
+                  <Link
+                    href="/servicios"
+                    className="inline-block rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-50"
+                  >
+                    Buscar servicios
+                  </Link>
+                </div>
               </div>
             )}
           </div>

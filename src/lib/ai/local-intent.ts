@@ -138,6 +138,6 @@ export function interpretLocalIntent(input: string): IntentResult {
   return {
     intent: "unknown",
     query,
-    href: buildHref("/buscar", { q: query || text }),
+    href: buildHref("/productos", { q: query || text }),
   };
 }

@@ -96,7 +96,7 @@ const Header = () => {
 
           {/* Search */}
           <form
-            action="/buscar"
+            action="/productos"
             method="GET"
             className="ml-auto hidden max-w-xl flex-1 lg:block"
             onSubmit={(event) => {
@@ -119,7 +119,6 @@ const Header = () => {
                 name="q"
                 placeholder="¿Qué buscás en Mar del Plata?"
                 className="ml-2.5 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
-                required
               />
             </div>
             <div className="mt-2 flex gap-2 overflow-hidden">
@@ -236,7 +235,7 @@ const Header = () => {
         {/* Mobile search & Quick Cats */}
         <div className="lg:hidden px-4 pb-3 space-y-2 border-t border-slate-100">
           <form
-            action="/buscar"
+            action="/productos"
             method="GET"
             className="pt-3"
             onSubmit={(event) => {
@@ -259,7 +258,6 @@ const Header = () => {
                 name="q"
                 placeholder="¿Qué buscás en Mar del Plata?"
                 className="ml-2.5 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
-                required
               />
             </div>
           </form>
