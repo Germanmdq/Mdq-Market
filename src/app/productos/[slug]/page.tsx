@@ -9,6 +9,7 @@ import { getProductGallery, getProductMainImage } from "@/lib/product-images";
 import ProductCard from "@/components/marketplace/ProductCard";
 import { formatPrice, cn } from "@/lib/utils";
 import ProductPurchasePanel from "@/components/marketplace/ProductPurchasePanel";
+import { tagHref, toTitleLabel } from "@/lib/labels";
 
 const STATUS_BUTTON: Record<string, { label: string; disabled: boolean }> = {
   published: { label: "Comprar ahora", disabled: false },
@@ -37,6 +38,7 @@ export default async function ProductDetailPage({
   ]);
   
   const btn = STATUS_BUTTON[product.status] || STATUS_BUTTON.published;
+  const conditionLabel = toTitleLabel(product.condition);
 
   return (
     <main className="w-full bg-white min-h-screen">
@@ -108,9 +110,13 @@ export default async function ProductDetailPage({
               {product.tags && product.tags.length > 0 && (
                 <div className="mt-5 flex flex-wrap gap-2">
                   {product.tags.map((tag, i) => (
-                    <span key={i} className="rounded-full bg-slate-700 px-3 py-1 text-xs font-semibold text-white shadow-sm">
-                      {tag}
-                    </span>
+                    <Link
+                      key={`${tag}-${i}`}
+                      href={tagHref(tag)}
+                      className="rounded-full bg-slate-700 px-3 py-1 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-600"
+                    >
+                      {toTitleLabel(tag)}
+                    </Link>
                   ))}
                 </div>
               )}
@@ -135,7 +141,7 @@ export default async function ProductDetailPage({
                 {product.protected_payment && (
                   <span className="rounded-full bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm">Pago protegido</span>
                 )}
-                <span className="rounded-full bg-slate-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm">{product.condition}</span>
+                <span className="rounded-full bg-slate-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm">{conditionLabel}</span>
               </div>
             </div>
 
@@ -143,16 +149,22 @@ export default async function ProductDetailPage({
 
             {/* Seller & Safety */}
             <div className="space-y-4 pt-6 border-t border-slate-200">
-              <div className="rounded-3xl border border-slate-200 p-5 bg-white shadow-[0_16px_44px_rgba(15,23,42,0.10)] flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
+              <div className="rounded-3xl border border-slate-200 p-6 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.14)] flex items-start gap-5">
+                <div className="w-16 h-16 rounded-2xl bg-slate-100 overflow-hidden shrink-0 border border-slate-200 shadow-md">
                   <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${product.seller_name || "Vendedor"}`} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1">
                   <p className="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Vendedor</p>
-                  <p className="text-sm font-semibold text-slate-950">{product.seller_name || "Vendedor local"}</p>
+                  <p className="text-lg font-semibold text-slate-950">{product.seller_name || "Vendedor local"}</p>
                   <p className="text-sm text-slate-500 mt-1 flex items-center gap-1.5">
-                    <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" /> 4.8 · {product.zone || product.city}
+                    <Star className="w-4 h-4 fill-amber-500 text-amber-500" /> 4.8 · {product.zone || product.city}
                   </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {product.seller_verified && (
+                      <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">Verificado</span>
+                    )}
+                    <span className="rounded-full bg-slate-700 px-3 py-1 text-xs font-semibold text-white">{toTitleLabel(product.seller_type)}</span>
+                  </div>
                 </div>
               </div>
 

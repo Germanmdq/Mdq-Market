@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Heart } from "lucide-react";
 import type { Product } from "@/types/product";
 import { getProductMainImage } from "@/lib/product-images";
+import { toTitleLabel } from "@/lib/labels";
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("es-AR", {
@@ -82,6 +83,12 @@ export default function ProductCard({ product }: { product: Product }) {
           <h3 className="mt-2 line-clamp-2 text-sm font-medium leading-snug text-slate-700">
             {product.title}
           </h3>
+
+          <div className="mt-3">
+            <span className="rounded-full bg-slate-700 px-2.5 py-1 text-[10px] font-semibold text-white">
+              {toTitleLabel(product.condition)}
+            </span>
+          </div>
 
           <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
             <span className="font-medium">
