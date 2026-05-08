@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "import:categories": "node scripts/import-mercadolibre-categories.mjs"
+    "import:categories": "node scripts/import-mercadolibre-categories.mjs",
+    "export:category-routes": "node scripts/export-category-routes.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

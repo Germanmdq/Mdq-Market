@@ -19,6 +19,8 @@ import ServiceCard from "@/components/marketplace/ServiceCard";
 import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
 import { DetailSection, FAQSection, FinalCTASection, StepsExplainer, TrustMiniCard } from "@/components/marketplace/detail/DetailContinuity";
 
+export const dynamic = "force-dynamic";
+
 type ProfessionalRow = Record<string, any>;
 
 const FALLBACK_PROFESSIONALS: Record<string, ProfessionalRow> = {

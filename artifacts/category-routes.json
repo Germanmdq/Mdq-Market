@@ -1,0 +1,1041 @@
+[
+  {
+    "name": "Tecnología y celulares",
+    "slug": "tecnologia-y-celulares",
+    "type": "products",
+    "href": "/productos?category=tecnologia-y-celulares",
+    "productCount": 32,
+    "showInMenu": true,
+    "isActive": true,
+    "isRoot": true,
+    "children": [
+      {
+        "name": "Celulares",
+        "slug": "celulares",
+        "type": "products",
+        "href": "/productos?subcategory=celulares",
+        "productCount": 5,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Audio",
+        "slug": "audio",
+        "type": "products",
+        "href": "/productos?subcategory=audio",
+        "productCount": 2,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Gaming",
+        "slug": "gaming",
+        "type": "products",
+        "href": "/productos?subcategory=gaming",
+        "productCount": 2,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Notebooks",
+        "slug": "notebooks",
+        "type": "products",
+        "href": "/productos?subcategory=notebooks",
+        "productCount": 2,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Fotografía",
+        "slug": "fotografia",
+        "type": "products",
+        "href": "/productos?subcategory=fotografia",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Lectores digitales",
+        "slug": "lectores-digitales",
+        "type": "products",
+        "href": "/productos?subcategory=lectores-digitales",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Monitores",
+        "slug": "monitores",
+        "type": "products",
+        "href": "/productos?subcategory=monitores",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Redes",
+        "slug": "redes",
+        "type": "products",
+        "href": "/productos?subcategory=redes",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Tablets",
+        "slug": "tablets",
+        "type": "products",
+        "href": "/productos?subcategory=tablets",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Accesorios tecnológicos",
+        "slug": "accesorios-tecnologicos",
+        "type": "products",
+        "href": "/productos?subcategory=accesorios-tecnologicos",
+        "productCount": 0,
+        "showInMenu": false,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Hogar y muebles",
+    "slug": "hogar-y-muebles",
+    "type": "products",
+    "href": "/productos?category=hogar-y-muebles",
+    "productCount": 24,
+    "showInMenu": true,
+    "isActive": true,
+    "isRoot": true,
+    "children": [
+      {
+        "name": "Muebles",
+        "slug": "muebles",
+        "type": "products",
+        "href": "/productos?subcategory=muebles",
+        "productCount": 8,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Home office",
+        "slug": "home-office",
+        "type": "products",
+        "href": "/productos?subcategory=home-office",
+        "productCount": 2,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Comedor",
+        "slug": "comedor",
+        "type": "products",
+        "href": "/productos?subcategory=comedor",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Dormitorio",
+        "slug": "dormitorio",
+        "type": "products",
+        "href": "/productos?subcategory=dormitorio",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Living",
+        "slug": "living",
+        "type": "products",
+        "href": "/productos?subcategory=living",
+        "productCount": 0,
+        "showInMenu": false,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Electrodomésticos",
+    "slug": "electrodomesticos",
+    "type": "products",
+    "href": "/productos?category=electrodomesticos",
+    "productCount": 20,
+    "showInMenu": true,
+    "isActive": true,
+    "isRoot": true,
+    "children": [
+      {
+        "name": "Cocina",
+        "slug": "cocina",
+        "type": "products",
+        "href": "/productos?subcategory=cocina",
+        "productCount": 4,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Climatización",
+        "slug": "climatizacion",
+        "type": "products",
+        "href": "/productos?subcategory=climatizacion",
+        "productCount": 3,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Freezers",
+        "slug": "freezers",
+        "type": "products",
+        "href": "/productos?subcategory=freezers",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Lavado",
+        "slug": "lavado",
+        "type": "products",
+        "href": "/productos?subcategory=lavado",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Pequeños electrodomésticos",
+        "slug": "pequenos-electrodomesticos",
+        "type": "products",
+        "href": "/productos?subcategory=pequenos-electrodomesticos",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Emprendedores locales",
+    "slug": "emprendedores-locales",
+    "type": "products",
+    "href": "/productos?category=emprendedores-locales",
+    "productCount": 19,
+    "showInMenu": true,
+    "isActive": true,
+    "isRoot": true,
+    "children": [
+      {
+        "name": "Artesanales",
+        "slug": "artesanales",
+        "type": "products",
+        "href": "/productos?subcategory=artesanales",
+        "productCount": 4,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Deco artesanal",
+        "slug": "deco-artesanal",
+        "type": "products",
+        "href": "/productos?subcategory=deco-artesanal",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Pastelería",
+        "slug": "pasteleria",
+        "type": "products",
+        "href": "/productos?subcategory=pasteleria",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Regalería",
+        "slug": "regaleria",
+        "type": "products",
+        "href": "/productos?subcategory=regaleria",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Regalos",
+        "slug": "regalos",
+        "type": "products",
+        "href": "/productos?subcategory=regalos",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Textiles",
+        "slug": "textiles",
+        "type": "products",
+        "href": "/productos?subcategory=textiles",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Herramientas y construcción",
+    "slug": "herramientas-y-construccion",
+    "type": "products",
+    "href": "/productos?category=herramientas-y-construccion",
+    "productCount": 19,
+    "showInMenu": true,
+    "isActive": true,
+    "isRoot": true,
+    "children": [
+      {
+        "name": "Herramientas eléctricas",
+        "slug": "herramientas-electricas",
+        "type": "products",
+        "href": "/productos?subcategory=herramientas-electricas",
+        "productCount": 4,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Herramientas manuales",
+        "slug": "herramientas-manuales",
+        "type": "products",
+        "href": "/productos?subcategory=herramientas-manuales",
+        "productCount": 2,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Obra",
+        "slug": "obra",
+        "type": "products",
+        "href": "/productos?subcategory=obra",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Pintura",
+        "slug": "pintura",
+        "type": "products",
+        "href": "/productos?subcategory=pintura",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Taladros y atornilladores",
+        "slug": "taladros-y-atornilladores",
+        "type": "products",
+        "href": "/productos?subcategory=taladros-y-atornilladores",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Construcción",
+        "slug": "construccion",
+        "type": "products",
+        "href": "/productos?subcategory=construccion",
+        "productCount": 0,
+        "showInMenu": false,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Indumentaria y accesorios",
+    "slug": "indumentaria-y-accesorios",
+    "type": "products",
+    "href": "/productos?category=indumentaria-y-accesorios",
+    "productCount": 18,
+    "showInMenu": true,
+    "isActive": true,
+    "isRoot": true,
+    "children": [
+      {
+        "name": "Accesorios",
+        "slug": "accesorios",
+        "type": "products",
+        "href": "/productos?subcategory=accesorios",
+        "productCount": 4,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Hombre",
+        "slug": "hombre",
+        "type": "products",
+        "href": "/productos?subcategory=hombre",
+        "productCount": 2,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Mujer",
+        "slug": "mujer",
+        "type": "products",
+        "href": "/productos?subcategory=mujer",
+        "productCount": 2,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Calzado",
+        "slug": "calzado",
+        "type": "products",
+        "href": "/productos?subcategory=calzado",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Pantalones",
+        "slug": "pantalones",
+        "type": "products",
+        "href": "/productos?subcategory=pantalones",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Decoración y jardín",
+    "slug": "decoracion-y-jardin",
+    "type": "products",
+    "href": "/productos?category=decoracion-y-jardin",
+    "productCount": 17,
+    "showInMenu": true,
+    "isActive": true,
+    "isRoot": true,
+    "children": [
+      {
+        "name": "Jardín",
+        "slug": "jardin",
+        "type": "products",
+        "href": "/productos?subcategory=jardin",
+        "productCount": 3,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Textiles deco",
+        "slug": "textiles-deco",
+        "type": "products",
+        "href": "/productos?subcategory=textiles-deco",
+        "productCount": 2,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Cuadros",
+        "slug": "cuadros",
+        "type": "products",
+        "href": "/productos?subcategory=cuadros",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Espejos",
+        "slug": "espejos",
+        "type": "products",
+        "href": "/productos?subcategory=espejos",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Exterior",
+        "slug": "exterior",
+        "type": "products",
+        "href": "/productos?subcategory=exterior",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Iluminación",
+        "slug": "iluminacion",
+        "type": "products",
+        "href": "/productos?subcategory=iluminacion",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Comercios locales",
+    "slug": "comercios-locales",
+    "type": "products",
+    "href": "/productos?category=comercios-locales",
+    "productCount": 16,
+    "showInMenu": true,
+    "isActive": true,
+    "isRoot": true,
+    "children": [
+      {
+        "name": "Almacén",
+        "slug": "almacen",
+        "type": "products",
+        "href": "/productos?subcategory=almacen",
+        "productCount": 2,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Bazar",
+        "slug": "bazar",
+        "type": "products",
+        "href": "/productos?subcategory=bazar",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Café",
+        "slug": "cafe",
+        "type": "products",
+        "href": "/productos?subcategory=cafe",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Librería",
+        "slug": "libreria",
+        "type": "products",
+        "href": "/productos?subcategory=libreria",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Limpieza",
+        "slug": "limpieza",
+        "type": "products",
+        "href": "/productos?subcategory=limpieza",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Perfumería",
+        "slug": "perfumeria",
+        "type": "products",
+        "href": "/productos?subcategory=perfumeria",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Verdulería",
+        "slug": "verduleria",
+        "type": "products",
+        "href": "/productos?subcategory=verduleria",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Mascotas",
+    "slug": "mascotas",
+    "type": "products",
+    "href": "/productos?category=mascotas",
+    "productCount": 14,
+    "showInMenu": true,
+    "isActive": true,
+    "isRoot": true,
+    "children": [
+      {
+        "name": "Accesorios para mascotas",
+        "slug": "accesorios-para-mascotas",
+        "type": "products",
+        "href": "/productos?subcategory=accesorios-para-mascotas",
+        "productCount": 3,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Gatos",
+        "slug": "gatos",
+        "type": "products",
+        "href": "/productos?subcategory=gatos",
+        "productCount": 2,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Perros",
+        "slug": "perros",
+        "type": "products",
+        "href": "/productos?subcategory=perros",
+        "productCount": 2,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Bebés, niños y juguetes",
+    "slug": "bebes-ninos-y-juguetes",
+    "type": "products",
+    "href": "/productos?category=bebes-ninos-y-juguetes",
+    "productCount": 12,
+    "showInMenu": true,
+    "isActive": true,
+    "isRoot": true,
+    "children": [
+      {
+        "name": "Juguetes",
+        "slug": "juguetes",
+        "type": "products",
+        "href": "/productos?subcategory=juguetes",
+        "productCount": 2,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Cochecitos",
+        "slug": "cochecitos",
+        "type": "products",
+        "href": "/productos?subcategory=cochecitos",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Dormitorio infantil",
+        "slug": "dormitorio-infantil",
+        "type": "products",
+        "href": "/productos?subcategory=dormitorio-infantil",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Escolar",
+        "slug": "escolar",
+        "type": "products",
+        "href": "/productos?subcategory=escolar",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Sillas y practicunas",
+        "slug": "sillas-y-practicunas",
+        "type": "products",
+        "href": "/productos?subcategory=sillas-y-practicunas",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Bicicletas y movilidad",
+    "slug": "bicicletas-y-movilidad",
+    "type": "products",
+    "href": "/productos?category=bicicletas-y-movilidad",
+    "productCount": 11,
+    "showInMenu": true,
+    "isActive": true,
+    "isRoot": true,
+    "children": [
+      {
+        "name": "Bicicletas",
+        "slug": "bicicletas",
+        "type": "products",
+        "href": "/productos?subcategory=bicicletas",
+        "productCount": 3,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Accesorios de movilidad",
+        "slug": "accesorios-de-movilidad",
+        "type": "products",
+        "href": "/productos?subcategory=accesorios-de-movilidad",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      },
+      {
+        "name": "Monopatines",
+        "slug": "monopatines",
+        "type": "products",
+        "href": "/productos?subcategory=monopatines",
+        "productCount": 1,
+        "showInMenu": true,
+        "isActive": true,
+        "isRoot": false,
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Servicios",
+    "slug": "servicios",
+    "type": "services",
+    "href": "/servicios",
+    "productCount": 71,
+    "showInMenu": true,
+    "children": [
+      {
+        "name": "Servicios Profesionales",
+        "slug": "servicios-profesionales",
+        "type": "services",
+        "href": "/servicios?category=servicios-profesionales",
+        "productCount": 55,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Gas",
+        "slug": "gas",
+        "type": "services",
+        "href": "/servicios?category=gas",
+        "productCount": 19,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Plomería",
+        "slug": "plomeria",
+        "type": "services",
+        "href": "/servicios?category=plomeria",
+        "productCount": 19,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Electricidad",
+        "slug": "electricidad",
+        "type": "services",
+        "href": "/servicios?category=electricidad",
+        "productCount": 18,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Mantenimiento y Reparación",
+        "slug": "mantenimiento-y-reparacion",
+        "type": "services",
+        "href": "/servicios?category=mantenimiento-y-reparacion",
+        "productCount": 8,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Salud y Bienestar",
+        "slug": "salud-y-bienestar",
+        "type": "services",
+        "href": "/servicios?category=salud-y-bienestar",
+        "productCount": 7,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Contabilidad",
+        "slug": "contabilidad",
+        "type": "services",
+        "href": "/servicios?category=contabilidad",
+        "productCount": 2,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Entrenamiento",
+        "slug": "entrenamiento",
+        "type": "services",
+        "href": "/servicios?category=entrenamiento",
+        "productCount": 2,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Legales",
+        "slug": "legales",
+        "type": "services",
+        "href": "/servicios?category=legales",
+        "productCount": 2,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Masajes",
+        "slug": "masajes",
+        "type": "services",
+        "href": "/servicios?category=masajes",
+        "productCount": 2,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Nutrición",
+        "slug": "nutricion",
+        "type": "services",
+        "href": "/servicios?category=nutricion",
+        "productCount": 2,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Climatización",
+        "slug": "climatizacion",
+        "type": "services",
+        "href": "/servicios?category=climatizacion",
+        "productCount": 1,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Hogar",
+        "slug": "hogar",
+        "type": "services",
+        "href": "/servicios?category=hogar",
+        "productCount": 1,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Orientación",
+        "slug": "orientacion",
+        "type": "services",
+        "href": "/servicios?category=orientacion",
+        "productCount": 1,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Pintura",
+        "slug": "pintura",
+        "type": "services",
+        "href": "/servicios?category=pintura",
+        "productCount": 1,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Pisos",
+        "slug": "pisos",
+        "type": "services",
+        "href": "/servicios?category=pisos",
+        "productCount": 1,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Terapia",
+        "slug": "terapia",
+        "type": "services",
+        "href": "/servicios?category=terapia",
+        "productCount": 1,
+        "showInMenu": true,
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Profesionales",
+    "slug": "profesionales",
+    "type": "professionals",
+    "href": "/profesionales",
+    "productCount": 2,
+    "showInMenu": true,
+    "children": [
+      {
+        "name": "Hogar",
+        "slug": "hogar",
+        "type": "professionals",
+        "href": "/profesionales?category=hogar",
+        "productCount": 2,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Baños",
+        "slug": "banos",
+        "type": "professionals",
+        "href": "/profesionales?category=banos",
+        "productCount": 1,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Calefactores",
+        "slug": "calefactores",
+        "type": "professionals",
+        "href": "/profesionales?category=calefactores",
+        "productCount": 1,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Cocinas",
+        "slug": "cocinas",
+        "type": "professionals",
+        "href": "/profesionales?category=cocinas",
+        "productCount": 1,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Gas",
+        "slug": "gas",
+        "type": "professionals",
+        "href": "/profesionales?category=gas",
+        "productCount": 1,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Pérdidas",
+        "slug": "perdidas",
+        "type": "professionals",
+        "href": "/profesionales?category=perdidas",
+        "productCount": 1,
+        "showInMenu": true,
+        "children": []
+      },
+      {
+        "name": "Plomería",
+        "slug": "plomeria",
+        "type": "professionals",
+        "href": "/profesionales?category=plomeria",
+        "productCount": 1,
+        "showInMenu": true,
+        "children": []
+      }
+    ]
+  }
+]

@@ -10,7 +10,7 @@ const FALLBACK = "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?q
 
 const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
   const [imgSrc, setImgSrc] = useState(service.image_url || service.image || FALLBACK);
-  const href = `/servicios/${service.slug || service.id}`;
+  const href = service.slug ? `/servicios/${service.slug}` : "/servicios";
   const priceFrom = Number((service as any).priceFrom ?? (service as any).price_from ?? 0);
   const zones = Array.isArray(service.zones) ? service.zones : ((service as any).zone ? [(service as any).zone] : []);
   const responseTime = service.responseTime || (service as any).response_time || "A coordinar";

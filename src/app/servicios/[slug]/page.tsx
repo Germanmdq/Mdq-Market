@@ -22,6 +22,8 @@ import ServiceCard from "@/components/marketplace/ServiceCard";
 import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
 import { DetailSection, FAQSection, FinalCTASection, StepsExplainer, TrustMiniCard } from "@/components/marketplace/detail/DetailContinuity";
 
+export const dynamic = "force-dynamic";
+
 function toCardProfessional(professional: any) {
   const rating = typeof professional.rating === "number" ? professional.rating : professional.rating?.average ?? 0;
   return {
@@ -45,7 +47,11 @@ function toCardProfessional(professional: any) {
   };
 }
 
-export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ServiceDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }> | { slug: string };
+}) {
   const { slug } = await params;
   const service = await getServiceBySlug(slug);
 

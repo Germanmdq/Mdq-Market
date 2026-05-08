@@ -20,7 +20,8 @@ export async function getServiceBySlug(slug: string) {
   const { data, error } = await supabase
     .from("services")
     .select("*")
-    .or(`slug.eq.${slug},id.eq.${slug}`)
+    .eq("slug", slug)
+    .eq("status", "published")
     .maybeSingle();
 
   if (error) {
@@ -28,5 +29,21 @@ export async function getServiceBySlug(slug: string) {
     return null;
   }
 
-  return data as Service;
+  if (data) return data as Service;
+
+  const { data: debugService, error: debugError } = await supabase
+    .from("services")
+    .select("id,title,slug,status")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (debugError) {
+    console.error("Error diagnosing missing service by slug:", debugError);
+  } else if (debugService) {
+    console.warn("Service exists but is not published:", debugService);
+  } else {
+    console.warn(`Service slug not found: ${slug}`);
+  }
+
+  return null;
 }
