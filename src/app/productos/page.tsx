@@ -167,6 +167,31 @@ function buildCategoryTree(categories: CategoryRow[], products: CatalogSignal[])
   return prune(roots);
 }
 
+function findCategoryNodeByParam(categories: CategoryNode[], value?: string | null): CategoryNode | null {
+  if (!value) return null;
+  const normalizedValue = normalizeLabel(value).replace(/&/g, "y").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
+  for (const category of categories) {
+    const normalizedSlug = normalizeLabel(category.slug).replace(/&/g, "y").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    const normalizedName = normalizeLabel(category.name).replace(/&/g, "y").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    if (normalizedSlug === normalizedValue || normalizedName === normalizedValue) return category;
+    const child = findCategoryNodeByParam(category.children, value);
+    if (child) return child;
+  }
+
+  return null;
+}
+
+function findParentCategory(categories: CategoryNode[], childId?: string | null): CategoryNode | null {
+  if (!childId) return null;
+  for (const category of categories) {
+    if (category.children.some((child) => child.id === childId)) return category;
+    const parent = findParentCategory(category.children, childId);
+    if (parent) return parent;
+  }
+  return null;
+}
+
 function CategoryQuickLinks({
   title,
   categories,
@@ -281,8 +306,8 @@ function StoreHighlights({ products }: { products: CatalogSignal[] }) {
       eyebrow="Locales"
       title="Tiendas y vendedores destacados"
       description="Perfiles con catálogo activo dentro de MDP Market"
-      href="/productos?verified=true"
-      linkLabel="Ver verificados"
+      href="/productos"
+      linkLabel="Ver tiendas"
       className="border-t border-slate-200 bg-slate-50"
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -491,11 +516,6 @@ export default async function ProductsPage({
       qCount = qCount.eq("mdp_delivery_available", true);
     }
 
-    if (params.verified === "true") {
-      q = q.eq("seller_verified", true);
-      qCount = qCount.eq("seller_verified", true);
-    }
-
     if (typeof params.q === "string" && params.q.trim()) {
       q = q.ilike("title", `%${params.q.trim()}%`);
       qCount = qCount.ilike("title", `%${params.q.trim()}%`);
@@ -559,10 +579,16 @@ export default async function ProductsPage({
   ]);
   const categoryTree = buildCategoryTree((categoryRows ?? []) as CategoryRow[], (catalogSignals ?? []) as CatalogSignal[]);
   const selectedCategoryParam = typeof params.category === "string" ? params.category : null;
-  const selectedCategoryNode = selectedCategoryParam
-    ? categoryTree.find((category) => normalizeFilterValue(category.slug) === normalizeFilterValue(selectedCategoryParam) || normalizeFilterValue(category.name) === normalizeFilterValue(selectedCategoryParam))
-    : null;
-  const quickCategories = selectedCategoryNode?.children.length ? selectedCategoryNode.children : categoryTree;
+  const selectedSubcategoryParam = typeof params.subcategory === "string" ? params.subcategory : null;
+  const selectedCategoryNode = findCategoryNodeByParam(categoryTree, selectedCategoryParam);
+  const selectedSubcategoryNode = findCategoryNodeByParam(categoryTree, selectedSubcategoryParam);
+  const selectedNode = selectedSubcategoryNode ?? selectedCategoryNode;
+  const selectedParentNode = selectedSubcategoryNode ? findParentCategory(categoryTree, selectedSubcategoryNode.id) : selectedCategoryNode;
+  const quickCategories = selectedNode?.children.length
+    ? selectedNode.children
+    : selectedParentNode?.children.length
+      ? selectedParentNode.children
+      : categoryTree;
   const cleanParams = Object.fromEntries(
     Object.entries(params).filter(([, value]) => typeof value === "string")
   ) as Record<string, string>;
@@ -570,10 +596,10 @@ export default async function ProductsPage({
   return (
     <main className="min-h-screen bg-slate-50">
       <CategoryQuickLinks
-        title={selectedCategoryNode ? `Encontrá más en ${selectedCategoryNode.name}` : "Comprá por categoría"}
+        title={selectedNode ? `Encontrá más en ${selectedNode.name}` : "Comprá por categoría"}
         categories={quickCategories}
-        heroImages={getProductHeroImages(selectedCategoryNode)}
-        heroCaptions={getProductHeroCaptions(selectedCategoryNode ? `Encontrá más en ${selectedCategoryNode.name}` : "Comprá por categoría", selectedCategoryNode)}
+        heroImages={getProductHeroImages(selectedNode)}
+        heroCaptions={getProductHeroCaptions(selectedNode ? `Encontrá más en ${selectedNode.name}` : "Comprá por categoría", selectedNode)}
         params={cleanParams}
         totalProducts={totalProducts}
         totalPages={totalPages}
@@ -599,12 +625,12 @@ export default async function ProductsPage({
             <p className="mt-1 text-sm text-slate-500">Publicaciones con coordinación local en Mar del Plata.</p>
           </Link>
           <Link
-            href="/productos?protectedPayment=true&verified=true"
+            href="/productos?protectedPayment=true"
             className="rounded-3xl border border-blue-100 bg-white p-5 shadow-[0_16px_44px_rgba(15,23,42,0.08)] transition hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(15,23,42,0.14)]"
           >
             <ShieldCheck className="mb-4 h-7 w-7 text-blue-600" />
             <p className="text-base font-semibold text-slate-950">Compra protegida</p>
-            <p className="mt-1 text-sm text-slate-500">Vendedores verificados y pago protegido MDP.</p>
+            <p className="mt-1 text-sm text-slate-500">Vendedores locales y pago protegido MDP.</p>
           </Link>
         </div>
       </section>

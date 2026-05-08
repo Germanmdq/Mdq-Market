@@ -65,6 +65,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
     } else {
       params.delete(key);
     }
+    if (key === "category") {
+      params.delete("subcategory");
+    }
     params.delete("page");
     router.push(`/productos?${params.toString()}`, { scroll: false });
   };
@@ -80,7 +83,6 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
   const currentMaxPrice = searchParams.get("maxPrice");
   const hasProtectedPayment = searchParams.get("protectedPayment") === "true";
   const hasDelivery = searchParams.get("delivery") === "true";
-  const isVerified = searchParams.get("verified") === "true";
   const hasOffers = searchParams.get("ofertas") === "true";
   const normalizedCurrentCategory = normalizeFilterValue(currentCategory);
   const normalizedCurrentSubcategory = normalizeFilterValue(currentSubcategory);
@@ -109,7 +111,6 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
     hasDelivery && { key: "delivery", label: "Entrega MDP" },
     hasProtectedPayment && { key: "protectedPayment", label: "Pago protegido" },
     hasOffers && { key: "ofertas", label: "Ofertas" },
-    isVerified && { key: "verified", label: "Vendedor verificado" },
   ].filter(Boolean) as { key: string; label: string }[];
 
   const toggleBoolean = (key: string, current: boolean) => {
@@ -353,17 +354,6 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
             />
             <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
               Entrega en MDP
-            </span>
-          </label>
-          <label className="flex items-center gap-2.5 cursor-pointer group">
-            <input
-              type="checkbox"
-              checked={isVerified}
-              onChange={() => toggleBoolean("verified", isVerified)}
-              className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-            />
-            <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
-              Vendedor verificado
             </span>
           </label>
         </div>

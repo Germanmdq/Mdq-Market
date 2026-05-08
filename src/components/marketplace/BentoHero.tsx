@@ -42,7 +42,7 @@ const tiles = [
     id: 4,
     emoji: "💼", 
     icon: Briefcase,
-    tag: "Verificados", 
+    tag: "Destacados", 
     title: "Profesionales destacados",
     sub: "Salud, educación, asesoría", 
     bg: "from-purple-600 to-purple-900", 

@@ -5,7 +5,6 @@ import {
   Star, 
   MapPin, 
   Calendar, 
-  CheckCircle2, 
   MessageSquare, 
   ShieldCheck, 
   Clock, 
@@ -38,7 +37,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   const responseTime = service.responseTime || serviceAny.response_time || "A coordinar";
   const availability = service.availability || "Disponible";
   const specialty = service.specialty || service.subcategory || service.category;
-  const description = service.description || "Servicio profesional verificado en MDP Market con reserva protegida.";
+  const description = service.description || "Servicio profesional en MDP Market con reserva protegida.";
   const professionalName = service.professionalName || serviceAny.professional_name || "Profesional MDP";
   const priceFrom = Number(service.priceFrom ?? serviceAny.price_from ?? 0);
 
@@ -65,12 +64,6 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                <div className="relative aspect-[21/9] bg-gray-100">
                   <Image src={mainImage} alt={service.title} fill className="object-cover" />
                   <div className="absolute top-4 left-4 flex gap-2">
-                     {service.verified && (
-                       <div className="bg-blue-600 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest flex items-center gap-1.5 shadow-lg">
-                          <CheckCircle2 className="w-4 h-4" />
-                          Verificado
-                       </div>
-                     )}
                      <div className="bg-white/90 backdrop-blur-sm text-gray-900 text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
                         {completedJobs} Trabajos realizados
                      </div>

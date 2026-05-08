@@ -24,6 +24,7 @@ import {
   HeartPulse
 } from "lucide-react";
 import ServiceCard from "@/components/marketplace/ServiceCard";
+import CategoryHeroSlider from "@/components/marketplace/CategoryHeroSlider";
 import { cn } from "@/lib/utils";
 import { getPublishedServices } from "@/lib/services";
 import { trackActivity } from "@/lib/activity";
@@ -50,9 +51,53 @@ function getServiceCategoryMeta(category: string) {
   return SERVICE_CATEGORY_META.find((item) => normalized.includes(item.match)) ?? {
     icon: Wrench,
     title: category,
-    description: "Servicios locales verificados, con reserva protegida y coordinación MDP.",
+    description: "Servicios locales con reserva protegida y coordinación MDP.",
     color: "from-blue-500 to-cyan-500",
   };
+}
+
+function getServiceHeroImages(category?: string) {
+  const label = (category ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (label.includes("gas") || label.includes("calefactor")) {
+    return [
+      "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?auto=format&fit=crop&w=1400&q=80",
+    ];
+  }
+  if (label.includes("plomer") || label.includes("perdida") || label.includes("bano")) {
+    return [
+      "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=80",
+    ];
+  }
+  return [
+    "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1400&q=80",
+  ];
+}
+
+function getServiceHeroCaptions(category?: string) {
+  const categoryName = category || "servicios";
+  return [
+    {
+      eyebrow: "Servicios MDP",
+      title: category ? `${categoryName} en Mar del Plata` : "Servicios para resolver hoy",
+      description: "Encontrá soluciones locales, compará zona y coordiná la reserva dentro de MDP Market.",
+    },
+    {
+      eyebrow: "Reserva protegida",
+      title: "Pedí ayuda sin vueltas",
+      description: "Buscá por necesidad, zona o urgencia y avanzá con una operación ordenada.",
+    },
+    {
+      eyebrow: "Cerca tuyo",
+      title: "Menos búsqueda, más solución",
+      description: "Rubros claros para llegar rápido al servicio correcto.",
+    },
+  ];
 }
 
 function PromoWidgets({ onUrgentClick }: { onUrgentClick: () => void }) {
@@ -92,7 +137,6 @@ function ServiciosContent() {
   const [selectedZone, setSelectedZone] = useState<string>(searchParams.get("zone") ?? "");
   const [selectedCategory, setSelectedCategory] = useState<string>(searchParams.get("category") ?? "");
   const [availableToday, setAvailableToday] = useState(searchParams.get("availableToday") === "true");
-  const [verifiedOnly, setVerifiedOnly] = useState(searchParams.get("verified") === "true");
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -112,7 +156,6 @@ function ServiciosContent() {
       setSelectedZone(searchParams.get("zone") ?? "");
       setSelectedCategory(searchParams.get("category") ?? "");
       setAvailableToday(searchParams.get("availableToday") === "true");
-      setVerifiedOnly(searchParams.get("verified") === "true");
       if (query) {
         trackActivity({
           event_type: "search",
@@ -128,13 +171,12 @@ function ServiciosContent() {
     });
   }, [searchParams]);
 
-  const updateUrl = (next?: { q?: string; zone?: string; category?: string; availableToday?: boolean; verified?: boolean }) => {
+  const updateUrl = (next?: { q?: string; zone?: string; category?: string; availableToday?: boolean }) => {
     const params = new URLSearchParams(searchParams.toString());
     const q = next?.q ?? searchQuery;
     const zone = next?.zone ?? selectedZone;
     const category = next?.category ?? selectedCategory;
     const today = next?.availableToday ?? availableToday;
-    const verified = next?.verified ?? verifiedOnly;
 
     if (q) params.set("q", q);
     else params.delete("q");
@@ -144,8 +186,6 @@ function ServiciosContent() {
     else params.delete("category");
     if (today) params.set("availableToday", "true");
     else params.delete("availableToday");
-    if (verified) params.set("verified", "true");
-    else params.delete("verified");
     router.push(`/servicios?${params.toString()}`, { scroll: false });
   };
 
@@ -161,9 +201,6 @@ function ServiciosContent() {
       return false;
     }
     if (availableToday && s.availability !== "Hoy") {
-      return false;
-    }
-    if (verifiedOnly && !s.verified) {
       return false;
     }
     return true;
@@ -184,24 +221,20 @@ function ServiciosContent() {
     ).values()
   ).sort((a, b) => a.name.localeCompare(b.name));
 
-  const shouldShowCategories = !selectedCategory && !searchQuery && !selectedZone && !availableToday && !verifiedOnly;
+  const shouldShowCategories = !selectedCategory && !searchQuery && !selectedZone && !availableToday;
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <section className="bg-white border-b border-slate-200">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-6">
-            <h1 className="text-3xl font-semibold tracking-tight text-slate-950">
-              Servicios en Mar del Plata
-            </h1>
-            <p className="mt-1.5 text-sm text-slate-600">
-              Profesionales verificados con reserva protegida
-            </p>
-          </div>
-
-          <div className="max-w-2xl bg-slate-50 p-1.5 rounded-2xl border border-slate-200 flex flex-col md:flex-row gap-1.5">
-            <div className="flex-grow flex items-center px-4 gap-3 py-2.5 bg-white rounded-xl">
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
+          <CategoryHeroSlider
+            images={getServiceHeroImages(selectedCategory)}
+            title={selectedCategory ? `${selectedCategory} en Mar del Plata` : "Servicios en Mar del Plata"}
+            captions={getServiceHeroCaptions(selectedCategory)}
+          />
+          <div className="relative z-10 mx-auto -mt-8 max-w-4xl rounded-[1.7rem] border border-slate-200 bg-white p-2 shadow-[0_30px_100px_rgba(15,23,42,0.24)]">
+            <div className="flex flex-col gap-2 md:flex-row">
+            <div className="flex flex-grow items-center gap-3 rounded-2xl px-4 py-2.5">
               <Search className="w-5 h-5 text-slate-400" />
               <input
                 type="text"
@@ -214,7 +247,7 @@ function ServiciosContent() {
                 className="w-full bg-transparent focus:outline-none text-slate-900 placeholder-slate-400"
               />
             </div>
-            <div className="flex-grow flex items-center px-4 gap-3 py-2.5 bg-white rounded-xl">
+            <div className="flex flex-grow items-center gap-3 rounded-2xl px-4 py-2.5">
               <MapPin className="w-5 h-5 text-slate-400" />
               <select
                 value={selectedZone}
@@ -232,10 +265,15 @@ function ServiciosContent() {
             </div>
             <button
               onClick={() => updateUrl()}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-8 rounded-xl transition-colors"
+              className="rounded-2xl bg-blue-600 px-8 py-2.5 font-black text-white transition-colors hover:bg-blue-700"
             >
               Buscar
             </button>
+            </div>
+          </div>
+          <div className="mt-10">
+            <h1 className="text-3xl font-semibold tracking-tight text-slate-950">Servicios en Mar del Plata</h1>
+            <p className="mt-1.5 text-sm text-slate-600">{filteredServices.length} servicios encontrados</p>
           </div>
         </div>
       </section>
@@ -290,14 +328,14 @@ function ServiciosContent() {
                 <p className="text-lg font-semibold">Servicios urgentes</p>
                 <p className="mt-2 text-sm leading-6 text-blue-100">Electricidad, gas, plomería y arreglos con disponibilidad para hoy.</p>
               </button>
-              <button
-                onClick={() => updateUrl({ verified: true })}
+              <Link
+                href="/checkout/profesional"
                 className="rounded-3xl border border-emerald-100 bg-white p-6 text-left shadow-[0_16px_44px_rgba(15,23,42,0.10)] transition hover:-translate-y-1 hover:shadow-[0_26px_76px_rgba(15,23,42,0.16)]"
               >
                 <ShieldCheck className="mb-5 h-7 w-7 text-emerald-600" />
                 <p className="text-lg font-semibold text-slate-950">Reserva protegida</p>
-                <p className="mt-2 text-sm leading-6 text-slate-500">Elegí servicios verificados y mantené todo coordinado dentro de MDP Market.</p>
-              </button>
+                <p className="mt-2 text-sm leading-6 text-slate-500">Mantené pedido, presupuesto y coordinación dentro de MDP Market.</p>
+              </Link>
               <Link
                 href="/publicar?intent=servicio"
                 className="rounded-3xl border border-amber-100 bg-amber-50 p-6 text-left shadow-[0_16px_44px_rgba(15,23,42,0.08)] transition hover:-translate-y-1 hover:shadow-[0_26px_76px_rgba(15,23,42,0.14)]"
@@ -370,25 +408,6 @@ function ServiciosContent() {
                     />
                     <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
                       Disponible hoy
-                    </span>
-                  </label>
-                </div>
-
-                {/* Verification */}
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-900 mb-3">Confianza</h3>
-                  <label className="flex items-center gap-2.5 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={verifiedOnly}
-                      onChange={(e) => {
-                        setVerifiedOnly(e.target.checked);
-                        updateUrl({ verified: e.target.checked });
-                      }}
-                      className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                    <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
-                      Profesionales verificados
                     </span>
                   </label>
                 </div>

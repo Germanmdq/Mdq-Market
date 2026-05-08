@@ -304,7 +304,7 @@ export default async function HomePage() {
 
       {/* ═══ PROFESIONALES ═══ */}
       {verifiedPros.length > 0 && (
-        <MarketSection eyebrow="Confianza" title="Profesionales verificados" description="Con identidad validada por MDP Market." href="/profesionales" linkLabel="Ver listado" className="border-t border-slate-200 bg-white">
+        <MarketSection eyebrow="Confianza" title="Profesionales destacados" description="Perfiles con reputación y disponibilidad en Mar del Plata." href="/profesionales" linkLabel="Ver listado" className="border-t border-slate-200 bg-white">
           <MarketCarousel>
             {verifiedPros.map(p => (
               <div key={p.id} className="min-w-0 flex-[0_0_86%] sm:flex-[0_0_48%] lg:flex-[0_0_31%] xl:flex-[0_0_24%] py-4">

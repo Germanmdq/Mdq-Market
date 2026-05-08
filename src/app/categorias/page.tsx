@@ -71,7 +71,7 @@ function professionalMeta(name: string) {
   const label = normalize(name);
   if (label.includes("abog") || label.includes("legal")) return { icon: Scale, color: "from-indigo-500 to-blue-700", description: "Asesoría legal, contratos, reclamos y consultas." };
   if (label.includes("cont")) return { icon: Calculator, color: "from-emerald-500 to-teal-700", description: "Impuestos, monotributo, balances y negocios." };
-  if (label.includes("gas") || label.includes("plomer") || label.includes("hogar")) return { icon: BriefcaseBusiness, color: "from-cyan-500 to-blue-700", description: "Profesionales verificados para resolver en tu zona." };
+  if (label.includes("gas") || label.includes("plomer") || label.includes("hogar")) return { icon: BriefcaseBusiness, color: "from-cyan-500 to-blue-700", description: "Profesionales para resolver en tu zona." };
   return { icon: BriefcaseBusiness, color: "from-violet-500 to-purple-700", description: "Perfiles con reputación, disponibilidad y contacto protegido." };
 }
 
@@ -228,7 +228,7 @@ export default async function CategoriesPage() {
               },
               {
                 eyebrow: "Reservar",
-                title: "Profesionales verificados",
+                title: "Profesionales por rubro",
                 description: "Elegí especialistas por rubro, zona y reputación.",
               },
             ]}
@@ -258,7 +258,7 @@ export default async function CategoriesPage() {
       <CategorySliderSection
         eyebrow="Reservar"
         title="Profesiones y especialistas"
-        description="Profesionales verificados, perfiles con reputación y contacto protegido."
+        description="Profesionales por rubro, perfiles con reputación y contacto protegido."
         cards={professionalCards}
       />
 

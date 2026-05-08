@@ -160,9 +160,6 @@ export default async function ProductDetailPage({
                     <Star className="w-4 h-4 fill-amber-500 text-amber-500" /> 4.8 · {product.zone || product.city}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {product.seller_verified && (
-                      <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">Verificado</span>
-                    )}
                     <span className="rounded-full bg-slate-700 px-3 py-1 text-xs font-semibold text-white">{toTitleLabel(product.seller_type)}</span>
                   </div>
                 </div>

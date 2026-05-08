@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Star, Clock, MapPin, CheckCircle2 } from "lucide-react";
+import { Star, Clock, MapPin } from "lucide-react";
 import { Service } from "@/types";
 import { formatPrice } from "@/lib/utils";
 
@@ -35,12 +35,6 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
             <span className="absolute top-3 left-3 flex items-center gap-1.5 bg-emerald-600 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
               Disponible hoy
-            </span>
-          )}
-          {service.verified && (
-            <span className="absolute bottom-3 left-3 flex items-center gap-1 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-[10px] font-semibold text-slate-700 shadow-sm">
-              <CheckCircle2 className="w-3 h-3 text-blue-600" />
-              Verificado
             </span>
           )}
         </div>

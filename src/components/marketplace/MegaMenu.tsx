@@ -349,7 +349,7 @@ const MegaMenu = () => {
                 </Link>
 
                 <Link
-                  href="/profesionales?verified=true"
+                  href="/profesionales"
                   className="flex items-center gap-3 p-3 rounded-2xl bg-white/8 hover:bg-white/12 border border-white/10 transition-colors group"
                   onClick={() => setIsOpen(false)}
                 >
@@ -357,8 +357,8 @@ const MegaMenu = () => {
                     <ShieldCheck className="w-4 h-4 text-purple-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium group-hover:text-blue-300 transition-colors">Profesionales verificados</div>
-                    <div className="text-xs text-slate-400">Identidad validada</div>
+                    <div className="text-sm font-medium group-hover:text-blue-300 transition-colors">Profesionales destacados</div>
+                    <div className="text-xs text-slate-400">Perfiles con reputación</div>
                   </div>
                 </Link>
 

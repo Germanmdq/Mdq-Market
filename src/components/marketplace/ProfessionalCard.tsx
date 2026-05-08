@@ -12,7 +12,7 @@ type ProfessionalCardData = Professional & {
 };
 
 const ProfessionalCard: React.FC<{ professional: ProfessionalCardData }> = ({ professional }) => {
-  const description = professional.bio || professional.headline || "Profesional verificado en MDP Market.";
+  const description = professional.bio || professional.headline || "Profesional de MDP Market.";
   const rating =
     typeof professional.rating === "number"
       ? professional.rating
@@ -39,11 +39,6 @@ const ProfessionalCard: React.FC<{ professional: ProfessionalCardData }> = ({ pr
           </div>
         </div>
 
-        {professional.verified && (
-          <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-700 tracking-wider uppercase shrink-0">
-            Verificado
-          </span>
-        )}
       </div>
 
       <div className="mt-4 flex items-center gap-3 text-sm text-slate-600">

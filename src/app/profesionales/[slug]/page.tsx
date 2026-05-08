@@ -72,7 +72,7 @@ function normalizeProfessional(row: ProfessionalRow) {
     profession: row.profession || row.category || "Profesional local",
     category: row.category || "Servicios",
     headline: row.headline || `${row.profession || row.category || "Profesional"} en Mar del Plata`,
-    bio: row.bio || "Profesional verificado en MDP Market, con atención por zonas, reputación visible y reserva protegida.",
+    bio: row.bio || "Profesional de MDP Market, con atención por zonas, reputación visible y reserva protegida.",
     verified: Boolean(row.verified),
     featured: Boolean(row.featured),
     rating,
@@ -152,9 +152,6 @@ export default async function ProfessionalDetailPage({
                     <img src={professional.avatar} alt={professional.name} className="h-full w-full object-cover" />
                   </div>
                   <div className="flex flex-wrap gap-2 pb-2">
-                    {professional.verified && (
-                      <span className="rounded-full bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm">Verificado</span>
-                    )}
                     {professional.featured && (
                       <span className="rounded-full bg-slate-800 px-3 py-1.5 text-xs font-semibold text-white shadow-sm">Destacado</span>
                     )}
@@ -242,7 +239,7 @@ export default async function ProfessionalDetailPage({
                       <Award className="h-5 w-5 text-blue-600" />
                       <div>
                         <p className="text-sm font-semibold text-slate-950">{credential.name || credential.type}</p>
-                        <p className="text-xs text-slate-500">{credential.status || "Verificado"}</p>
+                        <p className="text-xs text-slate-500">{credential.status || "Validado"}</p>
                       </div>
                     </div>
                   ))}

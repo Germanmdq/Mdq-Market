@@ -92,7 +92,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
           <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
             <span className="font-medium">
-              {product.seller_verified ? "✓ Verificado" : product.seller_name || "Vendedor"}
+              {product.seller_name || "Vendedor local"}
             </span>
             <span className="truncate ml-2">{product.zone}</span>
           </div>

@@ -64,7 +64,7 @@ const PROFESSIONAL_CATEGORY_META = [
   { match: "cont", icon: Calculator, title: "Contabilidad", description: "Monotributo, impuestos, balances y asesoramiento para negocios.", color: "from-emerald-400 to-teal-600" },
   { match: "psic", icon: Brain, title: "Salud mental", description: "Profesionales para orientación, terapia y acompañamiento.", color: "from-violet-400 to-fuchsia-600" },
   { match: "arqu", icon: DraftingCompass, title: "Arquitectura", description: "Planos, reformas, dirección de obra y habilitaciones.", color: "from-amber-400 to-orange-600" },
-  { match: "salud", icon: HeartPulse, title: "Salud", description: "Turnos y consultas con profesionales verificados en la ciudad.", color: "from-rose-400 to-red-600" },
+  { match: "salud", icon: HeartPulse, title: "Salud", description: "Turnos y consultas con profesionales de la ciudad.", color: "from-rose-400 to-red-600" },
   { match: "coach", icon: Sparkles, title: "Desarrollo", description: "Mentorías, carrera, bienestar y mejora personal.", color: "from-cyan-400 to-blue-600" },
 ];
 
@@ -136,18 +136,15 @@ function getProfessionalHeroCaptions(category?: string) {
   ];
 }
 
-function ProfessionalPromoWidgets({ onVerifiedClick }: { onVerifiedClick: () => void }) {
+function ProfessionalPromoWidgets() {
   return (
     <div className="space-y-4">
       <div className="rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-600 to-slate-950 p-5 text-white shadow-xl">
         <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 text-white">
           <BadgeCheck className="h-5 w-5" />
         </div>
-        <p className="text-sm font-semibold">Profesionales verificados</p>
-        <p className="mt-2 text-xs leading-5 text-blue-100">Priorizá perfiles con identidad validada, reputación y respuesta clara.</p>
-        <button onClick={onVerifiedClick} className="mt-4 rounded-full bg-white px-4 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-50">
-          Ver verificados
-        </button>
+        <p className="text-sm font-semibold">Profesionales destacados</p>
+        <p className="mt-2 text-xs leading-5 text-blue-100">Priorizá perfiles con reputación, zonas claras y respuesta ordenada.</p>
       </div>
       <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-5 shadow-[0_16px_44px_rgba(15,23,42,0.10)]">
         <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-md">
@@ -191,7 +188,7 @@ function toCardProfessional(professional: ProfessionalRow) {
     category: professional.category || "Servicios",
     subcategories: professional.subcategories || [],
     headline: professional.headline || `${professional.profession || "Profesional"} en Mar del Plata`,
-    bio: professional.bio || "Profesional verificado en MDP Market.",
+    bio: professional.bio || "Profesional de MDP Market.",
     verified: Boolean(professional.verified),
     featured: Boolean(professional.featured),
     rating: {
@@ -224,7 +221,6 @@ function ProfessionalsContent() {
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") ?? "");
   const [selectedZone, setSelectedZone] = useState(searchParams.get("zone") ?? "");
-  const [verifiedOnly, setVerifiedOnly] = useState(searchParams.get("verified") === "true");
 
   useEffect(() => {
     async function loadProfessionals() {
@@ -253,7 +249,6 @@ function ProfessionalsContent() {
       setSearchQuery(searchParams.get("q") ?? "");
       setSelectedCategory(searchParams.get("category") ?? "");
       setSelectedZone(searchParams.get("zone") ?? "");
-      setVerifiedOnly(searchParams.get("verified") === "true");
     });
   }, [searchParams]);
 
@@ -275,17 +270,15 @@ function ProfessionalsContent() {
     return Array.from(set).slice(0, 14);
   }, [professionals]);
 
-  const updateUrl = (next?: { q?: string; category?: string; zone?: string; verified?: boolean }) => {
+  const updateUrl = (next?: { q?: string; category?: string; zone?: string }) => {
     const params = new URLSearchParams(searchParams.toString());
     const q = next?.q ?? searchQuery;
     const category = next?.category ?? selectedCategory;
     const zone = next?.zone ?? selectedZone;
-    const verified = next?.verified ?? verifiedOnly;
 
     q ? params.set("q", q) : params.delete("q");
     category ? params.set("category", category) : params.delete("category");
     zone ? params.set("zone", zone) : params.delete("zone");
-    verified ? params.set("verified", "true") : params.delete("verified");
     router.push(`/profesionales?${params.toString()}`, { scroll: false });
   };
 
@@ -316,27 +309,23 @@ function ProfessionalsContent() {
       if (!professionalZones.some((zone) => normalizeText(zone) === normalizeText(selectedZone))) return false;
     }
 
-    if (verifiedOnly && !professional.verified) return false;
     return true;
   });
 
-  const shouldShowCategories = !selectedCategory && !searchQuery && !selectedZone && !verifiedOnly;
+  const shouldShowCategories = !selectedCategory && !searchQuery && !selectedZone;
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-6">
-            <h1 className="text-3xl font-semibold tracking-tight text-slate-950">
-              Profesionales en Mar del Plata
-            </h1>
-            <p className="mt-1.5 text-sm text-slate-600">
-              Expertos certificados con reputación verificada
-            </p>
-          </div>
-
-          <div className="max-w-2xl bg-slate-50 p-1.5 rounded-2xl border border-slate-200 flex flex-col md:flex-row gap-1.5">
-            <div className="flex-grow flex items-center px-4 gap-3 py-2.5 bg-white rounded-xl">
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
+          <CategoryHeroSlider
+            images={getProfessionalHeroImages(selectedCategory)}
+            title={selectedCategory ? `${selectedCategory} en Mar del Plata` : "Profesionales en Mar del Plata"}
+            captions={getProfessionalHeroCaptions(selectedCategory)}
+          />
+          <div className="relative z-10 mx-auto -mt-8 max-w-3xl rounded-[1.7rem] border border-slate-200 bg-white p-2 shadow-[0_30px_100px_rgba(15,23,42,0.24)]">
+            <div className="flex flex-col gap-2 md:flex-row">
+            <div className="flex flex-grow items-center gap-3 rounded-2xl px-4 py-2.5">
               <Search className="w-5 h-5 text-slate-400" />
               <input
                 type="text"
@@ -349,41 +338,21 @@ function ProfessionalsContent() {
                 className="w-full bg-transparent focus:outline-none text-slate-900 placeholder-slate-400"
               />
             </div>
-            <button onClick={() => updateUrl()} className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-8 rounded-xl transition-colors">
+            <button onClick={() => updateUrl()} className="rounded-2xl bg-blue-600 px-8 py-2.5 font-black text-white transition-colors hover:bg-blue-700">
               Buscar
             </button>
+            </div>
+          </div>
+          <div className="mt-10">
+            <h1 className="text-3xl font-semibold tracking-tight text-slate-950">Profesionales en Mar del Plata</h1>
+            <p className="mt-1.5 text-sm text-slate-600">{filteredProfessionals.length} profesionales encontrados</p>
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {shouldShowCategories ? (
           <section>
-            <div className="mb-8 grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
-              <div className="relative overflow-hidden rounded-[2rem] bg-slate-950 p-8 text-white shadow-[0_30px_100px_rgba(15,23,42,0.22)]">
-                <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
-                <div className="relative max-w-2xl">
-                  <p className="text-sm font-semibold text-blue-200">Profesionales MDP</p>
-                  <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">Encontrá el profesional correcto</h2>
-                  <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">
-                    Elegí rubro, revisá perfiles verificados y reservá con operación protegida dentro de Mar del Plata.
-                  </p>
-                  <div className="mt-8 flex flex-wrap gap-3">
-                    <button onClick={() => updateUrl({ verified: true })} className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-blue-50">
-                      Ver verificados
-                    </button>
-                    <a href="#categorias-profesionales" className="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
-                      Elegir rubro
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <CategoryHeroSlider
-                images={getProfessionalHeroImages()}
-                title="Profesionales en Mar del Plata"
-                captions={getProfessionalHeroCaptions()}
-              />
-            </div>
             <div id="categorias-profesionales" className="mb-6">
               <h2 className="text-2xl font-semibold tracking-tight text-slate-950">Categorías profesionales</h2>
               <p className="mt-1 text-sm text-slate-500">Primero elegís el rubro; después ves profesionales disponibles.</p>
@@ -402,12 +371,6 @@ function ProfessionalsContent() {
                       normalizeText(professional.category).includes(normalizeText(category)) ||
                       (professional.subcategories ?? []).some((subcategory) => normalizeText(subcategory).includes(normalizeText(category)))
                     ).length;
-                    const featuredCount = professionals.filter((professional) =>
-                      professional.featured && (
-                        normalizeText(professional.category).includes(normalizeText(category)) ||
-                        (professional.subcategories ?? []).some((subcategory) => normalizeText(subcategory).includes(normalizeText(category)))
-                      )
-                    ).length;
                     const meta = getProfessionalCategoryMeta(category);
                     const Icon = meta.icon;
 
@@ -425,9 +388,6 @@ function ProfessionalsContent() {
                         <p className="relative mt-2 min-h-[40px] text-sm leading-5 text-slate-500">{meta.description}</p>
                         <div className="relative mt-5 flex flex-wrap gap-2">
                           <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{count} profesionales</span>
-                          {featuredCount > 0 && (
-                            <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">{featuredCount} destacados</span>
-                          )}
                         </div>
                       </button>
                     );
@@ -435,12 +395,12 @@ function ProfessionalsContent() {
                 </div>
                 <div className="mt-8 grid gap-4 md:grid-cols-3">
                   <button
-                    onClick={() => updateUrl({ verified: true })}
+                    onClick={() => updateUrl({ category: "Gas" })}
                     className="rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-600 to-slate-950 p-6 text-left text-white shadow-[0_24px_70px_rgba(37,99,235,0.22)] transition hover:-translate-y-1"
                   >
                     <BadgeCheck className="mb-5 h-7 w-7" />
-                    <p className="text-lg font-semibold">Profesionales verificados</p>
-                    <p className="mt-2 text-sm leading-6 text-blue-100">Filtrá perfiles con identidad validada y reputación visible.</p>
+                    <p className="text-lg font-semibold">Soluciones para hoy</p>
+                    <p className="mt-2 text-sm leading-6 text-blue-100">Gas, plomería, electricidad y arreglos para resolver rápido.</p>
                   </button>
                   <button
                     onClick={() => updateUrl({ category: "Contabilidad" })}
@@ -530,24 +490,6 @@ function ProfessionalsContent() {
                   </div>
                 </div>
 
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-900 mb-3">Verificación</h3>
-                  <label className="flex items-center gap-2.5 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={verifiedOnly}
-                      onChange={(e) => {
-                        setVerifiedOnly(e.target.checked);
-                        updateUrl({ verified: e.target.checked });
-                      }}
-                      className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                    <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
-                      Matrícula verificada
-                    </span>
-                  </label>
-                </div>
-
                 <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
@@ -556,12 +498,12 @@ function ProfessionalsContent() {
                     <div>
                       <h4 className="text-sm font-semibold text-blue-900 mb-1">Garantía Profesional</h4>
                       <p className="text-xs text-blue-700 leading-relaxed">
-                        Los profesionales verificados han validado su identidad y/o matrícula.
+                        Pedido, presupuesto y reserva quedan ordenados dentro de MDP Market.
                       </p>
                     </div>
                   </div>
                 </div>
-                <ProfessionalPromoWidgets onVerifiedClick={() => updateUrl({ verified: true })} />
+                <ProfessionalPromoWidgets />
               </div>
             </div>
           </aside>
