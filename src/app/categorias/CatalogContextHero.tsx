@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CatalogContext } from "@/lib/catalog/getCatalogContext";
+import { CatalogContext } from "./getCatalogContext";
 
 export function CatalogContextHero({ context, resultCount }: { context: CatalogContext, resultCount?: number }) {
   return (
