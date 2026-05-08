@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { CheckCircle2, Loader2, MessageSquare, X } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 
@@ -25,12 +25,17 @@ function saveLocalFeedback(payload: FeedbackPayload) {
 }
 
 export default function FeedbackWidget() {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("Mejora");
   const [message, setMessage] = useState("");
   const [contact, setContact] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setVisible(true), 30000);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   if (!visible) return null;
 

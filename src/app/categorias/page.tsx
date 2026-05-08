@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { MarketCarousel } from "@/components/ui/MarketCarousel";
+import CategoryHeroSlider from "@/components/marketplace/CategoryHeroSlider";
 
 type CategoryRow = {
   id: string;
@@ -206,22 +207,38 @@ export default async function CategoriesPage() {
   return (
     <main className="min-h-screen bg-slate-50">
       <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto grid max-w-[1440px] gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_0.7fr] lg:px-8">
-          <div>
-            <p className="text-sm font-semibold text-blue-600">Categorías MDP Market</p>
-            <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">
-              Explorá por productos, servicios y profesiones
-            </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
-              Tres recorridos separados para encontrar más rápido lo que necesitás en Mar del Plata.
-            </p>
-          </div>
-          <form action="/buscar" className="flex h-fit rounded-2xl border border-slate-200 bg-slate-50 p-1.5">
+        <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
+          <CategoryHeroSlider
+            title="Categorías MDP Market"
+            images={[
+              "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1600&q=80",
+              "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1600&q=80",
+              "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1600&q=80",
+            ]}
+            captions={[
+              {
+                eyebrow: "Comprar",
+                title: "Productos por categoría",
+                description: "Explorá publicaciones locales con compra protegida y Entrega MDP.",
+              },
+              {
+                eyebrow: "Contratar",
+                title: "Servicios para resolver hoy",
+                description: "Encontrá rubros claros, disponibilidad y reserva protegida.",
+              },
+              {
+                eyebrow: "Reservar",
+                title: "Profesionales verificados",
+                description: "Elegí especialistas por rubro, zona y reputación.",
+              },
+            ]}
+          />
+          <form action="/buscar" className="relative z-10 mx-auto -mt-8 flex max-w-3xl rounded-3xl border border-slate-200 bg-white p-2 shadow-[0_28px_90px_rgba(15,23,42,0.22)]">
             <div className="flex flex-1 items-center gap-3 px-3">
               <Search className="h-5 w-5 text-slate-400" />
               <input name="q" placeholder="Buscar categoría, servicio o rubro..." className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
             </div>
-            <button className="rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white">Buscar</button>
+            <button className="h-12 rounded-2xl bg-blue-600 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(37,99,235,0.25)]">Buscar</button>
           </form>
         </div>
       </section>
