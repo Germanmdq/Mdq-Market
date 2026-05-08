@@ -52,18 +52,18 @@ const Header = () => {
           ? "bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm"
           : "bg-white border-b border-slate-200"
       )}>
-        <div className="mx-auto flex max-w-[1440px] items-center gap-6 px-4 sm:px-6 lg:px-8 h-16">
+        <div className="mx-auto flex h-[76px] max-w-[1440px] items-center gap-6 px-4 sm:px-6 lg:px-8">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
+          <Link href="/" className="flex shrink-0 items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-lg font-black text-white shadow-[0_14px_32px_rgba(37,99,235,0.28)]">
               M
             </div>
             <div className="hidden sm:block">
-              <p className="text-sm font-semibold tracking-tight text-slate-950 leading-tight">
+              <p className="text-base font-black tracking-tight text-slate-950 leading-tight">
                 MDP Market
               </p>
-              <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 leading-tight">
+              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500 leading-tight">
                 Mar del Plata
               </p>
             </div>
@@ -72,16 +72,16 @@ const Header = () => {
           {/* Nav links desktop */}
           <nav className="hidden items-center gap-1 lg:flex">
             <MegaMenu />
-            <Link href="/productos" className="text-sm font-medium text-slate-700 hover:text-slate-950 transition-colors px-3 py-2 rounded-lg hover:bg-slate-50">Productos</Link>
-            <Link href="/servicios" className="text-sm font-medium text-slate-700 hover:text-slate-950 transition-colors px-3 py-2 rounded-lg hover:bg-slate-50">Servicios</Link>
-            <Link href="/profesionales" className="text-sm font-medium text-slate-700 hover:text-slate-950 transition-colors px-3 py-2 rounded-lg hover:bg-slate-50">Profesionales</Link>
+            <Link href="/productos" className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950">Productos</Link>
+            <Link href="/servicios" className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950">Servicios</Link>
+            <Link href="/profesionales" className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950">Profesionales</Link>
           </nav>
 
           {/* Search */}
           <form
             action="/buscar"
             method="GET"
-            className="ml-auto hidden flex-1 max-w-lg lg:block"
+            className="ml-auto hidden max-w-xl flex-1 lg:block"
             onSubmit={(event) => {
               const formData = new FormData(event.currentTarget);
               const query = String(formData.get("q") ?? "").trim();
@@ -95,7 +95,7 @@ const Header = () => {
               }
             }}
           >
-            <div className="flex h-10 items-center rounded-full border border-slate-200 bg-slate-50 px-4 transition-all focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-50 focus-within:bg-white">
+            <div className="flex h-12 items-center rounded-2xl border border-slate-200 bg-slate-50 px-4 transition-all focus-within:border-blue-500 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-50">
               <Search className="h-4 w-4 text-slate-400" />
               <input
                 type="text"
@@ -176,10 +176,10 @@ const Header = () => {
                 </div>
               ) : (
                 <div className="hidden sm:flex items-center gap-2">
-                  <Link href="/login" className="px-3 py-2 text-sm font-medium text-slate-700 hover:text-slate-950">
+                  <Link href="/login" className="px-3 py-2 text-sm font-bold text-slate-700 hover:text-slate-950">
                     Ingresar
                   </Link>
-                  <Link href="/registro" className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-full hover:bg-blue-700 transition-colors">
+                  <Link href="/registro" className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-[0_14px_34px_rgba(37,99,235,0.28)] transition-colors hover:bg-blue-700">
                     Crear cuenta
                   </Link>
                 </div>
@@ -242,7 +242,7 @@ const Header = () => {
               { label: "Servicios", href: "/servicios" },
               { label: "Profesionales", href: "/profesionales" },
               { label: "Ofertas", href: "/productos?ofertas=true" },
-              { label: "Publicar gratis", href: "/publicar" },
+              { label: "Publicar gratis", href: "/registro?intent=publicar&next=/publicar?intent=vender" },
               ...(user ? [{ label: "Mi cuenta", href: "/cuenta" }, { label: "Favoritos", href: "/favoritos" }, { label: "Carrito", href: "/carrito" }] : [{ label: "Ingresar", href: "/login" }, { label: "Crear cuenta", href: "/registro" }]),
             ].map(l => (
               <Link key={l.label} href={l.href} className="block px-4 py-3 rounded-2xl text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">

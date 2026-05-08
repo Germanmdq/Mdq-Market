@@ -4,7 +4,7 @@ import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
-import { Mail, Lock, AlertCircle, Loader2, ArrowRight } from "lucide-react";
+import { Mail, Lock, AlertCircle, Loader2, ArrowRight, ShieldCheck, Store, Truck } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -167,32 +167,70 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Link href="/" className="flex justify-center items-center gap-3 mb-6">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-lg font-bold text-white shadow-lg shadow-blue-200">
-            M
-          </div>
-          <span className="text-2xl font-black tracking-tighter text-slate-900">MDP Market</span>
-        </Link>
-        <h2 className="text-center text-3xl font-black tracking-tight text-slate-900">
-          Bienvenido de vuelta
-        </h2>
-        <p className="mt-2 text-center text-sm text-slate-500 font-medium">
-          ¿No tenés cuenta?{" "}
-          <Link href="/registro" className="font-bold text-blue-600 hover:text-blue-500">
-            Registrate gratis
+    <div className="min-h-[calc(100vh-76px)] bg-[radial-gradient(circle_at_top,#eaf3ff_0%,#f8fafc_38%,#ffffff_100%)] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto grid min-h-[calc(100vh-140px)] w-full max-w-6xl items-center gap-8 lg:grid-cols-[1fr_470px]">
+        <section className="hidden lg:block">
+          <Link href="/" className="mb-8 flex items-center gap-4">
+            <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-blue-600 text-2xl font-black text-white shadow-[0_22px_50px_rgba(37,99,235,0.34)]">
+              M
+            </div>
+            <div>
+              <p className="text-3xl font-black tracking-tight text-slate-950">MDP Market</p>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-600">Mar del Plata</p>
+            </div>
           </Link>
-        </p>
-      </div>
+          <h1 className="max-w-xl text-5xl font-black leading-[1.02] tracking-tight text-slate-950">
+            Entrá a tu cuenta y seguí operando seguro.
+          </h1>
+          <p className="mt-5 max-w-lg text-lg leading-8 text-slate-600">
+            Compras protegidas, publicaciones, reservas y favoritos en una plataforma local pensada para saber con quién estás hablando.
+          </p>
+          <div className="mt-8 grid max-w-xl gap-4 sm:grid-cols-3">
+            {[
+              { icon: ShieldCheck, title: "Pago protegido" },
+              { icon: Truck, title: "Entrega MDP" },
+              { icon: Store, title: "Comunidad local" },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.title} className="rounded-3xl border border-white bg-white/80 p-5 shadow-[0_18px_55px_rgba(15,23,42,0.10)]">
+                  <Icon className="mb-4 h-6 w-6 text-blue-600" />
+                  <p className="text-sm font-black text-slate-950">{item.title}</p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-10 px-6 shadow-[0_26px_80px_rgba(15,23,42,0.12)] border border-slate-100 sm:rounded-[2.5rem] sm:px-12">
+        <section>
+          <div className="mb-6 text-center lg:hidden">
+            <Link href="/" className="inline-flex items-center gap-3">
+              <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-blue-600 text-xl font-black text-white shadow-[0_18px_42px_rgba(37,99,235,0.32)]">
+                M
+              </div>
+              <span className="text-2xl font-black tracking-tight text-slate-950">MDP Market</span>
+            </Link>
+          </div>
+
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_30px_100px_rgba(15,23,42,0.16)] sm:p-10">
+            <div className="mb-8">
+              <p className="text-sm font-black uppercase tracking-[0.16em] text-blue-600">Ingresar</p>
+              <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950">
+                Bienvenido de vuelta
+              </h2>
+              <p className="mt-2 text-sm font-medium text-slate-500">
+                ¿No tenés cuenta?{" "}
+                <Link href="/registro" className="font-black text-blue-600 hover:text-blue-500">
+                  Registrate gratis
+                </Link>
+              </p>
+            </div>
           <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>}>
             <LoginForm />
           </Suspense>
+          </div>
+        </section>
         </div>
-      </div>
     </div>
   );
 }

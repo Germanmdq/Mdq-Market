@@ -100,7 +100,7 @@ function CategorySliderSection({
           {cards.map((card) => {
             const Icon = card.icon;
             return (
-              <div key={card.id} className="min-w-0 flex-[0_0_82%] py-4 sm:flex-[0_0_44%] lg:flex-[0_0_25%] xl:flex-[0_0_20%]">
+              <div key={card.id} className="min-w-0 flex-[0_0_86%] py-4 sm:flex-[0_0_54%] lg:flex-[0_0_33%] xl:flex-[0_0_31%]">
                 <Link
                   href={card.href}
                   className="group relative block min-h-[230px] overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.10)] transition hover:-translate-y-1 hover:shadow-[0_30px_90px_rgba(15,23,42,0.16)]"
@@ -271,7 +271,7 @@ export default async function CategoriesPage() {
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/servicios" className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950">Pedir servicio</Link>
-            <Link href="/publicar" className="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white">Publicar gratis</Link>
+            <Link href="/registro?intent=publicar&next=/publicar?intent=vender" className="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white">Publicar gratis</Link>
           </div>
         </div>
       </section>

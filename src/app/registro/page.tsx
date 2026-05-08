@@ -4,7 +4,7 @@ import React, { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
-import { Mail, Lock, User, AlertCircle, Loader2, ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
+import { Mail, Lock, User, AlertCircle, Loader2, ArrowRight, CheckCircle2, ShieldCheck, BadgeCheck, ShoppingBag, Users } from "lucide-react";
 
 function RegistroForm() {
   const router = useRouter();
@@ -105,38 +105,76 @@ function RegistroForm() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Link href="/" className="flex justify-center items-center gap-3 mb-6">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-lg font-bold text-white shadow-lg shadow-blue-200">
-            M
-          </div>
-          <span className="text-2xl font-black tracking-tighter text-slate-900">MDP Market</span>
-        </Link>
-        <h2 className="text-center text-3xl font-black tracking-tight text-slate-900">
-          {isPublishing ? "Publicá con una cuenta segura" : "Creá tu cuenta gratis"}
-        </h2>
-        <p className="mt-2 text-center text-sm text-slate-500 font-medium">
-          ¿Ya tenés cuenta?{" "}
-          <Link href={`/login?next=${encodeURIComponent(next)}`} className="font-bold text-blue-600 hover:text-blue-500">
-            Iniciá sesión
+    <div className="min-h-[calc(100vh-76px)] bg-[radial-gradient(circle_at_top,#eaf3ff_0%,#f8fafc_38%,#ffffff_100%)] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto grid min-h-[calc(100vh-140px)] w-full max-w-6xl items-center gap-8 lg:grid-cols-[1fr_500px]">
+        <section className="hidden lg:block">
+          <Link href="/" className="mb-8 flex items-center gap-4">
+            <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-blue-600 text-2xl font-black text-white shadow-[0_22px_50px_rgba(37,99,235,0.34)]">
+              M
+            </div>
+            <div>
+              <p className="text-3xl font-black tracking-tight text-slate-950">MDP Market</p>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-600">Mar del Plata</p>
+            </div>
           </Link>
-        </p>
-      </div>
+          <h1 className="max-w-xl text-5xl font-black leading-[1.02] tracking-tight text-slate-950">
+            {isPublishing ? "Publicá en una comunidad más segura." : "Creá tu cuenta y movete con confianza."}
+          </h1>
+          <p className="mt-5 max-w-lg text-lg leading-8 text-slate-600">
+            Queremos saber quién sos para cuidar compras, ventas y reservas. Es rápido, local y hace que MDP Market funcione como comunidad.
+          </p>
+          <div className="mt-8 grid max-w-xl gap-4 sm:grid-cols-3">
+            {[
+              { icon: ShieldCheck, title: "Identidad cuidada" },
+              { icon: ShoppingBag, title: "Operación protegida" },
+              { icon: Users, title: "Comunidad MDP" },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.title} className="rounded-3xl border border-white bg-white/80 p-5 shadow-[0_18px_55px_rgba(15,23,42,0.10)]">
+                  <Icon className="mb-4 h-6 w-6 text-blue-600" />
+                  <p className="text-sm font-black text-slate-950">{item.title}</p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-10 px-6 shadow-[0_26px_80px_rgba(15,23,42,0.12)] border border-slate-100 sm:rounded-[2.5rem] sm:px-12">
+        <section>
+          <div className="mb-6 text-center lg:hidden">
+            <Link href="/" className="inline-flex items-center gap-3">
+              <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-blue-600 text-xl font-black text-white shadow-[0_18px_42px_rgba(37,99,235,0.32)]">
+                M
+              </div>
+              <span className="text-2xl font-black tracking-tight text-slate-950">MDP Market</span>
+            </Link>
+          </div>
+
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_30px_100px_rgba(15,23,42,0.16)] sm:p-10">
+          <div className="mb-7">
+            <p className="text-sm font-black uppercase tracking-[0.16em] text-blue-600">Crear cuenta</p>
+            <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950">
+              {isPublishing ? "Publicá con cuenta segura" : "Registrate gratis"}
+            </h2>
+            <p className="mt-2 text-sm font-medium text-slate-500">
+              ¿Ya tenés cuenta?{" "}
+              <Link href={`/login?next=${encodeURIComponent(next)}`} className="font-black text-blue-600 hover:text-blue-500">
+                Iniciá sesión
+              </Link>
+            </p>
+          </div>
+
           <div className="mb-7 rounded-3xl border border-blue-100 bg-blue-50 p-4">
             <div className="flex gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white">
-                <ShieldCheck className="h-5 w-5" />
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white">
+                <BadgeCheck className="h-5 w-5" />
               </div>
               <div>
                 <p className="text-sm font-black text-slate-950">
-                  Queremos saber quién sos por seguridad.
+                  Dos segundos para cuidar la comunidad.
                 </p>
                 <p className="mt-1 text-sm leading-5 text-slate-600">
-                  MDP Market es una comunidad local: identificar a compradores, vendedores y profesionales ayuda a cuidar cada operación. Son dos segundos y después seguís.
+                  Saber quién sos ayuda a que compradores, vendedores y profesionales operen con más confianza.
                 </p>
               </div>
             </div>
@@ -283,8 +321,9 @@ function RegistroForm() {
               Al registrarte aceptás nuestros <Link href="#" className="text-slate-600 underline">Términos y Condiciones</Link> y <Link href="#" className="text-slate-600 underline">Políticas de Privacidad</Link>.
             </p>
           </form>
+          </div>
+        </section>
         </div>
-      </div>
     </div>
   );
 }
