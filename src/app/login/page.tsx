@@ -36,8 +36,27 @@ function LoginForm() {
     }
   };
 
+  const handleOAuth = async (provider: "google" | "apple") => {
+    setLoading(true);
+    setError(null);
+
+    const redirectTo = typeof window !== "undefined"
+      ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`
+      : undefined;
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo },
+    });
+
+    if (error) {
+      setError(`No pudimos iniciar con ${provider === "google" ? "Google" : "Apple"}. Probá con email.`);
+      setLoading(false);
+    }
+  };
+
   return (
-    <form className="space-y-6" onSubmit={handleLogin}>
+    <div className="space-y-6">
       {error && (
         <div className="bg-red-50 border border-red-100 p-4 rounded-2xl flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
@@ -45,6 +64,34 @@ function LoginForm() {
         </div>
       )}
 
+      <div className="grid gap-3 sm:grid-cols-2">
+        <button
+          type="button"
+          onClick={() => handleOAuth("google")}
+          disabled={loading}
+          className="flex h-12 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white text-sm font-black text-slate-800 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50"
+        >
+          <span className="text-base font-black text-blue-600">G</span>
+          Google
+        </button>
+        <button
+          type="button"
+          onClick={() => handleOAuth("apple")}
+          disabled={loading}
+          className="flex h-12 items-center justify-center gap-2 rounded-2xl border border-slate-900 bg-slate-950 text-sm font-black text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-50"
+        >
+          <span className="text-base"></span>
+          Apple
+        </button>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="h-px flex-1 bg-slate-200" />
+        <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">o ingresá con email</span>
+        <div className="h-px flex-1 bg-slate-200" />
+      </div>
+
+      <form className="space-y-6" onSubmit={handleLogin}>
       <div>
         <label htmlFor="email" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">
           Email
@@ -111,9 +158,10 @@ function LoginForm() {
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </>
           )}
-        </button>
-      </div>
-    </form>
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
 
@@ -139,7 +187,7 @@ export default function LoginPage() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-10 px-6 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 sm:rounded-[2.5rem] sm:px-12">
+        <div className="bg-white py-10 px-6 shadow-[0_26px_80px_rgba(15,23,42,0.12)] border border-slate-100 sm:rounded-[2.5rem] sm:px-12">
           <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>}>
             <LoginForm />
           </Suspense>

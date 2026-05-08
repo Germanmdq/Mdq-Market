@@ -1,13 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
-import { Mail, Lock, User, AlertCircle, Loader2, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Mail, Lock, User, AlertCircle, Loader2, ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
 
-export default function RegistroPage() {
+function RegistroForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const rawNext = searchParams.get("next") || "/mi-cuenta";
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/mi-cuenta";
+  const isPublishing = searchParams.get("intent") === "publicar" || next.startsWith("/publicar");
   
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -46,12 +50,31 @@ export default function RegistroPage() {
       // If email confirmation is enabled, show success message
       // Otherwise redirect
       if (data.session) {
-        router.push("/mi-cuenta");
+        router.push(next);
         router.refresh();
       } else {
         setSuccess(true);
         setLoading(false);
       }
+    }
+  };
+
+  const handleOAuth = async (provider: "google" | "apple") => {
+    setLoading(true);
+    setError(null);
+
+    const redirectTo = typeof window !== "undefined"
+      ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`
+      : undefined;
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo },
+    });
+
+    if (error) {
+      setError(`No pudimos iniciar con ${provider === "google" ? "Google" : "Apple"}. Probá con email.`);
+      setLoading(false);
     }
   };
 
@@ -70,7 +93,7 @@ export default function RegistroPage() {
             Por favor, revisá tu bandeja de entrada para activar tu cuenta.
           </p>
           <Link 
-            href="/login" 
+            href={`/login?next=${encodeURIComponent(next)}`}
             className="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-slate-800 transition-all shadow-xl"
           >
             Volver al login
@@ -91,18 +114,61 @@ export default function RegistroPage() {
           <span className="text-2xl font-black tracking-tighter text-slate-900">MDP Market</span>
         </Link>
         <h2 className="text-center text-3xl font-black tracking-tight text-slate-900">
-          Crea tu cuenta gratis
+          {isPublishing ? "Publicá con una cuenta segura" : "Creá tu cuenta gratis"}
         </h2>
         <p className="mt-2 text-center text-sm text-slate-500 font-medium">
           ¿Ya tenés cuenta?{" "}
-          <Link href="/login" className="font-bold text-blue-600 hover:text-blue-500">
+          <Link href={`/login?next=${encodeURIComponent(next)}`} className="font-bold text-blue-600 hover:text-blue-500">
             Iniciá sesión
           </Link>
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-10 px-6 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 sm:rounded-[2.5rem] sm:px-12">
+        <div className="bg-white py-10 px-6 shadow-[0_26px_80px_rgba(15,23,42,0.12)] border border-slate-100 sm:rounded-[2.5rem] sm:px-12">
+          <div className="mb-7 rounded-3xl border border-blue-100 bg-blue-50 p-4">
+            <div className="flex gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-sm font-black text-slate-950">
+                  Queremos saber quién sos por seguridad.
+                </p>
+                <p className="mt-1 text-sm leading-5 text-slate-600">
+                  MDP Market es una comunidad local: identificar a compradores, vendedores y profesionales ayuda a cuidar cada operación. Son dos segundos y después seguís.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6 grid gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={() => handleOAuth("google")}
+              disabled={loading}
+              className="flex h-12 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white text-sm font-black text-slate-800 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50"
+            >
+              <span className="text-base font-black text-blue-600">G</span>
+              Google
+            </button>
+            <button
+              type="button"
+              onClick={() => handleOAuth("apple")}
+              disabled={loading}
+              className="flex h-12 items-center justify-center gap-2 rounded-2xl border border-slate-900 bg-slate-950 text-sm font-black text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-50"
+            >
+              <span className="text-base"></span>
+              Apple
+            </button>
+          </div>
+
+          <div className="mb-6 flex items-center gap-3">
+            <div className="h-px flex-1 bg-slate-200" />
+            <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">o registrate así</span>
+            <div className="h-px flex-1 bg-slate-200" />
+          </div>
+
           <form className="space-y-6" onSubmit={handleRegistro}>
             {error && (
               <div className="bg-red-50 border border-red-100 p-4 rounded-2xl flex items-start gap-3">
@@ -220,5 +286,13 @@ export default function RegistroPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegistroPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-slate-50"><Loader2 className="h-8 w-8 animate-spin text-blue-600" /></div>}>
+      <RegistroForm />
+    </Suspense>
   );
 }

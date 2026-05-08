@@ -89,11 +89,12 @@ export function interpretLocalIntent(input: string): IntentResult {
   const publishTerm = bestTerm(text, PRODUCT_TERMS);
   if (/(quiero\s+vender|publicar|vendo|vender)/i.test(normalized)) {
     const query = cleanQuery(text, publishTerm);
+    const publishHref = buildHref("/publicar", { intent: "vender", q: query, category: publishTerm ? CATEGORY_BY_TERM[publishTerm] : undefined });
     return {
       intent: "publish_product",
       query,
       category: publishTerm ? CATEGORY_BY_TERM[publishTerm] : undefined,
-      href: buildHref("/publicar", { intent: "vender", q: query, category: publishTerm ? CATEGORY_BY_TERM[publishTerm] : undefined }),
+      href: buildHref("/registro", { intent: "publicar", next: publishHref }),
     };
   }
 

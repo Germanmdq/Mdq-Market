@@ -11,7 +11,7 @@ const CHIPS = [
   { label: "Comprar producto", value: "Busco un producto" },
   { label: "Contratar servicio", value: "Necesito un servicio para hoy" },
   { label: "Buscar profesional", value: "Busco un profesional" },
-  { label: "Publicar algo", value: "Quiero vender" },
+  { label: "Publicar algo", value: "Quiero vender", href: "/registro?intent=publicar&next=/publicar?intent=vender" },
   { label: "Ver ofertas", value: "Ver ofertas cerca mío" },
 ];
 
@@ -99,7 +99,13 @@ export default function SmartSearchAssistant() {
                   <button
                     key={chip.label}
                     type="button"
-                    onClick={() => setQuery(chip.value)}
+                  onClick={() => {
+                    if (chip.href) {
+                      router.push(chip.href);
+                      return;
+                    }
+                    setQuery(chip.value);
+                  }}
                     className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
                   >
                     {chip.label}
