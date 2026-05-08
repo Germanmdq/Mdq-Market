@@ -57,13 +57,13 @@ export default function ProductCard({ product }: { product: Product }) {
         <div className="p-4">
           <div className="flex flex-wrap items-center gap-1.5">
             {product.mdp_delivery_available ? (
-              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+              <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-semibold text-white">
                 Entrega MDP
               </span>
             ) : null}
 
             {product.protected_payment ? (
-              <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700">
+              <span className="rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-semibold text-white">
                 Pago protegido
               </span>
             ) : null}

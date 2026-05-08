@@ -108,7 +108,7 @@ export default async function ProductDetailPage({
               {product.tags && product.tags.length > 0 && (
                 <div className="mt-5 flex flex-wrap gap-2">
                   {product.tags.map((tag, i) => (
-                    <span key={i} className="px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-600">
+                    <span key={i} className="rounded-full bg-slate-700 px-3 py-1 text-xs font-semibold text-white shadow-sm">
                       {tag}
                     </span>
                   ))}
@@ -130,12 +130,12 @@ export default async function ProductDetailPage({
 
               <div className="flex flex-wrap gap-2 mb-8">
                 {product.mdp_delivery_available && (
-                  <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700">Entrega MDP</span>
+                  <span className="rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm">Entrega MDP</span>
                 )}
                 {product.protected_payment && (
-                  <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700">Pago protegido</span>
+                  <span className="rounded-full bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm">Pago protegido</span>
                 )}
-                <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700">{product.condition}</span>
+                <span className="rounded-full bg-slate-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm">{product.condition}</span>
               </div>
             </div>
 
@@ -143,7 +143,7 @@ export default async function ProductDetailPage({
 
             {/* Seller & Safety */}
             <div className="space-y-4 pt-6 border-t border-slate-200">
-              <div className="rounded-3xl border border-slate-200 p-5 bg-white shadow-sm flex items-start gap-4">
+              <div className="rounded-3xl border border-slate-200 p-5 bg-white shadow-[0_16px_44px_rgba(15,23,42,0.10)] flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
                   <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${product.seller_name || "Vendedor"}`} alt="" className="w-full h-full object-cover" />
                 </div>
@@ -156,7 +156,7 @@ export default async function ProductDetailPage({
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-slate-200 p-5 bg-white shadow-sm">
+              <div className="rounded-3xl border border-slate-200 p-5 bg-white shadow-[0_16px_44px_rgba(15,23,42,0.10)]">
                 <p className="text-sm font-semibold text-slate-950 flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-blue-600" /> Compra protegida
                 </p>
@@ -166,7 +166,7 @@ export default async function ProductDetailPage({
               </div>
               
               {product.mdp_delivery_available && (
-                <div className="rounded-3xl border border-slate-200 p-5 bg-white shadow-sm">
+                <div className="rounded-3xl border border-slate-200 p-5 bg-white shadow-[0_16px_44px_rgba(15,23,42,0.10)]">
                   <p className="text-sm font-semibold text-slate-950 flex items-center gap-2">
                     <Truck className="w-5 h-5 text-emerald-600" /> Entrega MDP
                   </p>
