@@ -3,12 +3,22 @@ import Link from "next/link";
 import {
   ArrowRight,
   BadgePercent,
+  Baby,
+  Bike,
+  Hammer,
+  Home,
+  Laptop,
+  Palette,
+  PawPrint,
   Search,
   ShieldCheck,
   SlidersHorizontal,
+  Sofa,
   Sparkles,
   Store,
+  Tags,
   Truck,
+  Utensils,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import type { Product } from "@/types/product";
@@ -20,6 +30,7 @@ import { MarketCarousel } from "@/components/ui/MarketCarousel";
 import { MarketSection } from "@/components/marketplace/MarketSection";
 import { getPublishedServices } from "@/lib/services";
 import PersonalizedProductSections from "@/components/marketplace/PersonalizedProductSections";
+import CategoryHeroSlider from "@/components/marketplace/CategoryHeroSlider";
 
 type CategoryRow = {
   id: string;
@@ -43,6 +54,82 @@ type CatalogSignal = {
   zone?: string | null;
   tags?: string[] | null;
 };
+
+function normalizeLabel(value: string) {
+  return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function getProductCategoryMeta(category: CategoryNode | { name: string; slug: string }) {
+  const label = normalizeLabel(`${category.name} ${category.slug}`);
+  if (label.includes("hogar") || label.includes("mueble")) return { icon: Sofa, color: "from-cyan-500 to-blue-700", copy: "Muebles, organización, decoración y soluciones para renovar ambientes." };
+  if (label.includes("tecnolog") || label.includes("celular") || label.includes("notebook")) return { icon: Laptop, color: "from-indigo-500 to-blue-700", copy: "Equipos, accesorios y tecnología disponible en Mar del Plata." };
+  if (label.includes("bici") || label.includes("movilidad")) return { icon: Bike, color: "from-emerald-500 to-teal-700", copy: "Movilidad urbana, repuestos y oportunidades para moverte mejor." };
+  if (label.includes("bebe") || label.includes("nino") || label.includes("juguete")) return { icon: Baby, color: "from-pink-500 to-rose-600", copy: "Juguetes, cuidado, ropa y productos familiares seleccionados." };
+  if (label.includes("herramient") || label.includes("construccion")) return { icon: Hammer, color: "from-amber-500 to-orange-700", copy: "Herramientas, obra, mantenimiento y equipamiento para resolver." };
+  if (label.includes("deco") || label.includes("jardin")) return { icon: Home, color: "from-lime-500 to-emerald-700", copy: "Jardín, deco y detalles para mejorar tu casa." };
+  if (label.includes("mascota")) return { icon: PawPrint, color: "from-violet-500 to-purple-700", copy: "Productos para mascotas, cuidado y accesorios." };
+  if (label.includes("comercio") || label.includes("almacen") || label.includes("cafe") || label.includes("verduleria")) return { icon: Utensils, color: "from-red-500 to-orange-700", copy: "Comercios locales, alimentos, bazar y compras de cercanía." };
+  if (label.includes("arte") || label.includes("libreria")) return { icon: Palette, color: "from-fuchsia-500 to-pink-700", copy: "Librería, creatividad, útiles y regalos locales." };
+  return { icon: Tags, color: "from-blue-500 to-cyan-700", copy: "Publicaciones locales con compra protegida y entrega coordinada." };
+}
+
+function getProductHeroImages(category?: CategoryNode | null) {
+  const label = normalizeLabel(`${category?.name ?? ""} ${category?.slug ?? ""}`);
+  if (label.includes("hogar") || label.includes("mueble")) {
+    return [
+      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=1400&q=80",
+    ];
+  }
+  if (label.includes("tecnolog") || label.includes("celular") || label.includes("notebook")) {
+    return [
+      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1400&q=80",
+    ];
+  }
+  if (label.includes("bici") || label.includes("movilidad")) {
+    return [
+      "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1529422643029-d4585747aaf2?auto=format&fit=crop&w=1400&q=80",
+    ];
+  }
+  if (label.includes("comercio") || label.includes("almacen") || label.includes("cafe")) {
+    return [
+      "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1516594798947-e65505dbb29d?auto=format&fit=crop&w=1400&q=80",
+    ];
+  }
+  return [
+    "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?auto=format&fit=crop&w=1400&q=80",
+  ];
+}
+
+function getProductHeroCaptions(title: string, category?: CategoryNode | null) {
+  const categoryName = category?.name ?? "MDP Market";
+  return [
+    {
+      eyebrow: "Inspiración local",
+      title: title.replace("Encontrá más en ", ""),
+      description: `Ideas, oportunidades y publicaciones reales para comprar ${categoryName.toLowerCase()} en Mar del Plata.`,
+    },
+    {
+      eyebrow: "Compra protegida",
+      title: "Elegí con más confianza",
+      description: "Revisá precio, zona, vendedor y entrega antes de avanzar con la operación.",
+    },
+    {
+      eyebrow: "Entrega MDP",
+      title: "Coordinación dentro de la ciudad",
+      description: "Sin envíos externos: acordamos la entrega local cuando completás la compra.",
+    },
+  ];
+}
 
 function buildCategoryTree(categories: CategoryRow[], products: CatalogSignal[]) {
   const counts = new Map<string, number>();
@@ -83,38 +170,71 @@ function buildCategoryTree(categories: CategoryRow[], products: CatalogSignal[])
 function CategoryQuickLinks({
   title,
   categories,
+  heroImages,
+  heroCaptions,
 }: {
   title: string;
   categories: CategoryNode[];
+  heroImages: string[];
+  heroCaptions: { eyebrow: string; title: string; description: string }[];
 }) {
   if (!categories.length) return null;
 
   return (
     <section className="border-b border-slate-200 bg-white">
-      <div className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-5 flex items-end justify-between gap-4">
+      <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
+        <div className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="relative overflow-hidden rounded-[2rem] bg-slate-950 p-8 text-white shadow-[0_30px_100px_rgba(15,23,42,0.22)]">
+            <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
+            <div className="absolute bottom-0 right-16 h-40 w-40 rounded-full bg-emerald-400/10 blur-2xl" />
+            <div className="relative max-w-2xl">
+              <p className="text-sm font-semibold text-blue-200">Categoría MDP Market</p>
+              <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">{title}</h2>
+              <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">
+                Explorá publicaciones reales de Mar del Plata, filtrá por zona, elegí compra protegida y coordiná Entrega MDP sin métodos externos.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link href="#resultados-productos" className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-blue-50">
+                  Ver productos
+                </Link>
+                <Link href="/productos?ofertas=true" className="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+                  Ofertas disponibles
+                </Link>
+              </div>
+            </div>
+          </div>
+          <CategoryHeroSlider images={heroImages} title={title} captions={heroCaptions} />
+        </div>
+
+        <div className="mt-8 flex items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-blue-600">Explorá el catálogo</p>
-            <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">{title}</h2>
+            <p className="text-sm font-medium text-blue-600">Subcategorías</p>
+            <h3 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Elegí por necesidad</h3>
           </div>
           <Link href="#directorio-categorias" className="hidden items-center gap-1 text-sm font-semibold text-slate-900 hover:text-blue-600 sm:flex">
             Ver directorio <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
-          {categories.slice(0, 12).map((category) => (
-            <Link
-              key={category.id}
-              href={`/productos?category=${category.slug}`}
-              className="group rounded-3xl border border-slate-200 bg-slate-50 p-4 shadow-[0_12px_34px_rgba(15,23,42,0.08)] transition hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-[0_22px_60px_rgba(15,23,42,0.14)]"
-            >
-              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-blue-600 shadow-sm transition group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white">
-                <Sparkles className="h-5 w-5" />
-              </div>
-              <p className="line-clamp-2 min-h-[40px] text-sm font-semibold leading-5 text-slate-950">{category.name}</p>
-              <p className="mt-2 text-xs font-medium text-slate-500">{category.productCount} publicaciones</p>
-            </Link>
-          ))}
+        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {categories.slice(0, 8).map((category) => {
+            const meta = getProductCategoryMeta(category);
+            const Icon = meta.icon;
+            return (
+              <Link
+                key={category.id}
+                href={`/productos?${category.is_root ? "category" : "subcategory"}=${category.slug}`}
+                className="group relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.10)] transition hover:-translate-y-1 hover:shadow-[0_30px_90px_rgba(15,23,42,0.16)]"
+              >
+                <div className={`absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br ${meta.color} opacity-15 transition group-hover:scale-125 group-hover:opacity-25`} />
+                <div className={`relative mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${meta.color} text-white shadow-lg transition group-hover:-rotate-3 group-hover:scale-110`}>
+                  <Icon className="h-7 w-7" />
+                </div>
+                <p className="relative text-lg font-semibold text-slate-950">{category.name}</p>
+                <p className="relative mt-2 min-h-[48px] text-sm leading-6 text-slate-500">{meta.copy}</p>
+                <p className="relative mt-5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 w-fit">{category.productCount} publicaciones</p>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -459,6 +579,8 @@ export default async function ProductsPage({
       <CategoryQuickLinks
         title={selectedCategoryNode ? `Encontrá más en ${selectedCategoryNode.name}` : "Comprá por categoría"}
         categories={quickCategories}
+        heroImages={getProductHeroImages(selectedCategoryNode)}
+        heroCaptions={getProductHeroCaptions(selectedCategoryNode ? `Encontrá más en ${selectedCategoryNode.name}` : "Comprá por categoría", selectedCategoryNode)}
       />
 
       <section className="border-b border-slate-200 bg-slate-50">

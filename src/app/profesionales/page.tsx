@@ -4,23 +4,30 @@ import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Award,
+  Bath,
   BadgeCheck,
   BadgePercent,
   Brain,
   BriefcaseBusiness,
   Calculator,
   DraftingCompass,
+  Droplets,
+  Flame,
   HeartPulse,
+  Home,
   Scale,
   Search,
   ShieldCheck,
   SlidersHorizontal,
   Sparkles,
+  Utensils,
+  Wrench,
   X,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
+import CategoryHeroSlider from "@/components/marketplace/CategoryHeroSlider";
 
 type ProfessionalRow = {
   id: string;
@@ -46,6 +53,13 @@ type ProfessionalRow = {
 const FALLBACK_ZONES = ["Centro", "Güemes", "Constitución", "La Perla", "Playa Grande", "Puerto", "Punta Mogotes"];
 
 const PROFESSIONAL_CATEGORY_META = [
+  { match: "bano", icon: Bath, title: "Baños", description: "Plomería, sanitarios, grifería, humedad y arreglos puntuales.", color: "from-sky-500 to-blue-700" },
+  { match: "calefactor", icon: Flame, title: "Calefactores", description: "Revisión, limpieza, instalación y puesta a punto con coordinación local.", color: "from-orange-500 to-red-700" },
+  { match: "cocina", icon: Utensils, title: "Cocinas", description: "Instalación, reparación, gas, extractores y mantenimiento.", color: "from-amber-500 to-orange-700" },
+  { match: "gas", icon: Flame, title: "Gas", description: "Gasistas para instalaciones, pérdidas y controles de seguridad.", color: "from-red-500 to-rose-700" },
+  { match: "hogar", icon: Home, title: "Hogar", description: "Arreglos, mejoras, mantenimiento y soluciones para la casa.", color: "from-emerald-500 to-teal-700" },
+  { match: "perdida", icon: Droplets, title: "Pérdidas", description: "Detección y reparación de pérdidas de agua, gas o humedad.", color: "from-cyan-500 to-blue-700" },
+  { match: "plomer", icon: Wrench, title: "Plomería", description: "Destapes, baños, cocina, cañerías y urgencias coordinadas.", color: "from-blue-500 to-indigo-700" },
   { match: "abog", icon: Scale, title: "Legales", description: "Abogados para consultas laborales, familia, contratos y reclamos.", color: "from-indigo-500 to-blue-700" },
   { match: "cont", icon: Calculator, title: "Contabilidad", description: "Monotributo, impuestos, balances y asesoramiento para negocios.", color: "from-emerald-400 to-teal-600" },
   { match: "psic", icon: Brain, title: "Salud mental", description: "Profesionales para orientación, terapia y acompañamiento.", color: "from-violet-400 to-fuchsia-600" },
@@ -62,6 +76,64 @@ function getProfessionalCategoryMeta(category: string) {
     description: "Profesionales locales con reputación, agenda y contacto protegido.",
     color: "from-blue-500 to-cyan-500",
   };
+}
+
+function getProfessionalHeroImages(category?: string) {
+  const label = normalizeText(category);
+  if (label.includes("gas") || label.includes("calefactor") || label.includes("cocina")) {
+    return [
+      "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?auto=format&fit=crop&w=1400&q=80",
+    ];
+  }
+  if (label.includes("plomer") || label.includes("perdida") || label.includes("bano")) {
+    return [
+      "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=80",
+    ];
+  }
+  if (label.includes("abog") || label.includes("leg")) {
+    return [
+      "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1400&q=80",
+    ];
+  }
+  if (label.includes("cont")) {
+    return [
+      "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1554224154-26032ffc0d07?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80",
+    ];
+  }
+  return [
+    "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1400&q=80",
+  ];
+}
+
+function getProfessionalHeroCaptions(category?: string) {
+  const categoryName = category || "profesionales";
+  return [
+    {
+      eyebrow: "Profesionales cerca tuyo",
+      title: "Resolvé con alguien de confianza",
+      description: `Encontrá ${categoryName.toLowerCase()} con perfil, reputación y zonas de atención en Mar del Plata.`,
+    },
+    {
+      eyebrow: "Reserva protegida",
+      title: "Pedí turno sin vueltas",
+      description: "Elegí profesional, coordiná horario y mantené la operación ordenada dentro de MDP Market.",
+    },
+    {
+      eyebrow: "Servicios locales",
+      title: "Menos búsqueda, más solución",
+      description: "Filtrá por rubro, verificación y zona para llegar más rápido al perfil correcto.",
+    },
+  ];
 }
 
 function ProfessionalPromoWidgets({ onVerifiedClick }: { onVerifiedClick: () => void }) {
@@ -287,8 +359,33 @@ function ProfessionalsContent() {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {shouldShowCategories ? (
           <section>
-            <div className="mb-6">
-              <h2 className="text-2xl font-semibold tracking-tight text-slate-950">Elegí una categoría profesional</h2>
+            <div className="mb-8 grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
+              <div className="relative overflow-hidden rounded-[2rem] bg-slate-950 p-8 text-white shadow-[0_30px_100px_rgba(15,23,42,0.22)]">
+                <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
+                <div className="relative max-w-2xl">
+                  <p className="text-sm font-semibold text-blue-200">Profesionales MDP</p>
+                  <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">Encontrá el profesional correcto</h2>
+                  <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">
+                    Elegí rubro, revisá perfiles verificados y reservá con operación protegida dentro de Mar del Plata.
+                  </p>
+                  <div className="mt-8 flex flex-wrap gap-3">
+                    <button onClick={() => updateUrl({ verified: true })} className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-blue-50">
+                      Ver verificados
+                    </button>
+                    <a href="#categorias-profesionales" className="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+                      Elegir rubro
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <CategoryHeroSlider
+                images={getProfessionalHeroImages()}
+                title="Profesionales en Mar del Plata"
+                captions={getProfessionalHeroCaptions()}
+              />
+            </div>
+            <div id="categorias-profesionales" className="mb-6">
+              <h2 className="text-2xl font-semibold tracking-tight text-slate-950">Categorías profesionales</h2>
               <p className="mt-1 text-sm text-slate-500">Primero elegís el rubro; después ves profesionales disponibles.</p>
             </div>
             {loading ? (
