@@ -491,12 +491,12 @@ export default async function ProductsPage({
       </section>
 
       {/* Main Content */}
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 py-8">
-        <div className="lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
+      <div className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8">
+        <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-[0_24px_80px_rgba(15,23,42,0.10)] sm:p-6 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
 
           {/* Sidebar Filters - Desktop */}
           <aside className="hidden lg:block">
-            <div className="sticky top-24 bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+            <div className="sticky top-24 rounded-3xl border border-slate-200 bg-slate-50 p-6">
               <Suspense fallback={<div className="h-96 animate-pulse bg-slate-100 rounded-xl" />}>
                 <ProductFilters />
               </Suspense>
@@ -522,6 +522,13 @@ export default async function ProductsPage({
 
             {products.length > 0 ? (
               <>
+                <div className="mb-5 flex flex-col gap-1 border-b border-slate-100 pb-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-950">Resultados</p>
+                    <p className="mt-1 text-sm text-slate-500">{totalProducts} publicaciones disponibles</p>
+                  </div>
+                  <p className="text-xs font-medium text-slate-400">Compra protegida y Entrega MDP cuando esté disponible</p>
+                </div>
                 <ProductGrid products={products} />
 
                 {/* Pagination */}

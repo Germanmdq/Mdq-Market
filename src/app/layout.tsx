@@ -4,6 +4,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 import { Providers } from "@/components/providers/Providers";
+import FeedbackWidget from "@/components/layout/FeedbackWidget";
 
 export const metadata: Metadata = {
   title: "MDP Market & Services | Mar del Plata",
@@ -24,6 +25,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <FeedbackWidget />
           <BottomNav />
         </Providers>
       </body>

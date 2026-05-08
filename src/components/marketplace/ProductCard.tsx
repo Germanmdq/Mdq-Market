@@ -19,9 +19,9 @@ export default function ProductCard({ product }: { product: Product }) {
   const imageSrc = getProductMainImage(product);
 
   return (
-    <article className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_16px_44px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_26px_76px_rgba(15,23,42,0.18)] h-full flex flex-col">
-      <Link href={`/productos/${product.slug}`} className="block flex-1 flex flex-col">
-        <div className="relative aspect-square overflow-hidden rounded-t-[inherit] bg-slate-50">
+    <article className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_16px_44px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_26px_76px_rgba(15,23,42,0.18)]">
+      <Link href={`/productos/${product.slug}`} className="block">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-t-[inherit] bg-slate-50">
           <img
             src={imageSrc}
             alt={product.title}
@@ -54,8 +54,8 @@ export default function ProductCard({ product }: { product: Product }) {
           </button>
         </div>
 
-        <div className="p-4 flex flex-col flex-1">
-          <div className="flex flex-wrap items-center gap-1.5 min-h-[24px]">
+        <div className="p-4">
+          <div className="flex flex-wrap items-center gap-1.5">
             {product.mdp_delivery_available ? (
               <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
                 Entrega MDP
@@ -79,11 +79,11 @@ export default function ProductCard({ product }: { product: Product }) {
             </p>
           ) : null}
 
-          <h3 className="mt-2 line-clamp-2 min-h-[40px] text-sm font-medium leading-snug text-slate-700">
+          <h3 className="mt-2 line-clamp-2 text-sm font-medium leading-snug text-slate-700">
             {product.title}
           </h3>
 
-          <div className="mt-auto pt-3 flex items-center justify-between text-xs text-slate-500">
+          <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
             <span className="font-medium">
               {product.seller_verified ? "✓ Verificado" : product.seller_name || "Vendedor"}
             </span>
