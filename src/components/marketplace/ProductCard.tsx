@@ -20,13 +20,13 @@ export default function ProductCard({ product }: { product: Product }) {
   const imageSrc = getProductMainImage(product);
 
   return (
-    <article className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_16px_44px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_26px_76px_rgba(15,23,42,0.18)]">
-      <Link href={`/productos/${product.slug}`} className="block">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-t-[inherit] bg-slate-50">
+    <article className="group flex h-full min-h-[430px] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_14px_42px_rgba(15,23,42,0.10)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_64px_rgba(15,23,42,0.16)]">
+      <Link href={`/productos/${product.slug}`} className="flex h-full flex-col">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
           <img
             src={imageSrc}
             alt={product.title}
-            className="h-full w-full rounded-t-[inherit] object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
             onError={(event) => {
               const fallback = "/fallbacks/producto.svg";
@@ -55,8 +55,8 @@ export default function ProductCard({ product }: { product: Product }) {
           </button>
         </div>
 
-        <div className="p-4">
-          <div className="flex flex-wrap items-center gap-1.5">
+        <div className="flex flex-1 flex-col p-4">
+          <div className="flex min-h-[28px] flex-wrap items-start gap-1.5">
             {product.mdp_delivery_available ? (
               <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-semibold text-white">
                 Entrega MDP
@@ -70,27 +70,28 @@ export default function ProductCard({ product }: { product: Product }) {
             ) : null}
           </div>
 
-          <p className="mt-3 text-xl font-semibold tracking-tight text-slate-950">
-            {formatPrice(product.price)}
-          </p>
-
-          {product.old_price ? (
-            <p className="text-sm text-slate-400 line-through mt-0.5">
-              {formatPrice(product.old_price)}
+          <div className="mt-3 min-h-[54px]">
+            <p className="text-xl font-semibold tracking-tight text-slate-950">
+              {formatPrice(product.price)}
             </p>
-          ) : null}
+            {product.old_price ? (
+              <p className="mt-0.5 text-sm text-slate-400 line-through">
+                {formatPrice(product.old_price)}
+              </p>
+            ) : null}
+          </div>
 
-          <h3 className="mt-2 line-clamp-2 text-sm font-medium leading-snug text-slate-700">
+          <h3 className="mt-2 min-h-[44px] line-clamp-2 text-sm font-semibold leading-snug text-slate-950">
             {product.title}
           </h3>
 
-          <div className="mt-3">
+          <div className="mt-3 min-h-[26px]">
             <span className="rounded-full bg-slate-700 px-2.5 py-1 text-[10px] font-semibold text-white">
               {toTitleLabel(product.condition)}
             </span>
           </div>
 
-          <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
+          <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
             <span className="font-medium">
               {product.seller_name || "Vendedor local"}
             </span>

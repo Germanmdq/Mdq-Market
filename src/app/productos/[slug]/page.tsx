@@ -10,7 +10,7 @@ import ProductCard from "@/components/marketplace/ProductCard";
 import { formatPrice, cn } from "@/lib/utils";
 import ProductPurchasePanel from "@/components/marketplace/ProductPurchasePanel";
 import { tagHref, toTitleLabel } from "@/lib/labels";
-import { FAQSection, FinalCTASection, StepsExplainer } from "@/components/marketplace/detail/DetailContinuity";
+import { FAQSection, FinalCTASection, StepsExplainer, panelClass } from "@/components/marketplace/detail/DetailContinuity";
 
 const STATUS_BUTTON: Record<string, { label: string; disabled: boolean }> = {
   published: { label: "Comprar ahora", disabled: false },
@@ -200,7 +200,7 @@ export default async function ProductDetailPage({
           </aside>
         </div>
 
-        <section className="mt-10 space-y-10">
+        <section className="mt-8 space-y-6">
           <StepsExplainer
             title="Cómo funciona esta compra"
             steps={[
@@ -213,10 +213,10 @@ export default async function ProductDetailPage({
           />
 
           {relatedProducts.length > 0 && (
-            <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_18px_55px_rgba(15,23,42,0.10)] sm:p-6">
+            <section className={panelClass}>
               <div className="mb-6 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-blue-600">Más de esta categoría</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600">Más de esta categoría</p>
                   <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Productos relacionados</h2>
                   <p className="mt-2 text-sm text-slate-500">Opciones similares disponibles en Mar del Plata.</p>
                 </div>
@@ -233,9 +233,9 @@ export default async function ProductDetailPage({
           )}
 
           {sellerProducts.filter((p) => p.id !== product.id).length > 0 && (
-            <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_18px_55px_rgba(15,23,42,0.10)] sm:p-6">
+            <section className={panelClass}>
               <div className="mb-6">
-                <p className="text-sm font-semibold text-blue-600">Más del vendedor</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600">Más del vendedor</p>
                 <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">{product.seller_name || "Vendedor local"}</h2>
               </div>
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">

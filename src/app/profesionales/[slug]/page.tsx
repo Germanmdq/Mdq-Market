@@ -17,7 +17,7 @@ import { supabase } from "@/lib/supabase/client";
 import { cn, formatPrice } from "@/lib/utils";
 import ServiceCard from "@/components/marketplace/ServiceCard";
 import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
-import { DetailSection, FAQSection, FinalCTASection, StepsExplainer, TrustMiniCard } from "@/components/marketplace/detail/DetailContinuity";
+import { DetailSection, FAQSection, FinalCTASection, StepsExplainer, TrustMiniCard, miniPanelClass, panelClass, stickyPanelClass } from "@/components/marketplace/detail/DetailContinuity";
 
 export const dynamic = "force-dynamic";
 
@@ -205,7 +205,7 @@ export default async function ProfessionalDetailPage({
         </nav>
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <section className="min-w-0 space-y-6">
+          <section className="min-w-0 space-y-5">
             <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.12)]">
               <div className="relative h-44 bg-slate-200">
                 <img src={professional.coverImage} alt="" className="h-full w-full object-cover" />
@@ -247,7 +247,7 @@ export default async function ProfessionalDetailPage({
               </div>
             </div>
 
-            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_16px_44px_rgba(15,23,42,0.10)]">
+            <section className={panelClass}>
               <h2 className="text-xl font-semibold tracking-tight text-slate-950">Sobre el profesional</h2>
               <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-600">{professional.bio}</p>
               {professional.zones.length > 0 && (
@@ -262,7 +262,7 @@ export default async function ProfessionalDetailPage({
               )}
             </section>
 
-            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_16px_44px_rgba(15,23,42,0.10)]">
+            <section className={panelClass}>
               <h2 className="text-xl font-semibold tracking-tight text-slate-950">Servicios ofrecidos</h2>
               {serviceCards.length > 0 ? (
                 <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -284,7 +284,7 @@ export default async function ProfessionalDetailPage({
               )}
             </section>
 
-            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_16px_44px_rgba(15,23,42,0.10)]">
+            <section className={panelClass}>
               <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-slate-950">
                 <ShieldCheck className="h-5 w-5 text-blue-600" />
                 Verificaciones
@@ -314,9 +314,11 @@ export default async function ProfessionalDetailPage({
           </section>
 
           <aside className="hidden lg:block">
-            <div className="sticky top-28 space-y-4">
+            <div className={stickyPanelClass}>
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(15,23,42,0.14)]">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Presupuesto inicial</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600">Panel de operación</p>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight text-slate-950">Reservar profesional</h2>
+              <p className="mt-5 text-xs font-semibold uppercase tracking-wider text-slate-500">Presupuesto inicial</p>
               <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
                 {professional.priceFrom > 0 ? `Desde ${formatPrice(professional.priceFrom)}` : "A presupuestar"}
               </p>
@@ -367,9 +369,24 @@ export default async function ProfessionalDetailPage({
                 </Link>
               </div>
             </div>
+
+            <div className={miniPanelClass}>
+              <p className="flex items-center gap-2 text-sm font-semibold text-slate-950">
+                <ShieldCheck className="h-5 w-5 text-blue-600" />
+                Seguridad MDP
+              </p>
+              <div className="mt-4 space-y-3">
+                {["Identidad revisada", "Contacto validado", "Reserva protegida", "Soporte disponible"].map((item) => (
+                  <p key={item} className="flex items-center gap-2 text-sm text-slate-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                    {item}
+                  </p>
+                ))}
+              </div>
+            </div>
             <TrustMiniCard title="Reserva protegida" description="Pedido, presupuesto y reserva quedan registrados para dar seguimiento dentro de MDP Market." />
             {similarProfessionals.length > 0 && (
-              <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_16px_44px_rgba(15,23,42,0.10)]">
+              <div className={miniPanelClass}>
                 <p className="text-sm font-semibold text-slate-950">Más profesionales</p>
                 <div className="mt-4 space-y-3">
                   {similarProfessionals.slice(0, 3).map((item) => (
@@ -384,7 +401,45 @@ export default async function ProfessionalDetailPage({
           </aside>
         </div>
 
-        <section className="mt-10 space-y-10">
+        <section className="mt-8 space-y-6">
+          <section className={panelClass}>
+            <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
+              <div className="aspect-[4/3] overflow-hidden rounded-3xl bg-slate-100">
+                <img src={professional.coverImage} alt="" className="h-full w-full object-cover" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600">Experiencia comprobable</p>
+                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Trabajos realizados en Mar del Plata</h2>
+                <p className="mt-3 text-sm leading-6 text-slate-600">
+                  Perfil con actividad, zonas de atención y reserva protegida para comparar antes de avanzar.
+                </p>
+                <div className="mt-5 grid grid-cols-3 gap-3">
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <strong className="block text-xl text-slate-950">{professional.completedJobs || "Activo"}</strong>
+                    <span className="text-xs text-slate-500">trabajos</span>
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <strong className="block text-xl text-slate-950">{professional.rating.toFixed(1)}</strong>
+                    <span className="text-xs text-slate-500">calificación</span>
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <strong className="block text-xl text-slate-950">{professional.responseTime}</strong>
+                    <span className="text-xs text-slate-500">respuesta</span>
+                  </div>
+                </div>
+                {professional.zones.length > 0 && (
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {professional.zones.slice(0, 5).map((zone: string) => (
+                      <span key={zone} className="rounded-full bg-slate-700 px-3 py-1 text-xs font-semibold text-white">
+                        {zone}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+
           <DetailSection eyebrow="Disponibilidad" title="Disponibilidad horaria" description="Coordiná una franja antes de confirmar la reserva.">
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {["Hoy 16 a 19", "Mañana 10 a 13", "Mañana 16 a 19", "Coordinar por chat"].map((slot) => (

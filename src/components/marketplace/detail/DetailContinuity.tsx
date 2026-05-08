@@ -7,6 +7,14 @@ type FAQ = {
   answer: string;
 };
 
+export const panelClass =
+  "rounded-[32px] border border-slate-200 bg-white p-5 shadow-[0_16px_50px_rgba(15,23,42,0.06)] sm:p-6";
+
+export const miniPanelClass =
+  "rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_34px_rgba(15,23,42,0.05)]";
+
+export const stickyPanelClass = "sticky top-28 space-y-4";
+
 export function DetailSection({
   eyebrow,
   title,
@@ -23,11 +31,11 @@ export function DetailSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_18px_55px_rgba(15,23,42,0.10)] sm:p-6">
+    <section className={panelClass}>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          {eyebrow ? <p className="text-sm font-semibold text-blue-600">{eyebrow}</p> : null}
-          <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">{title}</h2>
+          {eyebrow ? <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600">{eyebrow}</p> : null}
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{title}</h2>
           {description ? <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">{description}</p> : null}
         </div>
         {href ? (
@@ -90,12 +98,12 @@ export function TrustMiniCard({
   description?: string;
 }) {
   return (
-    <div className="rounded-3xl border border-blue-100 bg-blue-50 p-5 shadow-[0_16px_44px_rgba(15,23,42,0.08)]">
-      <p className="flex items-center gap-2 text-sm font-semibold text-blue-950">
+    <div className={miniPanelClass}>
+      <p className="flex items-center gap-2 text-sm font-semibold text-slate-950">
         <ShieldCheck className="h-5 w-5 text-blue-600" />
         {title}
       </p>
-      <p className="mt-2 text-sm leading-6 text-blue-900/75">{description}</p>
+      <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
     </div>
   );
 }

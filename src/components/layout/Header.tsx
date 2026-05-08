@@ -10,6 +10,22 @@ import AuthModal from "../auth/AuthModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { trackActivity } from "@/lib/activity";
 
+const contextualLinks = [
+  { label: "Entrega MDP", href: "/productos?delivery=true" },
+  { label: "Pago protegido", href: "/productos?protectedPayment=true" },
+  { label: "Servicios urgentes", href: "/servicios?availableToday=true" },
+  { label: "Publicar gratis", href: "/registro?intent=publicar&next=/publicar?intent=vender" },
+  { label: "Profesionales destacados", href: "/profesionales" },
+];
+
+const quickSearches = [
+  { label: "iPhone", href: "/productos?q=iphone" },
+  { label: "Gasista", href: "/servicios?q=gasista&availableToday=true" },
+  { label: "Silla oficina", href: "/productos?q=silla%20oficina" },
+  { label: "Plomero", href: "/servicios?q=plomero&availableToday=true" },
+  { label: "Notebook", href: "/productos?q=notebook" },
+];
+
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -72,9 +88,10 @@ const Header = () => {
           {/* Nav links desktop */}
           <nav className="hidden items-center gap-1 lg:flex">
             <MegaMenu />
-            <Link href="/productos" className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950">Productos</Link>
-            <Link href="/servicios" className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950">Servicios</Link>
+            <Link href="/productos" className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950">Comprar</Link>
+            <Link href="/servicios?availableToday=true" className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950">Servicios hoy</Link>
             <Link href="/profesionales" className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950">Profesionales</Link>
+            <Link href="/registro?intent=publicar&next=/publicar?intent=vender" className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950">Vender</Link>
           </nav>
 
           {/* Search */}
@@ -100,10 +117,17 @@ const Header = () => {
               <input
                 type="text"
                 name="q"
-                placeholder="Buscar productos, servicios..."
+                placeholder="¿Qué buscás en Mar del Plata?"
                 className="ml-2.5 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
                 required
               />
+            </div>
+            <div className="mt-2 flex gap-2 overflow-hidden">
+              {quickSearches.map((item) => (
+                <Link key={item.label} href={item.href} className="text-[11px] font-semibold text-slate-500 transition hover:text-blue-600">
+                  {item.label}
+                </Link>
+              ))}
             </div>
           </form>
 
@@ -195,6 +219,20 @@ const Header = () => {
           </div>
         </div>
 
+        <div className="border-t border-slate-100 bg-white/90">
+          <div className="mx-auto flex max-w-[1440px] gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8">
+            {contextualLinks.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-[0_8px_22px_rgba(15,23,42,0.04)] transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {/* Mobile search & Quick Cats */}
         <div className="lg:hidden px-4 pb-3 space-y-2 border-t border-slate-100">
           <form
@@ -219,7 +257,7 @@ const Header = () => {
               <input
                 type="text"
                 name="q"
-                placeholder="¿Qué estás buscando?"
+                placeholder="¿Qué buscás en Mar del Plata?"
                 className="ml-2.5 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
                 required
               />
@@ -238,9 +276,10 @@ const Header = () => {
         {menuOpen && (
           <div className="lg:hidden bg-white border-t border-slate-100 px-4 py-4 space-y-1 animate-in slide-in-from-top duration-200">
             {[
-              { label: "Productos", href: "/productos" },
-              { label: "Servicios", href: "/servicios" },
+              { label: "Comprar", href: "/productos" },
+              { label: "Servicios hoy", href: "/servicios?availableToday=true" },
               { label: "Profesionales", href: "/profesionales" },
+              { label: "Categorías", href: "/categorias" },
               { label: "Ofertas", href: "/productos?ofertas=true" },
               { label: "Publicar gratis", href: "/registro?intent=publicar&next=/publicar?intent=vender" },
               ...(user ? [{ label: "Mi cuenta", href: "/cuenta" }, { label: "Favoritos", href: "/favoritos" }, { label: "Carrito", href: "/carrito" }] : [{ label: "Ingresar", href: "/login" }, { label: "Crear cuenta", href: "/registro" }]),
