@@ -26,6 +26,16 @@ const SELLER_TYPES = {
   "particular": "Particular"
 };
 
+function normalizeFilterValue(value: string | null | undefined) {
+  return (value ?? "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, "y")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 interface ProductFiltersProps {
   mobile?: boolean;
 }
@@ -72,15 +82,25 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
   const hasDelivery = searchParams.get("delivery") === "true";
   const isVerified = searchParams.get("verified") === "true";
   const hasOffers = searchParams.get("ofertas") === "true";
+  const normalizedCurrentCategory = normalizeFilterValue(currentCategory);
+  const normalizedCurrentSubcategory = normalizeFilterValue(currentSubcategory);
+
+  const isCategoryActive = (category: Category) =>
+    normalizedCurrentCategory === normalizeFilterValue(category.slug) ||
+    normalizedCurrentCategory === normalizeFilterValue(category.name);
+
+  const isSubcategoryActive = (subcategory: Category) =>
+    normalizedCurrentSubcategory === normalizeFilterValue(subcategory.slug) ||
+    normalizedCurrentSubcategory === normalizeFilterValue(subcategory.name);
 
   const subcategories = useMemo(
-    () => categories.find((category) => category.slug === currentCategory)?.children ?? categories.flatMap((category) => category.children ?? []).slice(0, 18),
-    [categories, currentCategory]
+    () => categories.find((category) => isCategoryActive(category))?.children ?? categories.flatMap((category) => category.children ?? []).slice(0, 18),
+    [categories, normalizedCurrentCategory]
   );
 
   const chips = [
-    currentCategory && { key: "category", label: categories.find((c) => c.slug === currentCategory)?.name ?? currentCategory },
-    currentSubcategory && { key: "subcategory", label: subcategories.find((c) => c.slug === currentSubcategory)?.name ?? currentSubcategory },
+    currentCategory && { key: "category", label: categories.find((c) => isCategoryActive(c))?.name ?? currentCategory },
+    currentSubcategory && { key: "subcategory", label: subcategories.find((c) => isSubcategoryActive(c))?.name ?? currentSubcategory },
     currentMinPrice && { key: "minPrice", label: `Desde $${Number(currentMinPrice).toLocaleString("es-AR")}` },
     currentMaxPrice && { key: "maxPrice", label: `Hasta $${Number(currentMaxPrice).toLocaleString("es-AR")}` },
     currentZone && { key: "zone", label: currentZone },
@@ -132,20 +152,29 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
           </div>
         ) : (
           <div className="space-y-1.5">
-            {categories.slice(0, 14).map((category) => (
-              <label key={category.id} className="flex items-center gap-2.5 cursor-pointer group">
+            {categories.slice(0, 14).map((category) => {
+              const active = isCategoryActive(category);
+              return (
+              <label
+                key={category.id}
+                className={cn(
+                  "flex cursor-pointer items-center gap-2.5 rounded-xl px-2 py-1.5 transition group",
+                  active ? "bg-blue-50 text-blue-700" : "hover:bg-slate-50"
+                )}
+              >
                 <input
                   type="radio"
                   name="category"
-                  checked={currentCategory === category.slug}
-                  onChange={() => updateFilter("category", currentCategory === category.slug ? null : category.slug)}
+                  checked={active}
+                  onChange={() => updateFilter("category", active ? null : category.slug)}
                   className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
                 />
-                <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
+                <span className={cn("text-sm transition-colors", active ? "font-semibold text-blue-700" : "text-slate-700 group-hover:text-slate-950")}>
                   {category.name}
                 </span>
               </label>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -154,20 +183,29 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ mobile }) => {
         <div>
           <h3 className="text-sm font-semibold text-slate-900 mb-3">Subcategoría</h3>
           <div className="space-y-1.5">
-            {subcategories.slice(0, 16).map((subcategory) => (
-              <label key={subcategory.id} className="flex items-center gap-2.5 cursor-pointer group">
+            {subcategories.slice(0, 16).map((subcategory) => {
+              const active = isSubcategoryActive(subcategory);
+              return (
+              <label
+                key={subcategory.id}
+                className={cn(
+                  "flex cursor-pointer items-center gap-2.5 rounded-xl px-2 py-1.5 transition group",
+                  active ? "bg-blue-50 text-blue-700" : "hover:bg-slate-50"
+                )}
+              >
                 <input
                   type="radio"
                   name="subcategory"
-                  checked={currentSubcategory === subcategory.slug}
-                  onChange={() => updateFilter("subcategory", currentSubcategory === subcategory.slug ? null : subcategory.slug)}
+                  checked={active}
+                  onChange={() => updateFilter("subcategory", active ? null : subcategory.slug)}
                   className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
                 />
-                <span className="text-sm text-slate-700 group-hover:text-slate-950 transition-colors">
+                <span className={cn("text-sm transition-colors", active ? "font-semibold text-blue-700" : "text-slate-700 group-hover:text-slate-950")}>
                   {subcategory.name}
                 </span>
               </label>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
