@@ -28,36 +28,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Category, getMegaMenuCategories } from "@/lib/categories";
-
-// Helper to determine category type and build correct href
-function getCategoryHref(category: Category): string {
-  const rootSlug = category.path_slugs?.[0] ?? category.slug;
-
-  // Servicios
-  if (rootSlug === "servicios" || category.name.toLowerCase().includes("servicio")) {
-    return category.level === 1
-      ? "/servicios"
-      : `/servicios?category=${category.slug}`;
-  }
-
-  // Profesionales
-  if (rootSlug === "profesionales" || category.name.toLowerCase().includes("profesional")) {
-    return category.level === 1
-      ? "/profesionales"
-      : `/profesionales?category=${category.slug}`;
-  }
-
-  // Productos (default)
-  if (category.level === 1) {
-    return `/productos?category=${category.slug}`;
-  } else if (category.level === 2) {
-    // Si es nivel 2, es una subcategoría
-    return `/productos?subcategory=${category.slug}`;
-  }
-
-  // Nivel 3 o más profundo
-  return `/productos?subcategory=${category.slug}`;
-}
+import { getCategoryHref } from "@/lib/categories/getCategoryHref";
 
 function normalizeLabel(value: string) {
   return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");

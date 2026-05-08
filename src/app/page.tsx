@@ -18,13 +18,13 @@ import type { Service } from "@/types";
 
 /* ── Category Chips ── */
 const CATEGORIES = [
-  { name: "Tecnología", icon: Laptop, href: "/productos?category=tecnologia" },
-  { name: "Celulares", icon: Smartphone, href: "/productos?category=celulares" },
-  { name: "Hogar", icon: Sofa, href: "/productos?category=hogar" },
-  { name: "Electro", icon: Tv, href: "/productos?category=electro" },
-  { name: "Herramientas", icon: Hammer, href: "/productos?category=herramientas" },
-  { name: "Moda", icon: Shirt, href: "/productos?category=moda" },
-  { name: "Bebés", icon: Baby, href: "/productos?category=bebes" },
+  { name: "Tecnología", icon: Laptop, href: "/productos?category=tecnologia-y-celulares" },
+  { name: "Celulares", icon: Smartphone, href: "/productos?subcategory=celulares" },
+  { name: "Hogar", icon: Sofa, href: "/productos?category=hogar-y-muebles" },
+  { name: "Electro", icon: Tv, href: "/productos?category=electrodomesticos" },
+  { name: "Herramientas", icon: Hammer, href: "/productos?category=herramientas-y-construccion" },
+  { name: "Moda", icon: Shirt, href: "/productos?category=indumentaria-y-accesorios" },
+  { name: "Bebés", icon: Baby, href: "/productos?category=bebes-ninos-y-juguetes" },
   { name: "Servicios", icon: Wrench, href: "/servicios" },
   { name: "Profesionales", icon: Store, href: "/profesionales" },
 ];
@@ -291,7 +291,7 @@ export default async function HomePage() {
 
       {/* ═══ TECNOLOGÍA ═══ */}
       {techProducts.length > 0 && (
-        <MarketSection eyebrow="Novedades" title="Tecnología y Celulares" href="/productos?category=tecnologia" className="border-t border-slate-200 bg-white">
+        <MarketSection eyebrow="Novedades" title="Tecnología y Celulares" href="/productos?category=tecnologia-y-celulares" className="border-t border-slate-200 bg-white">
           <MarketCarousel>
             {techProducts.map(p => (
               <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">

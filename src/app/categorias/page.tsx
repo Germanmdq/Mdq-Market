@@ -22,6 +22,9 @@ import {
 import { supabase } from "@/lib/supabase/client";
 import { MarketCarousel } from "@/components/ui/MarketCarousel";
 import CategoryHeroSlider from "@/components/marketplace/CategoryHeroSlider";
+import { getCategoryHref } from "@/lib/categories/getCategoryHref";
+
+export const dynamic = "force-dynamic";
 
 type CategoryRow = {
   id: string;
@@ -29,6 +32,8 @@ type CategoryRow = {
   slug: string;
   parent_id: string | null;
   is_root: boolean;
+  level?: number | null;
+  show_in_menu?: boolean | null;
   path_slugs?: string[] | null;
 };
 
@@ -125,11 +130,13 @@ function CategorySliderSection({
 }
 
 export default async function CategoriesPage() {
-  const [{ data: categoryRows }, { data: productSignals }, { data: services }, { data: professionals }] = await Promise.all([
+  const [{ data: categoryRows, error: categoriesError }, { data: productSignals }, { data: services }, { data: professionals }] = await Promise.all([
     supabase
       .from("categories")
-      .select("id, name, slug, parent_id, is_root, path_slugs")
+      .select("*")
       .eq("is_active", true)
+      .eq("show_in_menu", true)
+      .order("level", { ascending: true })
       .order("name", { ascending: true }),
     supabase
       .from("products")
@@ -147,12 +154,29 @@ export default async function CategoriesPage() {
       .limit(300),
   ]);
 
+  if (categoriesError) {
+    console.error("Categories page error:", categoriesError);
+  }
+
   const categories = (categoryRows ?? []) as CategoryRow[];
+  const roots = categories.filter((category) => category.is_root === true || category.level === 1);
+  const childrenByParent = new Map<string, CategoryRow[]>();
+  categories.forEach((category) => {
+    if (!category.parent_id) return;
+    const current = childrenByParent.get(category.parent_id) ?? [];
+    current.push(category);
+    childrenByParent.set(category.parent_id, current);
+  });
   const productCounts = new Map<string, number>();
   (productSignals ?? []).forEach((product: any) => {
     if (product.category_id) productCounts.set(product.category_id, (productCounts.get(product.category_id) ?? 0) + 1);
     if (product.subcategory_id) productCounts.set(product.subcategory_id, (productCounts.get(product.subcategory_id) ?? 0) + 1);
   });
+
+  const countCategoryWithChildren = (category: CategoryRow) => {
+    const children = childrenByParent.get(category.id) ?? [];
+    return (productCounts.get(category.id) ?? 0) + children.reduce((sum, child) => sum + (productCounts.get(child.id) ?? 0), 0);
+  };
 
   const productCards = categories
     .filter((category) => {
@@ -167,7 +191,7 @@ export default async function CategoriesPage() {
         id: category.id,
         name: category.name,
         slug: category.slug,
-        href: `/productos?${category.is_root ? "category" : "subcategory"}=${category.slug}`,
+        href: getCategoryHref(category),
         count: productCounts.get(category.id) ?? 0,
         ...meta,
       };
@@ -233,7 +257,7 @@ export default async function CategoriesPage() {
               },
             ]}
           />
-          <form action="/buscar" className="relative z-10 mx-auto -mt-8 flex max-w-3xl rounded-3xl border border-slate-200 bg-white p-2 shadow-[0_28px_90px_rgba(15,23,42,0.22)]">
+          <form action="/productos" className="relative z-10 mx-auto -mt-8 flex max-w-3xl rounded-3xl border border-slate-200 bg-white p-2 shadow-[0_28px_90px_rgba(15,23,42,0.22)]">
             <div className="flex flex-1 items-center gap-3 px-3">
               <Search className="h-5 w-5 text-slate-400" />
               <input name="q" placeholder="Buscar categoría, servicio o rubro..." className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
@@ -241,6 +265,87 @@ export default async function CategoriesPage() {
             <button className="h-12 rounded-2xl bg-blue-600 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(37,99,235,0.25)]">Buscar</button>
           </form>
         </div>
+      </section>
+
+      <section className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
+        {roots.length === 0 ? (
+          <div className="rounded-[32px] border border-slate-200 bg-white p-8 text-center shadow-[0_16px_50px_rgba(15,23,42,0.06)]">
+            <p className="text-sm font-semibold text-blue-600">Sin categorías visibles</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+              Todavía no hay categorías para mostrar.
+            </h2>
+            <p className="mt-3 text-sm text-slate-500">
+              Revisá public.categories en Supabase y asegurate de tener is_active=true y show_in_menu=true.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {roots.map((root) => {
+              const children = childrenByParent.get(root.id) ?? [];
+              const rootCount = countCategoryWithChildren(root);
+              const meta = categoryMeta(root.name, root.slug);
+              const Icon = meta.icon;
+              return (
+                <article
+                  key={root.id}
+                  className="relative flex min-h-[300px] flex-col overflow-hidden rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_16px_50px_rgba(15,23,42,0.06)]"
+                >
+                  <div className={`absolute -right-12 -top-12 h-36 w-36 rounded-full bg-gradient-to-br ${meta.color} opacity-15`} />
+                  <div className="relative flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${meta.color} text-white shadow-lg`}>
+                        <Icon className="h-7 w-7" />
+                      </div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600">
+                        Categoría
+                      </p>
+                      <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+                        {root.name}
+                      </h2>
+                      <p className="mt-2 text-sm leading-6 text-slate-500">{meta.description}</p>
+                    </div>
+                    <Link
+                      href={getCategoryHref(root)}
+                      className="relative shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:border-blue-200 hover:text-blue-700"
+                    >
+                      Ver
+                    </Link>
+                  </div>
+
+                  {children.length > 0 ? (
+                    <div className="relative mt-6 flex flex-wrap gap-2">
+                      {children.slice(0, 10).map((child) => (
+                        <Link
+                          key={child.id}
+                          href={getCategoryHref(child)}
+                          className="rounded-full bg-slate-100 px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-blue-50 hover:text-blue-700"
+                        >
+                          {child.name}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="relative mt-6 text-sm text-slate-500">
+                      Ver publicaciones disponibles en esta categoría.
+                    </p>
+                  )}
+
+                  <div className="relative mt-auto flex items-center justify-between gap-4 pt-6">
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                      {rootCount} publicaciones
+                    </span>
+                    <Link
+                      href={getCategoryHref(root)}
+                      className="inline-flex text-sm font-semibold text-blue-600 hover:text-blue-700"
+                    >
+                      Explorar →
+                    </Link>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <CategorySliderSection

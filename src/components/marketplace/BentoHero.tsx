@@ -14,7 +14,7 @@ const tiles = [
     sub: "Plomero, electricista o cerrajero llegando en minutos. Pago en custodia hasta el OK.",
     bg: "from-red-600 to-red-900", 
     cat: "Servicios urgencia", 
-    nav: "servicios-urgencia" 
+    href: "/servicios?availableToday=true"
   },
   { 
     id: 2,
@@ -25,7 +25,7 @@ const tiles = [
     sub: "iPhone, MacBook y más", 
     bg: "from-blue-500 to-blue-800", 
     cat: "Tecnología", 
-    nav: "tecnologia" 
+    href: "/productos?category=tecnologia-y-celulares"
   },
   { 
     id: 3,
@@ -36,7 +36,7 @@ const tiles = [
     sub: "Alfajores, vinos, artesanías", 
     bg: "from-green-600 to-green-900", 
     cat: "Productos MDP", 
-    nav: "productos-mdp" 
+    href: "/productos?category=emprendedores-locales"
   },
   { 
     id: 4,
@@ -47,7 +47,7 @@ const tiles = [
     sub: "Salud, educación, asesoría", 
     bg: "from-purple-600 to-purple-900", 
     cat: "Profesionales", 
-    nav: "profesionales" 
+    href: "/profesionales"
   },
   { 
     id: 5,
@@ -58,7 +58,7 @@ const tiles = [
     sub: "Heladeras, aires, muebles", 
     bg: "from-amber-500 to-amber-800", 
     cat: "Hogar y Electro", 
-    nav: "hogar-y-electro" 
+    href: "/productos?category=hogar-y-muebles"
   },
 ];
 
@@ -70,7 +70,7 @@ const BentoHero = () => {
         return (
           <Link
             key={t.id}
-            href={`/categorias/${t.nav}`}
+            href={t.href}
             className={cn(
               "relative overflow-hidden rounded-3xl group transition-all duration-500 hover:scale-[1.01] hover:shadow-2xl",
               t.big ? "md:col-span-2 md:row-span-2" : "md:col-span-1 md:row-span-1"

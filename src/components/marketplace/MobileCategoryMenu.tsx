@@ -16,31 +16,11 @@ import {
 } from "lucide-react";
 import { Category, getMegaMenuCategories } from "@/lib/categories";
 import { cn } from "@/lib/utils";
+import { getCategoryHref } from "@/lib/categories/getCategoryHref";
 
 interface MobileCategoryMenuProps {
   onClose: () => void;
 }
-
-// Helper for correct links (matching desktop)
-const getCategoryHref = (category: Category) => {
-  const rootSlug = category.path_slugs?.[0] ?? category.slug;
-
-  if (rootSlug === "servicios") {
-    return category.level === 1
-      ? "/servicios"
-      : `/servicios?category=${category.slug}`;
-  }
-
-  if (rootSlug === "profesionales") {
-    return category.level === 1
-      ? "/profesionales"
-      : `/profesionales?category=${category.slug}`;
-  }
-
-  return category.level === 1
-    ? `/productos?category=${category.slug}`
-    : `/productos?subcategory=${category.slug}`;
-};
 
 const MobileCategoryMenu = ({ onClose }: MobileCategoryMenuProps) => {
   const [categories, setCategories] = useState<Category[]>([]);

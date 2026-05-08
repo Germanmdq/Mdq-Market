@@ -5,13 +5,21 @@ import Link from "next/link";
 import { CATEGORIES } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 
+const LEGACY_CATEGORY_HREFS: Record<string, string> = {
+  tecnologia: "/productos?category=tecnologia-y-celulares",
+  "hogar-y-electro": "/productos?category=hogar-y-muebles",
+  "servicios-urgencia": "/servicios?availableToday=true",
+  "productos-mdp": "/productos?category=emprendedores-locales",
+  construccion: "/productos?category=herramientas-y-construccion",
+};
+
 export default function CategoryBubbles() {
   return (
     <div className="flex flex-wrap justify-center gap-6 md:gap-12">
       {CATEGORIES.map((cat) => (
         <Link 
           key={cat.id} 
-          href={`/categorias/${cat.slug}`}
+          href={LEGACY_CATEGORY_HREFS[cat.slug] ?? "/categorias"}
           className="flex flex-col items-center gap-4 group"
         >
           <div className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-full border border-gray-100 flex items-center justify-center shadow-sm group-hover:shadow-xl group-hover:scale-110 group-hover:border-blue-200 transition-all duration-500 overflow-hidden relative">
