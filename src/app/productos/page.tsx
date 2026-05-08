@@ -172,38 +172,58 @@ function CategoryQuickLinks({
   categories,
   heroImages,
   heroCaptions,
+  params,
+  totalProducts,
+  totalPages,
+  page,
 }: {
   title: string;
   categories: CategoryNode[];
   heroImages: string[];
   heroCaptions: { eyebrow: string; title: string; description: string }[];
+  params: Record<string, string>;
+  totalProducts: number;
+  totalPages: number;
+  page: number;
 }) {
   if (!categories.length) return null;
 
   return (
     <section className="border-b border-slate-200 bg-white">
       <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="relative overflow-hidden rounded-[2rem] bg-slate-950 p-8 text-white shadow-[0_30px_100px_rgba(15,23,42,0.22)]">
-            <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
-            <div className="absolute bottom-0 right-16 h-40 w-40 rounded-full bg-emerald-400/10 blur-2xl" />
-            <div className="relative max-w-2xl">
-              <p className="text-sm font-semibold text-blue-200">Categoría MDP Market</p>
-              <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">{title}</h2>
-              <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">
-                Explorá publicaciones reales de Mar del Plata, filtrá por zona, elegí compra protegida y coordiná Entrega MDP sin métodos externos.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="#resultados-productos" className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-blue-50">
-                  Ver productos
-                </Link>
-                <Link href="/productos?ofertas=true" className="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
-                  Ofertas disponibles
-                </Link>
-              </div>
-            </div>
+        <CategoryHeroSlider images={heroImages} title={title} captions={heroCaptions} />
+
+        <form
+          action="/productos"
+          method="GET"
+          className="relative z-10 mx-auto -mt-8 flex max-w-3xl rounded-[1.7rem] border border-slate-200 bg-white p-2 shadow-[0_30px_100px_rgba(15,23,42,0.24)]"
+        >
+          <div className="flex flex-1 items-center gap-3 px-3">
+            <Search className="h-5 w-5 text-slate-400" />
+            <input
+              name="q"
+              defaultValue={params.q ?? ""}
+              placeholder="Buscar productos..."
+              className="min-w-0 flex-1 bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400"
+            />
           </div>
-          <CategoryHeroSlider images={heroImages} title={title} captions={heroCaptions} />
+          {Object.entries(params)
+            .filter(([key, value]) => key !== "q" && key !== "page" && Boolean(value))
+            .map(([key, value]) => (
+              <input key={key} type="hidden" name={key} value={value} />
+            ))}
+          <button className="h-12 rounded-2xl bg-blue-600 px-6 text-sm font-black text-white shadow-[0_12px_30px_rgba(37,99,235,0.28)] transition hover:bg-blue-700">
+            Buscar
+          </button>
+        </form>
+
+        <div className="mt-10">
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-950">
+            Productos en Mar del Plata
+          </h1>
+          <p className="mt-1.5 text-sm text-slate-600">
+            {totalProducts} productos encontrados {totalPages > 1 && `(página ${page} de ${totalPages})`}
+          </p>
         </div>
 
         <div className="mt-8 flex items-end justify-between gap-4">
@@ -549,38 +569,15 @@ export default async function ProductsPage({
 
   return (
     <main className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-6">
-            <h1 className="text-3xl font-semibold tracking-tight text-slate-950">
-              Productos en Mar del Plata
-            </h1>
-            <p className="mt-1.5 text-sm text-slate-600">
-              {totalProducts} productos encontrados {totalPages > 1 && `(página ${page} de ${totalPages})`}
-            </p>
-          </div>
-
-          <form action="/productos" method="GET" className="relative max-w-2xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <input
-              name="q"
-              defaultValue={typeof params.q === "string" ? params.q : ""}
-              placeholder="Buscar productos..."
-              className="w-full pl-12 pr-4 py-3 bg-slate-50 rounded-2xl border border-slate-200 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all outline-none text-slate-900"
-            />
-            {/* Preserve existing filters */}
-            {typeof params.category === "string" && <input type="hidden" name="category" value={params.category} />}
-            {typeof params.zone === "string" && <input type="hidden" name="zone" value={params.zone} />}
-          </form>
-        </div>
-      </div>
-
       <CategoryQuickLinks
         title={selectedCategoryNode ? `Encontrá más en ${selectedCategoryNode.name}` : "Comprá por categoría"}
         categories={quickCategories}
         heroImages={getProductHeroImages(selectedCategoryNode)}
         heroCaptions={getProductHeroCaptions(selectedCategoryNode ? `Encontrá más en ${selectedCategoryNode.name}` : "Comprá por categoría", selectedCategoryNode)}
+        params={cleanParams}
+        totalProducts={totalProducts}
+        totalPages={totalPages}
+        page={page}
       />
 
       <section className="border-b border-slate-200 bg-slate-50">
