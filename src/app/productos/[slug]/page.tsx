@@ -10,6 +10,7 @@ import ProductCard from "@/components/marketplace/ProductCard";
 import { formatPrice, cn } from "@/lib/utils";
 import ProductPurchasePanel from "@/components/marketplace/ProductPurchasePanel";
 import { tagHref, toTitleLabel } from "@/lib/labels";
+import { FAQSection, FinalCTASection, StepsExplainer } from "@/components/marketplace/detail/DetailContinuity";
 
 const STATUS_BUTTON: Record<string, { label: string; disabled: boolean }> = {
   published: { label: "Comprar ahora", disabled: false },
@@ -41,7 +42,7 @@ export default async function ProductDetailPage({
   const conditionLabel = toTitleLabel(product.condition);
 
   return (
-    <main className="w-full bg-white min-h-screen">
+    <main className="min-h-screen w-full bg-slate-50">
       <div className="mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-8 py-10">
         
         {/* Breadcrumb */}
@@ -56,10 +57,18 @@ export default async function ProductDetailPage({
         </nav>
 
         {/* Main Product Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] gap-12 items-start">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
           
           {/* ═══ LEFT: Gallery ═══ */}
-          <div className="space-y-4">
+          <section className="min-w-0 space-y-6">
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_18px_55px_rgba(15,23,42,0.10)] lg:hidden">
+              <p className="text-sm font-medium text-slate-500">{product.subcategory || product.category}</p>
+              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{product.title}</h1>
+              <div className="mt-4 flex items-end gap-3">
+                <span className="text-4xl font-semibold tracking-tight text-slate-950">{formatPrice(product.price)}</span>
+                {product.old_price && <span className="mb-1 text-xl font-medium text-slate-400 line-through">{formatPrice(product.old_price)}</span>}
+              </div>
+            </div>
             <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_22px_70px_rgba(15,23,42,0.16)] group">
               {product.status === "sold" && (
                 <div className="absolute inset-0 bg-slate-950/40 z-10 flex items-center justify-center backdrop-blur-sm">
@@ -121,10 +130,11 @@ export default async function ProductDetailPage({
                 </div>
               )}
             </div>
-          </div>
+          </section>
 
           {/* ═══ RIGHT: Info Panel ═══ */}
-          <aside className="lg:sticky lg:top-28 space-y-8">
+          <aside className="hidden lg:block">
+            <div className="sticky top-28 space-y-4">
             <div>
               <p className="text-sm font-medium text-slate-500 mb-2">{product.subcategory || product.category}</p>
               <h1 className="text-3xl font-semibold tracking-tight text-slate-950 mb-4 leading-tight">{product.title}</h1>
@@ -186,76 +196,75 @@ export default async function ProductDetailPage({
                 </div>
               )}
             </div>
-
+            </div>
           </aside>
         </div>
+
+        <section className="mt-10 space-y-10">
+          <StepsExplainer
+            title="Cómo funciona esta compra"
+            steps={[
+              "Elegís el producto.",
+              "Indicás cuándo podés recibirlo.",
+              "El vendedor confirma disponibilidad.",
+              "MDP coordina la entrega.",
+              "Confirmás recepción.",
+            ]}
+          />
+
+          {relatedProducts.length > 0 && (
+            <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_18px_55px_rgba(15,23,42,0.10)] sm:p-6">
+              <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-blue-600">Más de esta categoría</p>
+                  <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Productos relacionados</h2>
+                  <p className="mt-2 text-sm text-slate-500">Opciones similares disponibles en Mar del Plata.</p>
+                </div>
+                <Link href={`/productos?category=${product.category}`} className="hidden items-center gap-1 text-sm font-semibold text-blue-600 sm:flex">
+                  Ver todos <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {relatedProducts.slice(0, 8).map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {sellerProducts.filter((p) => p.id !== product.id).length > 0 && (
+            <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_18px_55px_rgba(15,23,42,0.10)] sm:p-6">
+              <div className="mb-6">
+                <p className="text-sm font-semibold text-blue-600">Más del vendedor</p>
+                <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">{product.seller_name || "Vendedor local"}</h2>
+              </div>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {sellerProducts.filter((p) => p.id !== product.id).slice(0, 4).map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          <FAQSection
+            items={[
+              { question: "¿Cómo funciona la entrega MDP?", answer: "La coordinación se hace dentro de Mar del Plata, sin métodos de envío externos." },
+              { question: "¿Cuándo se libera el pago?", answer: "El pago se libera cuando confirmás que recibiste el producto correctamente." },
+              { question: "¿Puedo coordinar horario?", answer: "Sí. La franja horaria se confirma durante checkout o por chat protegido." },
+              { question: "¿Qué pasa si el producto no coincide?", answer: "La operación queda registrada y el soporte puede intervenir antes de liberar el pago." },
+            ]}
+          />
+
+          <FinalCTASection
+            title="Comprá con entrega coordinada en Mar del Plata."
+            description="Elegí horario, confirmá recepción y operá con pago protegido dentro de MDP Market."
+            primaryHref={`/checkout?type=product&id=${product.id}`}
+            primaryLabel="Comprar ahora"
+            secondaryHref="/productos"
+            secondaryLabel="Seguir viendo productos"
+          />
+        </section>
       </div>
-
-      <section className="border-t border-slate-200 bg-slate-50">
-        <div className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
-            <div>
-              <h2 className="text-xl font-semibold tracking-tight text-slate-950">
-                Cómo funciona esta compra
-              </h2>
-            </div>
-            <ol className="grid gap-3 text-sm text-slate-700">
-              {[
-                "Pagás con operación protegida.",
-                "El vendedor confirma disponibilidad.",
-                "Coordinamos entrega en Mar del Plata.",
-                "Recibís el producto.",
-                "Confirmás recepción y se libera el pago.",
-              ].map((step, index) => (
-                <li key={step} className="flex gap-3 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white">
-                    {index + 1}
-                  </span>
-                  <span className="pt-1">{step}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ PRODUCTOS RELACIONADOS ═══ */}
-      {relatedProducts.length > 0 && (
-        <section className="border-t border-slate-200 bg-white py-16">
-          <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
-            <div className="mb-8 flex items-center justify-between">
-              <h2 className="text-xl font-semibold tracking-tight text-slate-950">
-                Productos relacionados
-              </h2>
-              <Link href={`/productos?category=${product.category}`} className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1">
-                Ver todos <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {relatedProducts.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {sellerProducts.length > 0 && (
-        <section className="border-t border-slate-200 bg-white py-16">
-          <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
-            <div className="mb-8 flex items-center justify-between">
-              <h2 className="text-xl font-semibold tracking-tight text-slate-950">
-                Más de este vendedor
-              </h2>
-            </div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {sellerProducts.filter((p) => p.id !== product.id).slice(0, 4).map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Mobile Sticky Buy Button */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white p-4 lg:hidden shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">

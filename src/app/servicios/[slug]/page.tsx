@@ -17,6 +17,33 @@ import {
 import { formatPrice, cn } from "@/lib/utils";
 import { getServiceBySlug } from "@/lib/services";
 import { notFound } from "next/navigation";
+import { supabase } from "@/lib/supabase/client";
+import ServiceCard from "@/components/marketplace/ServiceCard";
+import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
+import { DetailSection, FAQSection, FinalCTASection, StepsExplainer, TrustMiniCard } from "@/components/marketplace/detail/DetailContinuity";
+
+function toCardProfessional(professional: any) {
+  const rating = typeof professional.rating === "number" ? professional.rating : professional.rating?.average ?? 0;
+  return {
+    id: professional.id,
+    name: professional.name || "Profesional MDP",
+    slug: professional.slug || professional.id,
+    avatar: professional.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${professional.name || professional.id}`,
+    profession: professional.profession || professional.category || "Profesional local",
+    category: professional.category || "Servicios",
+    subcategories: professional.subcategories || [],
+    headline: professional.headline || `${professional.profession || "Profesional"} en Mar del Plata`,
+    bio: professional.bio || "Profesional de MDP Market.",
+    verified: Boolean(professional.verified),
+    featured: Boolean(professional.featured),
+    rating: { average: rating, totalReviews: 0, punctuality: rating, quality: rating, communication: rating, value: rating },
+    stats: { completedJobs: professional.completedJobs ?? professional.completed_jobs ?? 0, repeatClients: 0, responseTime: professional.responseTime ?? professional.response_time ?? "A coordinar", memberSince: "" },
+    zones: professional.zones || (professional.zone ? [professional.zone] : []),
+    services: [],
+    priceFrom: professional.priceFrom ?? professional.price_from ?? 15000,
+    availability: "Consultar",
+  };
+}
 
 export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -40,26 +67,46 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   const description = service.description || "Servicio profesional en MDP Market con reserva protegida.";
   const professionalName = service.professionalName || serviceAny.professional_name || "Profesional MDP";
   const priceFrom = Number(service.priceFrom ?? serviceAny.price_from ?? 0);
+  const [{ data: servicesData }, { data: professionalsData }] = await Promise.all([
+    supabase.from("services").select("*").eq("status", "published").neq("id", service.id).limit(80),
+    supabase.from("professionals").select("*").limit(80),
+  ]);
+  const allServices = (servicesData ?? []) as any[];
+  const similarServices = allServices
+    .filter((item) => {
+      const haystack = `${item.category ?? ""} ${item.subcategory ?? ""} ${item.specialty ?? ""} ${item.professionalName ?? ""} ${item.professional_name ?? ""}`.toLowerCase();
+      return haystack.includes(String(service.category ?? "").toLowerCase()) ||
+        haystack.includes(String(service.subcategory ?? "").toLowerCase()) ||
+        zones.some((zone: string) => haystack.includes(zone.toLowerCase()));
+    })
+    .slice(0, 8);
+  const serviceFallback = allServices.filter((item) => !similarServices.some((related) => related.id === item.id)).slice(0, 8 - similarServices.length);
+  const servicesForSections = [...similarServices, ...serviceFallback].slice(0, 8);
+  const professionalsForService = ((professionalsData ?? []) as any[])
+    .filter((professional) => {
+      const haystack = `${professional.name ?? ""} ${professional.profession ?? ""} ${professional.category ?? ""} ${(professional.subcategories ?? []).join(" ")} ${(professional.zones ?? []).join(" ")} ${professional.zone ?? ""}`.toLowerCase();
+      return haystack.includes(String(service.category ?? "").toLowerCase()) ||
+        haystack.includes(String(service.subcategory ?? "").toLowerCase()) ||
+        haystack.includes(professionalName.toLowerCase()) ||
+        zones.some((zone: string) => haystack.includes(zone.toLowerCase()));
+    })
+    .slice(0, 8);
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-20">
+    <main className="min-h-screen bg-slate-50">
       {/* Top Banner / Breadcrumbs */}
-      <div className="bg-white border-b border-gray-100 py-4 mb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <nav className="flex text-sm text-gray-500 gap-2">
+      <div className="mx-auto max-w-[1280px] px-4 py-8 sm:px-6 lg:px-8">
+          <nav className="mb-6 flex flex-wrap text-sm text-gray-500 gap-2">
             <Link href="/" className="hover:text-blue-600">Home</Link>
             <span>/</span>
             <Link href="/servicios" className="hover:text-blue-600">Servicios</Link>
             <span>/</span>
             <span className="text-gray-900 font-medium truncate">{service.title}</span>
           </nav>
-        </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
           {/* Left Column: Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <section className="min-w-0 space-y-8">
             <section className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                <div className="relative aspect-[21/9] bg-gray-100">
                   <Image src={mainImage} alt={service.title} fill className="object-cover" />
@@ -152,11 +199,12 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   ))}
                </div>
             </section>
-          </div>
+          </section>
 
           {/* Right Column: Booking Card */}
-          <div className="space-y-6">
-            <aside className="bg-white rounded-3xl shadow-2xl border border-blue-100 p-8 sticky top-24">
+          <aside className="hidden lg:block">
+            <div className="sticky top-28 space-y-4">
+            <div className="bg-white rounded-3xl shadow-2xl border border-blue-100 p-8">
                <div className="flex flex-col mb-8">
                   <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Presupuesto inicial desde</span>
                   <div className="flex items-baseline gap-2">
@@ -192,7 +240,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                <p className="mt-6 text-[10px] text-gray-400 text-center leading-relaxed">
                   Al reservar aceptás los Términos de Servicio y la Política de Cancelación de MDP Market.
                </p>
-            </aside>
+            </div>
 
             {/* Support Info */}
             <div className="bg-blue-900 rounded-3xl p-8 text-white">
@@ -205,9 +253,58 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   Contactar Soporte
                </button>
             </div>
+            <TrustMiniCard title="Reserva protegida" description="El pedido, el presupuesto y la coordinación quedan ordenados dentro de MDP Market." />
           </div>
+          </aside>
         </div>
+
+        <section className="mt-10 space-y-10">
+          {servicesForSections.length > 0 && (
+            <DetailSection eyebrow="Servicios similares" title={`Más servicios de ${service.category}`} description="Alternativas reales para comparar antes de reservar." href={`/servicios?category=${encodeURIComponent(service.category)}`}>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {servicesForSections.slice(0, 8).map((item) => <ServiceCard key={item.id} service={item} />)}
+              </div>
+            </DetailSection>
+          )}
+
+          {professionalsForService.length > 0 && (
+            <DetailSection eyebrow="Profesionales" title="Profesionales que pueden ayudarte" description="Perfiles relacionados por rubro o zona." href={`/profesionales?category=${encodeURIComponent(service.category)}`}>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {professionalsForService.slice(0, 8).map((professional) => <ProfessionalCard key={professional.id} professional={toCardProfessional(professional)} />)}
+              </div>
+            </DetailSection>
+          )}
+
+          <StepsExplainer
+            title="Cómo funciona la reserva protegida"
+            steps={[
+              "Elegís el servicio.",
+              "Indicás día, horario y zona.",
+              "El profesional confirma disponibilidad.",
+              "El trabajo se realiza.",
+              "Confirmás la finalización.",
+            ]}
+          />
+
+          <FAQSection
+            items={[
+              { question: "¿Cómo se confirma la reserva?", answer: "La confirmación se hace cuando el profesional acepta disponibilidad y condiciones." },
+              { question: "¿Puedo cambiar el horario?", answer: "Sí. Podés coordinar por chat antes de confirmar definitivamente." },
+              { question: "¿Qué pasa si necesito urgencia?", answer: "Usá la disponibilidad para hoy o consultá antes de reservar." },
+              { question: "¿El precio puede variar?", answer: "Si el alcance cambia, el profesional debe confirmarlo antes de avanzar." },
+            ]}
+          />
+
+          <FinalCTASection
+            title="Coordiná el servicio con reserva protegida."
+            description="Elegí día, zona y horario para avanzar con más seguridad dentro de MDP Market."
+            primaryHref={`/checkout/profesional?service=${service.id}&title=${encodeURIComponent(service.title)}&professionalName=${encodeURIComponent(professionalName)}&price=${priceFrom || 0}`}
+            primaryLabel="Reservar servicio"
+            secondaryHref="/servicios"
+            secondaryLabel="Ver más servicios"
+          />
+        </section>
       </div>
-    </div>
+    </main>
   );
 }

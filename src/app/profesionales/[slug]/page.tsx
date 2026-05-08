@@ -15,6 +15,9 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { cn, formatPrice } from "@/lib/utils";
+import ServiceCard from "@/components/marketplace/ServiceCard";
+import ProfessionalCard from "@/components/marketplace/ProfessionalCard";
+import { DetailSection, FAQSection, FinalCTASection, StepsExplainer, TrustMiniCard } from "@/components/marketplace/detail/DetailContinuity";
 
 type ProfessionalRow = Record<string, any>;
 
@@ -87,6 +90,41 @@ function normalizeProfessional(row: ProfessionalRow) {
   };
 }
 
+function toCardProfessional(professional: ProfessionalRow) {
+  const rating = typeof professional.rating === "number" ? professional.rating : professional.rating?.average ?? 0;
+  return {
+    id: professional.id,
+    name: professional.name || "Profesional MDP",
+    slug: professional.slug || professional.id,
+    avatar: professional.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${professional.name || professional.id}`,
+    profession: professional.profession || professional.category || "Profesional local",
+    category: professional.category || "Servicios",
+    subcategories: professional.subcategories || [],
+    headline: professional.headline || `${professional.profession || "Profesional"} en Mar del Plata`,
+    bio: professional.bio || "Profesional de MDP Market.",
+    verified: Boolean(professional.verified),
+    featured: Boolean(professional.featured),
+    rating: {
+      average: rating,
+      totalReviews: professional.total_reviews ?? 0,
+      punctuality: rating,
+      quality: rating,
+      communication: rating,
+      value: rating,
+    },
+    stats: {
+      completedJobs: professional.completedJobs ?? professional.completed_jobs ?? 0,
+      repeatClients: 0,
+      responseTime: professional.responseTime ?? professional.response_time ?? "A coordinar",
+      memberSince: "",
+    },
+    zones: professional.zones || (professional.zone ? [professional.zone] : []),
+    services: [],
+    priceFrom: professional.priceFrom ?? professional.price_from ?? 15000,
+    availability: "Consultar",
+  };
+}
+
 export default async function ProfessionalDetailPage({
   params,
 }: {
@@ -111,6 +149,31 @@ export default async function ProfessionalDetailPage({
   }
 
   const professional = normalizeProfessional(row);
+  const [{ data: servicesData }, { data: professionalsData }] = await Promise.all([
+    supabase.from("services").select("*").eq("status", "published").limit(80),
+    supabase.from("professionals").select("*").neq("id", professional.id).limit(80),
+  ]);
+  const serviceRows = (servicesData ?? []) as any[];
+  const professionalRows = (professionalsData ?? []) as ProfessionalRow[];
+  const relatedServices = serviceRows
+    .filter((service) => {
+      const haystack = `${service.professional_profile_id ?? ""} ${service.professionalId ?? ""} ${service.professional_id ?? ""} ${service.professionalName ?? ""} ${service.professional_name ?? ""} ${service.category ?? ""} ${service.subcategory ?? ""} ${service.specialty ?? ""}`.toLowerCase();
+      return haystack.includes(String(professional.id).toLowerCase()) ||
+        haystack.includes(professional.name.toLowerCase()) ||
+        haystack.includes(professional.category.toLowerCase()) ||
+        haystack.includes(professional.profession.toLowerCase());
+    })
+    .slice(0, 8);
+  const fallbackServices = serviceRows.filter((service) => !relatedServices.some((item) => item.id === service.id)).slice(0, 8 - relatedServices.length);
+  const servicesForSections = [...relatedServices, ...fallbackServices].slice(0, 8);
+  const similarProfessionals = professionalRows
+    .filter((item) => {
+      const haystack = `${item.profession ?? ""} ${item.category ?? ""} ${(item.subcategories ?? []).join(" ")} ${(item.zones ?? []).join(" ")} ${item.zone ?? ""}`.toLowerCase();
+      return haystack.includes(professional.category.toLowerCase()) ||
+        haystack.includes(professional.profession.toLowerCase()) ||
+        professional.zones.some((zone: string) => haystack.includes(zone.toLowerCase()));
+    })
+    .slice(0, 8);
   const serviceCards = professional.services.map((service: any, index: number) => {
     if (typeof service === "string") {
       return {
@@ -139,8 +202,8 @@ export default async function ProfessionalDetailPage({
           <span className="font-medium text-slate-900">{professional.name}</span>
         </nav>
 
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
-          <section className="space-y-6">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <section className="min-w-0 space-y-6">
             <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.12)]">
               <div className="relative h-44 bg-slate-200">
                 <img src={professional.coverImage} alt="" className="h-full w-full object-cover" />
@@ -248,7 +311,8 @@ export default async function ProfessionalDetailPage({
             </section>
           </section>
 
-          <aside className="lg:sticky lg:top-24">
+          <aside className="hidden lg:block">
+            <div className="sticky top-28 space-y-4">
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(15,23,42,0.14)]">
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Presupuesto inicial</p>
               <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
@@ -301,8 +365,77 @@ export default async function ProfessionalDetailPage({
                 </Link>
               </div>
             </div>
+            <TrustMiniCard title="Reserva protegida" description="Pedido, presupuesto y reserva quedan registrados para dar seguimiento dentro de MDP Market." />
+            {similarProfessionals.length > 0 && (
+              <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_16px_44px_rgba(15,23,42,0.10)]">
+                <p className="text-sm font-semibold text-slate-950">Más profesionales</p>
+                <div className="mt-4 space-y-3">
+                  {similarProfessionals.slice(0, 3).map((item) => (
+                    <Link key={item.id} href={`/profesionales/${item.slug || item.id}`} className="block rounded-2xl bg-slate-50 p-3 text-sm font-semibold text-slate-800 hover:bg-blue-50 hover:text-blue-700">
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+            </div>
           </aside>
         </div>
+
+        <section className="mt-10 space-y-10">
+          <DetailSection eyebrow="Disponibilidad" title="Disponibilidad horaria" description="Coordiná una franja antes de confirmar la reserva.">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {["Hoy 16 a 19", "Mañana 10 a 13", "Mañana 16 a 19", "Coordinar por chat"].map((slot) => (
+                <div key={slot} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-800">{slot}</div>
+              ))}
+            </div>
+          </DetailSection>
+
+          {servicesForSections.length > 0 && (
+            <DetailSection eyebrow="Servicios relacionados" title="Otros servicios que pueden interesarte" description="Opciones reales disponibles en Mar del Plata." href={`/servicios?category=${encodeURIComponent(professional.category)}`}>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {servicesForSections.slice(0, 8).map((service) => <ServiceCard key={service.id} service={service} />)}
+              </div>
+            </DetailSection>
+          )}
+
+          {similarProfessionals.length > 0 && (
+            <DetailSection eyebrow="Profesionales similares" title={`Más opciones en ${professional.category}`} description="Perfiles relacionados por rubro, especialidad o zona." href={`/profesionales?category=${encodeURIComponent(professional.category)}`}>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {similarProfessionals.slice(0, 8).map((item) => <ProfessionalCard key={item.id} professional={toCardProfessional(item)} />)}
+              </div>
+            </DetailSection>
+          )}
+
+          <StepsExplainer
+            title="Cómo funciona la reserva protegida"
+            steps={[
+              "Elegís el servicio.",
+              "Indicás día, horario y zona.",
+              "El profesional confirma disponibilidad.",
+              "El trabajo se realiza.",
+              "Confirmás la finalización.",
+            ]}
+          />
+
+          <FAQSection
+            items={[
+              { question: "¿Qué significa reserva protegida?", answer: "La solicitud queda registrada y el pago se libera cuando confirmás que el trabajo fue realizado." },
+              { question: "¿Puedo pedir presupuesto antes de reservar?", answer: "Sí. Podés consultar o solicitar presupuesto desde el panel derecho." },
+              { question: "¿Qué pasa si el profesional no confirma?", answer: "La operación no avanza y podés elegir otro profesional o pedir soporte." },
+              { question: "¿Se comparten mis datos personales?", answer: "Los datos se usan para coordinar la operación dentro de MDP Market." },
+            ]}
+          />
+
+          <FinalCTASection
+            title="¿Querés resolverlo con un profesional?"
+            description="Reservá, consultá o pedí presupuesto sin compartir tus datos antes de confirmar."
+            primaryHref={`/checkout/profesional?professional=${professional.id}&title=${encodeURIComponent(professional.profession)}&professionalName=${encodeURIComponent(professional.name)}&price=${professional.priceFrom || 0}`}
+            primaryLabel="Reservar profesional"
+            secondaryHref="/profesionales"
+            secondaryLabel="Ver más profesionales"
+          />
+        </section>
       </div>
     </main>
   );

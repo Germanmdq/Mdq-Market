@@ -89,23 +89,78 @@ export async function getProductsByCategory(category: string, limit = 12) {
 }
 
 export async function getRelatedProducts(product: Product, limit = 8) {
-  let query = supabase
+  const seen = new Set<string>();
+  const results: Product[] = [];
+
+  const append = (items: Product[]) => {
+    for (const item of items) {
+      if (item.id === product.id || seen.has(item.id)) continue;
+      seen.add(item.id);
+      results.push(item);
+      if (results.length >= limit) break;
+    }
+  };
+
+  if (product.subcategory_id) {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("status", "published")
+      .neq("id", product.id)
+      .eq("subcategory_id", product.subcategory_id)
+      .limit(limit);
+
+    if (error) console.error("Error loading related products by subcategory:", error);
+    append((data ?? []) as Product[]);
+  }
+
+  if (results.length < limit) {
+    let query = supabase
+      .from("products")
+      .select("*")
+      .eq("status", "published")
+      .neq("id", product.id)
+      .limit(limit);
+
+    query = product.category_id
+      ? query.eq("category_id", product.category_id)
+      : query.eq("category", product.category);
+
+    const { data, error } = await query;
+
+    if (error) console.error("Error loading related products:", error);
+    append((data ?? []) as Product[]);
+  }
+
+  if (results.length < 4) {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("status", "published")
+      .neq("id", product.id)
+      .order("featured", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (error) console.error("Error loading fallback related products:", error);
+    append((data ?? []) as Product[]);
+  }
+
+  return results.slice(0, limit);
+}
+
+export async function getProductsBySubcategory(subcategoryId?: string | null, limit = 8) {
+  if (!subcategoryId) return [];
+
+  const { data, error } = await supabase
     .from("products")
     .select("*")
     .eq("status", "published")
-    .neq("id", product.id)
+    .eq("subcategory_id", subcategoryId)
     .limit(limit);
 
-  if (product.category_id) {
-    query = query.eq("category_id", product.category_id);
-  } else {
-    query = query.eq("category", product.category);
-  }
-
-  const { data, error } = await query;
-
   if (error) {
-    console.error("Error loading related products:", error);
+    console.error("Error loading products by subcategory:", error);
     return [];
   }
 
