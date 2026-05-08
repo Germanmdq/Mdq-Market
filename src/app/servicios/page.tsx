@@ -10,7 +10,18 @@ import {
   X,
   ChevronDown,
   Briefcase,
-  ShieldCheck
+  ShieldCheck,
+  Zap,
+  Sparkles,
+  BadgePercent,
+  Clock,
+  Wrench,
+  Home,
+  Droplets,
+  Paintbrush,
+  Flame,
+  KeyRound,
+  HeartPulse
 } from "lucide-react";
 import ServiceCard from "@/components/marketplace/ServiceCard";
 import { cn } from "@/lib/utils";
@@ -22,6 +33,56 @@ const ZONES = [
   "Centro", "Güemes", "Constitución", "La Perla", "Playa Grande",
   "Punta Mogotes", "Camet", "Los Troncos", "Parque Camet"
 ];
+
+const SERVICE_CATEGORY_META = [
+  { match: "electric", icon: Zap, title: "Electricidad", description: "Urgencias, tableros, instalaciones y reparaciones seguras.", color: "from-amber-400 to-orange-500" },
+  { match: "plomer", icon: Droplets, title: "Plomería", description: "Pérdidas, baños, cocina, destapes y mantenimiento.", color: "from-sky-400 to-blue-600" },
+  { match: "gas", icon: Flame, title: "Gas", description: "Gasistas, calefactores, cocina y revisiones para hoy.", color: "from-red-400 to-rose-600" },
+  { match: "pint", icon: Paintbrush, title: "Pintura", description: "Interiores, exteriores, retoques y renovación de ambientes.", color: "from-violet-400 to-fuchsia-600" },
+  { match: "cerraj", icon: KeyRound, title: "Cerrajería", description: "Aperturas, cambios de cerradura y copias de llaves.", color: "from-slate-500 to-slate-800" },
+  { match: "limp", icon: Sparkles, title: "Limpieza", description: "Hogar, obra, patio, vidrios y servicios recurrentes.", color: "from-emerald-400 to-teal-600" },
+  { match: "nutric", icon: HeartPulse, title: "Bienestar", description: "Planes, salud, hábitos y profesionales de cuidado.", color: "from-pink-400 to-rose-500" },
+  { match: "hogar", icon: Home, title: "Hogar", description: "Arreglos y mejoras para mantener la casa al día.", color: "from-blue-400 to-indigo-600" },
+];
+
+function getServiceCategoryMeta(category: string) {
+  const normalized = category.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return SERVICE_CATEGORY_META.find((item) => normalized.includes(item.match)) ?? {
+    icon: Wrench,
+    title: category,
+    description: "Servicios locales verificados, con reserva protegida y coordinación MDP.",
+    color: "from-blue-500 to-cyan-500",
+  };
+}
+
+function PromoWidgets({ onUrgentClick }: { onUrgentClick: () => void }) {
+  return (
+    <div className="space-y-4">
+      <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-5 shadow-[0_16px_44px_rgba(15,23,42,0.10)]">
+        <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-md">
+          <BadgePercent className="h-5 w-5" />
+        </div>
+        <p className="text-sm font-semibold text-slate-950">Promo servicios del mes</p>
+        <p className="mt-2 text-xs leading-5 text-slate-600">10% bonificado en la primera reserva protegida para barrios seleccionados.</p>
+      </div>
+      <div className="rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-600 to-slate-950 p-5 text-white shadow-xl">
+        <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 text-white">
+          <Clock className="h-5 w-5" />
+        </div>
+        <p className="text-sm font-semibold">Urgencias MDP</p>
+        <p className="mt-2 text-xs leading-5 text-blue-100">Electricistas, gasistas y plomeros con disponibilidad para hoy.</p>
+        <button onClick={onUrgentClick} className="mt-4 rounded-full bg-white px-4 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-50">
+          Ver urgentes
+        </button>
+      </div>
+      <div className="rounded-3xl border border-amber-100 bg-amber-50 p-5 shadow-[0_16px_44px_rgba(15,23,42,0.08)]">
+        <p className="text-xs font-bold uppercase tracking-wider text-amber-700">Publicidad local</p>
+        <p className="mt-2 text-sm font-semibold text-slate-950">La Ferretería de Güemes</p>
+        <p className="mt-1 text-xs leading-5 text-slate-600">Herramientas, sanitarios y electricidad con entrega en el día.</p>
+      </div>
+    </div>
+  );
+}
 
 function ServiciosContent() {
   const router = useRouter();
@@ -194,23 +255,58 @@ function ServiciosContent() {
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {categories.map((category) => (
-                  <button
-                    key={category.name}
-                    onClick={() => updateUrl({ category: category.name })}
-                    className="rounded-3xl border border-slate-200 bg-white p-6 text-left shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl"
-                  >
-                    <p className="text-lg font-semibold text-slate-950">{category.name}</p>
-                    <p className="mt-2 text-sm text-slate-500">{category.count} servicios disponibles</p>
-                    {category.today > 0 && (
-                      <span className="mt-4 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                        {category.today} para hoy
-                      </span>
-                    )}
-                  </button>
-                ))}
+                {categories.map((category) => {
+                    const meta = getServiceCategoryMeta(category.name);
+                    const Icon = meta.icon;
+                    return (
+                      <button
+                        key={category.name}
+                        onClick={() => updateUrl({ category: category.name })}
+                        className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 text-left shadow-[0_16px_44px_rgba(15,23,42,0.10)] transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-[0_26px_76px_rgba(15,23,42,0.16)]"
+                      >
+                        <div className={`absolute -right-8 -top-8 h-28 w-28 rounded-full bg-gradient-to-br ${meta.color} opacity-15 transition group-hover:scale-125 group-hover:opacity-25`} />
+                        <div className={`relative mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${meta.color} text-white shadow-md transition group-hover:-rotate-6 group-hover:scale-110`}>
+                          <Icon className="h-7 w-7" />
+                        </div>
+                        <p className="relative text-lg font-semibold text-slate-950">{meta.title}</p>
+                        <p className="relative mt-2 min-h-[40px] text-sm leading-5 text-slate-500">{meta.description}</p>
+                        <div className="relative mt-5 flex flex-wrap gap-2">
+                          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{category.count} servicios</span>
+                          {category.today > 0 && (
+                            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">{category.today} hoy</span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                })}
               </div>
             )}
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              <button
+                onClick={() => updateUrl({ availableToday: true })}
+                className="rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-600 to-slate-950 p-6 text-left text-white shadow-[0_24px_70px_rgba(37,99,235,0.22)] transition hover:-translate-y-1"
+              >
+                <Clock className="mb-5 h-7 w-7" />
+                <p className="text-lg font-semibold">Servicios urgentes</p>
+                <p className="mt-2 text-sm leading-6 text-blue-100">Electricidad, gas, plomería y arreglos con disponibilidad para hoy.</p>
+              </button>
+              <button
+                onClick={() => updateUrl({ verified: true })}
+                className="rounded-3xl border border-emerald-100 bg-white p-6 text-left shadow-[0_16px_44px_rgba(15,23,42,0.10)] transition hover:-translate-y-1 hover:shadow-[0_26px_76px_rgba(15,23,42,0.16)]"
+              >
+                <ShieldCheck className="mb-5 h-7 w-7 text-emerald-600" />
+                <p className="text-lg font-semibold text-slate-950">Reserva protegida</p>
+                <p className="mt-2 text-sm leading-6 text-slate-500">Elegí servicios verificados y mantené todo coordinado dentro de MDP Market.</p>
+              </button>
+              <Link
+                href="/publicar?intent=servicio"
+                className="rounded-3xl border border-amber-100 bg-amber-50 p-6 text-left shadow-[0_16px_44px_rgba(15,23,42,0.08)] transition hover:-translate-y-1 hover:shadow-[0_26px_76px_rgba(15,23,42,0.14)]"
+              >
+                <BadgePercent className="mb-5 h-7 w-7 text-amber-600" />
+                <p className="text-lg font-semibold text-slate-950">Publicidad para servicios</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">Espacios destacados para ferreterías, técnicos y comercios de barrio.</p>
+              </Link>
+            </div>
           </section>
         ) : (
         <div className="lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
@@ -311,6 +407,7 @@ function ServiciosContent() {
                     </div>
                   </div>
                 </div>
+                <PromoWidgets onUrgentClick={() => updateUrl({ availableToday: true })} />
               </div>
             </div>
           </aside>

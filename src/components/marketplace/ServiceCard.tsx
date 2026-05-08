@@ -11,6 +11,9 @@ const FALLBACK = "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?q
 const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
   const [imgSrc, setImgSrc] = useState(service.image_url || service.image || FALLBACK);
   const href = `/servicios/${service.slug || service.id}`;
+  const priceFrom = Number((service as any).priceFrom ?? (service as any).price_from ?? 0);
+  const zones = Array.isArray(service.zones) ? service.zones : ((service as any).zone ? [(service as any).zone] : []);
+  const responseTime = service.responseTime || (service as any).response_time || "A coordinar";
 
   return (
     <Link href={href} className="block h-full group">
@@ -55,14 +58,14 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
           </h3>
 
           <div className="flex gap-3 text-[10px] font-medium text-slate-400 mb-3">
-            <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{service.responseTime}</span>
-            <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{service.zones[0]}</span>
+            <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{responseTime}</span>
+            <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{zones[0] || "MDP"}</span>
           </div>
 
           <div className="mt-auto pt-3 border-t border-slate-100/80 flex items-center justify-between">
             <div>
               <span className="text-[10px] font-medium text-slate-400">Desde</span>
-              <p className="text-lg font-bold text-slate-950 tracking-tight">{formatPrice(service.priceFrom)}</p>
+              <p className="text-lg font-bold text-slate-950 tracking-tight">{priceFrom > 0 ? formatPrice(priceFrom) : "A presupuestar"}</p>
             </div>
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-600">
               <Star className="w-3 h-3 fill-current" />{service.rating || 0}
