@@ -32,6 +32,7 @@ import { getPublishedServices } from "@/lib/services";
 import PersonalizedProductSections from "@/components/marketplace/PersonalizedProductSections";
 import CategoryHeroSlider from "@/components/marketplace/CategoryHeroSlider";
 import { normalizeSearchQuery, sanitizePostgrestSearchTerm } from "@/lib/search/buildSearchHref";
+import { CategoryAnimation } from "../categorias/CategoryAnimation";
 
 type CategoryRow = {
   id: string;
@@ -42,6 +43,7 @@ type CategoryRow = {
   is_active?: boolean;
   show_in_menu?: boolean;
   image_url?: string | null;
+  animation_url?: string | null;
 };
 
 type CategoryNode = CategoryRow & {
@@ -216,73 +218,57 @@ function CategoryQuickLinks({
   if (!categories.length) return null;
 
   return (
-    <section className="border-b border-slate-200 bg-white">
-      <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
-        <CategoryHeroSlider images={heroImages} title={title} captions={heroCaptions} />
-
-        <form
-          action="/productos"
-          method="GET"
-          className="relative z-10 mx-auto -mt-8 flex max-w-3xl rounded-[1.7rem] border border-slate-200 bg-white p-2 shadow-[0_30px_100px_rgba(15,23,42,0.24)]"
-        >
-          <div className="flex flex-1 items-center gap-3 px-3">
-            <Search className="h-5 w-5 text-slate-400" />
+    <section className="bg-[#ebebeb]">
+      <div className="bg-[#ffe600] py-3 shadow-sm">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+          <form
+            action="/productos"
+            method="GET"
+            className="relative mx-auto flex w-full max-w-2xl items-center rounded-sm bg-white shadow-sm"
+          >
             <input
               name="q"
               defaultValue={params.q ?? ""}
-              placeholder="Buscar productos..."
-              className="min-w-0 flex-1 bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400"
+              placeholder="Buscar productos, marcas y más…"
+              className="min-w-0 flex-1 px-4 py-2.5 text-base text-[#333333] outline-none placeholder:text-[#999999]"
             />
-          </div>
-          {Object.entries(params)
-            .filter(([key, value]) => key !== "q" && key !== "page" && Boolean(value))
-            .map(([key, value]) => (
-              <input key={key} type="hidden" name={key} value={value} />
-            ))}
-          <button className="h-12 rounded-2xl bg-blue-600 px-6 text-sm font-black text-white shadow-[0_12px_30px_rgba(37,99,235,0.28)] transition hover:bg-blue-700">
-            Buscar
-          </button>
-        </form>
-
-        <div className="mt-10">
-          <h1 className="text-3xl font-semibold tracking-tight text-slate-950">
-            Productos en Mar del Plata
-          </h1>
-          <p className="mt-1.5 text-sm text-slate-600">
-            {totalProducts} productos encontrados {totalPages > 1 && `(página ${page} de ${totalPages})`}
-          </p>
+            {Object.entries(params)
+              .filter(([key, value]) => key !== "q" && key !== "page" && Boolean(value))
+              .map(([key, value]) => (
+                <input key={key} type="hidden" name={key} value={value} />
+              ))}
+            <button className="flex h-full items-center justify-center border-l border-slate-200 px-4 text-[#999999] hover:text-[#3483fa] transition-colors">
+              <Search className="h-5 w-5" />
+            </button>
+          </form>
         </div>
+      </div>
 
-        <div className="mt-8 flex items-end justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium text-blue-600">Subcategorías</p>
-            <h3 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Elegí por necesidad</h3>
-          </div>
-          <Link href="#directorio-categorias" className="hidden items-center gap-1 text-sm font-semibold text-slate-900 hover:text-blue-600 sm:flex">
-            Ver directorio <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {categories.slice(0, 8).map((category) => {
-            const meta = getProductCategoryMeta(category);
+      <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 lg:px-8">
+        <CategoryHeroSlider images={heroImages} title={title} captions={heroCaptions} />
+
+        <div className="mt-8 flex flex-wrap justify-center gap-6 overflow-x-auto pb-4">
+          {categories.slice(0, 10).map((category) => {
             const imageUrl = category.image_url || `/category-art/${category.slug}.svg`;
             return (
               <Link
                 key={category.id}
                 href={`/productos?${category.is_root ? "category" : "subcategory"}=${category.slug}`}
-                className="group relative flex flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.10)] transition hover:-translate-y-1 hover:shadow-[0_30px_90px_rgba(15,23,42,0.16)]"
+                className="group flex min-w-[80px] flex-col items-center gap-3 text-center transition"
               >
-                <div className="relative mb-5 h-32 w-full rounded-2xl bg-slate-50/80 p-4 transition duration-500 group-hover:scale-105 group-hover:bg-slate-100">
-                  <img
-                    src={imageUrl}
-                    alt={`Ilustración de ${category.name}`}
-                    className="h-full w-full object-contain drop-shadow-sm"
-                    onError={(e) => { e.currentTarget.src = "/category-art/default.svg"; }}
-                  />
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm transition group-hover:shadow-md">
+                  {category.animation_url ? (
+                    <CategoryAnimation src={category.animation_url} className="h-8 w-8" />
+                  ) : (
+                    <img
+                      src={imageUrl}
+                      alt={`Ilustración de ${category.name}`}
+                      className="h-8 w-8 object-contain"
+                      onError={(e) => { e.currentTarget.src = "/category-art/default.svg"; }}
+                    />
+                  )}
                 </div>
-                <p className="relative text-lg font-semibold text-slate-950">{category.name}</p>
-                <p className="relative mt-2 min-h-[48px] text-sm leading-6 text-slate-500">{meta.copy}</p>
-                <div className="mt-auto pt-5"><p className="relative w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{category.productCount} publicaciones</p></div>
+                <p className="text-xs text-[#666666] group-hover:text-[#3483fa]">{category.name}</p>
               </Link>
             );
           })}
@@ -309,25 +295,24 @@ function StoreHighlights({ products }: { products: CatalogSignal[] }) {
 
   return (
     <MarketSection
-      eyebrow="Locales"
-      title="Tiendas y vendedores destacados"
-      description="Perfiles con catálogo activo dentro de MDP Market"
+      eyebrow="Tiendas oficiales"
+      title="Tiendas destacadas"
       href="/productos"
       linkLabel="Ver tiendas"
-      className="border-t border-slate-200 bg-slate-50"
+      className="bg-transparent"
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {sellers.map((seller) => (
           <Link
             key={seller.name}
             href={`/productos?q=${encodeURIComponent(seller.name)}`}
-            className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_16px_44px_rgba(15,23,42,0.10)] transition hover:-translate-y-1 hover:shadow-[0_26px_76px_rgba(15,23,42,0.16)]"
+            className="rounded-sm bg-white p-5 shadow-sm transition hover:shadow-md"
           >
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-sm bg-slate-100 text-[#333333]">
               <Store className="h-6 w-6" />
             </div>
-            <p className="text-base font-semibold text-slate-950">{seller.name}</p>
-            <p className="mt-1 text-sm text-slate-500">{seller.count} publicaciones · {seller.zone}</p>
+            <p className="text-base font-medium text-[#333333]">{seller.name}</p>
+            <p className="mt-1 text-sm text-[#999999]">{seller.count} publicaciones · {seller.zone}</p>
           </Link>
         ))}
       </div>
@@ -346,16 +331,15 @@ function TrendLinks({ categories, products }: { categories: CategoryNode[]; prod
   return (
     <MarketSection
       eyebrow="Tendencias"
-      title="Lo que más se está explorando"
-      description="Atajos a búsquedas y subcategorías con movimiento"
-      className="border-t border-slate-200"
+      title="Búsquedas populares"
+      className="bg-transparent"
     >
       <div className="flex flex-wrap gap-3">
         {subcategories.map((subcategory) => (
           <Link
             key={subcategory.id}
             href={`/productos?subcategory=${subcategory.slug}`}
-            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-200 hover:text-blue-700 hover:shadow-md"
+            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-[#3483fa] shadow-sm transition hover:bg-slate-50"
           >
             {subcategory.name}
           </Link>
@@ -364,7 +348,7 @@ function TrendLinks({ categories, products }: { categories: CategoryNode[]; prod
           <Link
             key={tag}
             href={`/productos?q=${encodeURIComponent(tag)}`}
-            className="rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-100"
+            className="rounded-full bg-slate-100 px-4 py-2 text-sm text-[#333333] transition hover:bg-slate-200"
           >
             {tag}
           </Link>
@@ -378,23 +362,21 @@ function CategoryDirectory({ categories }: { categories: CategoryNode[] }) {
   if (!categories.length) return null;
 
   return (
-    <section id="directorio-categorias" className="border-t border-slate-200 bg-white py-12">
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+    <section id="directorio-categorias" className="bg-white border-t border-slate-200 py-12">
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <p className="text-sm font-medium text-blue-600">Directorio</p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Todas las categorías</h2>
-          <p className="mt-2 text-sm text-slate-500">Un mapa completo para navegar productos por rubro y subcategoría.</p>
+          <h2 className="text-2xl font-medium text-[#333333]">Categorías populares</h2>
         </div>
         <div className="columns-1 gap-6 sm:columns-2 lg:columns-3 xl:columns-4">
           {categories.map((category) => (
-            <div key={category.id} className="mb-6 break-inside-avoid rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-[0_12px_34px_rgba(15,23,42,0.07)]">
-              <Link href={`/productos?category=${category.slug}`} className="text-base font-semibold text-slate-950 hover:text-blue-600">
+            <div key={category.id} className="mb-6 break-inside-avoid rounded-sm border border-slate-200 bg-slate-50 p-5 shadow-sm">
+              <Link href={`/productos?category=${category.slug}`} className="text-base font-medium text-[#333333] hover:text-[#3483fa]">
                 {category.name}
               </Link>
               {category.children.length > 0 && (
                 <div className="mt-3 space-y-2">
                   {category.children.slice(0, 12).map((child) => (
-                    <Link key={child.id} href={`/productos?subcategory=${child.slug}`} className="block text-sm text-slate-600 hover:text-blue-600">
+                    <Link key={child.id} href={`/productos?subcategory=${child.slug}`} className="block text-sm text-[#666666] hover:text-[#3483fa]">
                       {child.name}
                     </Link>
                   ))}
@@ -584,7 +566,7 @@ export default async function ProductsPage({
   const [{ data: categoryRows }, { data: catalogSignals }] = await Promise.all([
     supabase
       .from("categories")
-      .select("id, name, slug, parent_id, is_root, is_active, show_in_menu, image_url")
+      .select("id, name, slug, parent_id, is_root, is_active, show_in_menu, image_url, animation_url")
       .eq("is_active", true)
       .order("level", { ascending: true })
       .order("name", { ascending: true }),
@@ -611,7 +593,7 @@ export default async function ProductsPage({
   ) as Record<string, string>;
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#ebebeb]">
       <CategoryQuickLinks
         title={selectedNode ? `Encontrá más en ${selectedNode.name}` : "Comprá por categoría"}
         categories={quickCategories}
@@ -623,43 +605,63 @@ export default async function ProductsPage({
         page={page}
       />
 
-      <section className="border-b border-slate-200 bg-slate-50">
-        <div className="mx-auto grid max-w-[1440px] gap-4 px-4 py-6 sm:px-6 md:grid-cols-3 lg:px-8">
-          <Link
-            href="/productos?ofertas=true"
-            className="rounded-3xl border border-red-100 bg-white p-5 shadow-[0_16px_44px_rgba(15,23,42,0.08)] transition hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(15,23,42,0.14)]"
-          >
-            <BadgePercent className="mb-4 h-7 w-7 text-red-600" />
-            <p className="text-base font-semibold text-slate-950">Ofertas y descuentos</p>
-            <p className="mt-1 text-sm text-slate-500">Productos con precio especial o descuento activo.</p>
-          </Link>
-          <Link
-            href="/productos?delivery=true"
-            className="rounded-3xl border border-emerald-100 bg-white p-5 shadow-[0_16px_44px_rgba(15,23,42,0.08)] transition hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(15,23,42,0.14)]"
-          >
-            <Truck className="mb-4 h-7 w-7 text-emerald-600" />
-            <p className="text-base font-semibold text-slate-950">Entrega MDP</p>
-            <p className="mt-1 text-sm text-slate-500">Publicaciones con coordinación local en Mar del Plata.</p>
-          </Link>
-          <Link
-            href="/productos?protectedPayment=true"
-            className="rounded-3xl border border-blue-100 bg-white p-5 shadow-[0_16px_44px_rgba(15,23,42,0.08)] transition hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(15,23,42,0.14)]"
-          >
-            <ShieldCheck className="mb-4 h-7 w-7 text-blue-600" />
-            <p className="text-base font-semibold text-slate-950">Compra protegida</p>
-            <p className="mt-1 text-sm text-slate-500">Vendedores locales y pago protegido MDP.</p>
-          </Link>
+      <section className="bg-[#ebebeb] pb-6">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+          <div className="grid divide-y md:divide-y-0 md:divide-x divide-slate-200 rounded-sm bg-white shadow-sm md:grid-cols-3">
+            <Link
+              href="/productos?ofertas=true"
+              className="flex items-center gap-4 p-6 transition hover:bg-slate-50"
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-50 text-[#3483fa]">
+                <BadgePercent className="h-6 w-6" />
+              </div>
+              <div>
+                <p className="text-lg font-medium text-[#333333]">Ofertas y descuentos</p>
+                <p className="text-sm text-[#666666]">Productos con precio especial</p>
+              </div>
+            </Link>
+            <Link
+              href="/productos?delivery=true"
+              className="flex items-center gap-4 p-6 transition hover:bg-slate-50"
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-[#00a650]">
+                <Truck className="h-6 w-6" />
+              </div>
+              <div>
+                <p className="text-lg font-medium text-[#333333]">Entrega MDP</p>
+                <p className="text-sm text-[#666666]">Coordinación en Mar del Plata</p>
+              </div>
+            </Link>
+            <Link
+              href="/productos?protectedPayment=true"
+              className="flex items-center gap-4 p-6 transition hover:bg-slate-50"
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-50 text-[#3483fa]">
+                <ShieldCheck className="h-6 w-6" />
+              </div>
+              <div>
+                <p className="text-lg font-medium text-[#333333]">Compra protegida</p>
+                <p className="text-sm text-[#666666]">Pago seguro y garantizado</p>
+              </div>
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Main Content */}
-      <div className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8">
-        <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-[0_24px_80px_rgba(15,23,42,0.10)] sm:p-6 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
+      <div className="mx-auto max-w-[1200px] px-4 pb-12 sm:px-6 lg:px-8">
+        <div className="lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
 
           {/* Sidebar Filters - Desktop */}
           <aside className="hidden lg:block">
-            <div className="sticky top-24 rounded-3xl border border-slate-200 bg-slate-50 p-6">
-              <Suspense fallback={<div className="h-96 animate-pulse bg-slate-100 rounded-xl" />}>
+            <div className="sticky top-24 pb-6">
+              <h1 className="text-[26px] font-semibold text-[#333333] mb-1">
+                {selectedNode ? selectedNode.name : searchQuery ? `Resultados para "${searchQuery}"` : "Productos"}
+              </h1>
+              <p className="text-sm text-[#666666] mb-6">
+                {totalProducts} resultados
+              </p>
+              <Suspense fallback={<div className="h-96 animate-pulse bg-slate-200 rounded-sm" />}>
                 <ProductFilters />
               </Suspense>
             </div>
@@ -669,13 +671,17 @@ export default async function ProductsPage({
           <div>
             {/* Mobile Filter Button */}
             <div className="lg:hidden mb-6">
-              <details className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <summary className="flex cursor-pointer items-center justify-center gap-2 py-3 text-sm font-medium text-slate-700">
+              <h1 className="text-2xl font-semibold text-[#333333] mb-1">
+                {selectedNode ? selectedNode.name : searchQuery ? `Resultados para "${searchQuery}"` : "Productos"}
+              </h1>
+              <p className="text-sm text-[#666666] mb-4">{totalProducts} resultados</p>
+              <details className="rounded-sm border border-slate-200 bg-white shadow-sm">
+                <summary className="flex cursor-pointer items-center justify-center gap-2 py-3 text-sm font-medium text-[#333333]">
                   <SlidersHorizontal className="w-4 h-4" />
-                  Filtros
+                  Filtrar y ordenar
                 </summary>
                 <div className="border-t border-slate-100 p-5">
-                  <Suspense fallback={<div className="h-48 animate-pulse rounded-xl bg-slate-100" />}>
+                  <Suspense fallback={<div className="h-48 animate-pulse rounded-sm bg-slate-100" />}>
                     <ProductFilters mobile />
                   </Suspense>
                 </div>
@@ -684,85 +690,65 @@ export default async function ProductsPage({
 
             {products.length > 0 ? (
               <>
-                <div className="mb-5 flex flex-col gap-1 border-b border-slate-100 pb-4 sm:flex-row sm:items-end sm:justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-slate-950">Resultados</p>
-                    <p className="mt-1 text-sm text-slate-500">{totalProducts} publicaciones disponibles</p>
-                  </div>
-                  <p className="text-xs font-medium text-slate-400">Compra protegida y Entrega MDP cuando esté disponible</p>
-                </div>
                 <ProductGrid products={products} />
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="mt-12 flex items-center justify-center gap-2">
+                  <div className="mt-12 flex items-center justify-center gap-1">
                     {page > 1 && (
                       <Link
                         href={`/productos?${new URLSearchParams({ ...Object.fromEntries(Object.entries(cleanParams).filter(([k]) => k !== "page")), page: String(page - 1) }).toString()}`}
-                        className="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                        className="flex h-10 items-center justify-center rounded-sm px-4 text-sm font-medium text-[#3483fa] transition-colors hover:bg-blue-50"
                       >
-                        Anterior
+                        <span className="sr-only">Anterior</span>
+                        <ArrowRight className="h-4 w-4 rotate-180" />
                       </Link>
                     )}
 
-                    <div className="flex items-center gap-2">
-                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                        const pageNum = Math.max(1, Math.min(page - 2, totalPages - 4)) + i;
-                        if (pageNum > totalPages) return null;
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      const pageNum = Math.max(1, Math.min(page - 2, totalPages - 4)) + i;
+                      if (pageNum > totalPages) return null;
 
-                        return (
-                          <Link
-                            key={pageNum}
-                            href={`/productos?${new URLSearchParams({ ...Object.fromEntries(Object.entries(cleanParams).filter(([k]) => k !== "page")), page: String(pageNum) }).toString()}`}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                              pageNum === page
-                                ? "bg-blue-600 text-white"
-                                : "border border-slate-300 text-slate-700 hover:bg-slate-50"
-                            }`}
-                          >
-                            {pageNum}
-                          </Link>
-                        );
-                      })}
-                    </div>
+                      return (
+                        <Link
+                          key={pageNum}
+                          href={`/productos?${new URLSearchParams({ ...Object.fromEntries(Object.entries(cleanParams).filter(([k]) => k !== "page")), page: String(pageNum) }).toString()}`}
+                          className={`flex h-10 w-10 items-center justify-center rounded-sm text-sm font-medium transition-colors ${
+                            pageNum === page
+                              ? "bg-[#3483fa] text-white"
+                              : "text-[#666666] hover:bg-slate-200"
+                          }`}
+                        >
+                          {pageNum}
+                        </Link>
+                      );
+                    })}
 
                     {page < totalPages && (
                       <Link
                         href={`/productos?${new URLSearchParams({ ...Object.fromEntries(Object.entries(cleanParams).filter(([k]) => k !== "page")), page: String(page + 1) }).toString()}`}
-                        className="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                        className="flex h-10 items-center justify-center rounded-sm px-4 text-sm font-medium text-[#3483fa] transition-colors hover:bg-blue-50"
                       >
-                        Siguiente
+                        <span className="sr-only">Siguiente</span>
+                        <ArrowRight className="h-4 w-4" />
                       </Link>
                     )}
                   </div>
                 )}
               </>
             ) : (
-              <div className="py-24 text-center bg-white rounded-3xl border border-slate-200 shadow-sm">
-                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Search className="w-8 h-8 text-slate-300" />
+              <div className="py-24 text-center bg-white rounded-sm shadow-sm">
+                <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Search className="w-10 h-10 text-slate-400" />
                 </div>
-                <p className="text-sm font-semibold text-blue-600">Sin resultados</p>
-                <h3 className="mt-2 text-lg font-semibold text-slate-950">
-                  {searchQuery ? `No encontramos publicaciones para “${searchQuery}”` : "No encontramos resultados"}
+                <h3 className="mt-2 text-[22px] font-medium text-[#333333]">
+                  No hay publicaciones que coincidan con tu búsqueda.
                 </h3>
-                <p className="mx-auto mt-2 max-w-md text-sm text-slate-600">
-                  Probá con otra palabra, quitá filtros o explorá productos y servicios disponibles en Mar del Plata.
-                </p>
-                <div className="mt-6 flex flex-wrap justify-center gap-2">
-                  <Link
-                    href="/productos"
-                    className="inline-block rounded-full bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-                  >
-                    Ver productos
-                  </Link>
-                  <Link
-                    href="/servicios"
-                    className="inline-block rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-50"
-                  >
-                    Buscar servicios
-                  </Link>
-                </div>
+                <ul className="mx-auto mt-6 max-w-md text-sm text-[#666666] text-left list-disc list-inside">
+                  <li className="mb-2"><strong>Revisá la ortografía</strong> de la palabra.</li>
+                  <li className="mb-2">Utilizá <strong>palabras más genéricas</strong> o menos palabras.</li>
+                  <li>Navegá por las categorías para encontrar un producto similar.</li>
+                </ul>
               </div>
             )}
           </div>
@@ -770,19 +756,20 @@ export default async function ProductsPage({
       </div>
 
       {/* Additional Sections */}
-      <div className="bg-white border-t border-slate-200">
+      <div className="bg-[#ebebeb] pb-12">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Ofertas del día */}
         {deals.length > 0 && (
           <MarketSection
-            eyebrow="Exclusivo"
-            title="Ofertas del día"
-            description="Productos locales con precio especial por tiempo limitado"
+            eyebrow=""
+            title="Ofertas de hoy"
             href="/productos?ofertas=true"
             linkLabel="Ver todas"
+            className="bg-transparent px-0"
           >
             <MarketCarousel>
               {deals.map(p => (
-                <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
+                <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_20%] py-4 pr-4">
                   <ProductCard product={p} />
                 </div>
               ))}
@@ -793,14 +780,14 @@ export default async function ProductsPage({
         {/* Productos destacados */}
         {featured.length > 0 && (
           <MarketSection
-            eyebrow="Tendencias"
-            title="Productos destacados"
+            eyebrow=""
+            title="Inspirado en lo último que viste"
             href="/productos?featured=true"
-            className="border-t border-slate-200"
+            className="bg-transparent px-0"
           >
             <MarketCarousel>
               {featured.map(p => (
-                <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_19%] py-4">
+                <div key={p.id} className="min-w-0 flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_24%] xl:flex-[0_0_20%] py-4 pr-4">
                   <ProductCard product={p} />
                 </div>
               ))}
@@ -811,16 +798,15 @@ export default async function ProductsPage({
         {/* Servicios */}
         {services.length > 0 && (
           <MarketSection
-            eyebrow="Soluciones locales"
-            title="Servicios disponibles"
-            description="Profesionales listos para asistirte"
+            eyebrow=""
+            title="Servicios locales disponibles"
             href="/servicios"
             linkLabel="Ver todos"
-            className="border-t border-slate-200 bg-slate-50"
+            className="bg-transparent px-0"
           >
             <MarketCarousel>
               {services.slice(0, 8).map(s => (
-                <div key={s.id} className="min-w-0 flex-[0_0_86%] sm:flex-[0_0_48%] lg:flex-[0_0_31%] xl:flex-[0_0_24%] py-4">
+                <div key={s.id} className="min-w-0 flex-[0_0_86%] sm:flex-[0_0_48%] lg:flex-[0_0_31%] xl:flex-[0_0_24%] py-4 pr-4">
                   <ServiceCard service={s} />
                 </div>
               ))}
@@ -831,8 +817,9 @@ export default async function ProductsPage({
         <PersonalizedProductSections />
         <StoreHighlights products={(catalogSignals ?? []) as CatalogSignal[]} />
         <TrendLinks categories={categoryTree} products={(catalogSignals ?? []) as CatalogSignal[]} />
-        <CategoryDirectory categories={categoryTree} />
+        </div>
       </div>
+      <CategoryDirectory categories={categoryTree} />
     </main>
   );
 }

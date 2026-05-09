@@ -63,24 +63,21 @@ const Header = () => {
   return (
     <>
       <header className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-200",
+        "sticky top-0 z-50 w-full bg-[#ffe600] transition-all duration-200",
         scrolled
-          ? "bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm"
-          : "bg-white border-b border-slate-200"
+          ? "shadow-sm"
+          : ""
       )}>
         <div className="mx-auto flex h-[76px] max-w-[1440px] items-center gap-6 px-4 sm:px-6 lg:px-8">
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-lg font-black text-white shadow-[0_14px_32px_rgba(37,99,235,0.28)]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#333333] text-lg font-black text-[#ffe600] shadow-sm">
               M
             </div>
             <div className="hidden sm:block">
-              <p className="text-base font-black tracking-tight text-slate-950 leading-tight">
+              <p className="text-[20px] font-bold tracking-tight text-[#333333] leading-tight">
                 MDP Market
-              </p>
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500 leading-tight">
-                Mar del Plata
               </p>
             </div>
           </Link>
@@ -88,10 +85,10 @@ const Header = () => {
           {/* Nav links desktop */}
           <nav className="hidden items-center gap-1 lg:flex">
             <MegaMenu />
-            <Link href="/productos" className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950">Comprar</Link>
-            <Link href="/servicios?availableToday=true" className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950">Servicios hoy</Link>
-            <Link href="/profesionales" className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950">Profesionales</Link>
-            <Link href="/registro?intent=publicar&next=/publicar?intent=vender" className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950">Vender</Link>
+            <Link href="/productos" className="px-3 py-2.5 text-[14px] font-normal text-[#333333] transition-colors hover:text-[#3483fa]">Comprar</Link>
+            <Link href="/servicios?availableToday=true" className="px-3 py-2.5 text-[14px] font-normal text-[#333333] transition-colors hover:text-[#3483fa]">Servicios hoy</Link>
+            <Link href="/profesionales" className="px-3 py-2.5 text-[14px] font-normal text-[#333333] transition-colors hover:text-[#3483fa]">Profesionales</Link>
+            <Link href="/registro?intent=publicar&next=/publicar?intent=vender" className="px-3 py-2.5 text-[14px] font-normal text-[#333333] transition-colors hover:text-[#3483fa]">Vender</Link>
           </nav>
 
           {/* Search */}
@@ -112,18 +109,18 @@ const Header = () => {
               }
             }}
           >
-            <div className="flex h-12 items-center rounded-2xl border border-slate-200 bg-slate-50 px-4 transition-all focus-within:border-blue-500 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-50">
-              <Search className="h-4 w-4 text-slate-400" />
+            <div className="flex h-10 items-center rounded-sm bg-white px-4 shadow-sm transition-all focus-within:ring-2 focus-within:ring-[#3483fa]">
               <input
                 type="text"
                 name="q"
-                placeholder="¿Qué buscás en Mar del Plata?"
-                className="ml-2.5 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+                placeholder="Buscar productos, marcas y más…"
+                className="flex-1 bg-transparent text-base outline-none text-[#333333] placeholder:text-[#999999]"
               />
+              <Search className="h-5 w-5 text-[#999999] ml-2 border-l border-slate-200 pl-2" />
             </div>
             <div className="mt-2 flex gap-2 overflow-hidden">
               {quickSearches.map((item) => (
-                <Link key={item.label} href={item.href} className="text-[11px] font-semibold text-slate-500 transition hover:text-blue-600">
+                <Link key={item.label} href={item.href} className="text-[12px] font-normal text-[#333333] transition hover:text-[#3483fa]">
                   {item.label}
                 </Link>
               ))}
@@ -133,14 +130,14 @@ const Header = () => {
           {/* Right Actions */}
           <div className="ml-auto lg:ml-0 flex items-center gap-1">
             {user && (
-              <Link href="/favoritos" className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-50 hover:text-slate-950 transition-colors">
+              <Link href="/favoritos" className="hidden sm:flex h-10 w-10 items-center justify-center text-[#333333] hover:text-[#3483fa] transition-colors">
                 <Heart className="h-5 w-5" />
               </Link>
             )}
-            <Link href="/carrito" className="flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-50 hover:text-slate-950 transition-colors relative">
+            <Link href="/carrito" className="flex h-10 w-10 items-center justify-center text-[#333333] hover:text-[#3483fa] transition-colors relative">
               <ShoppingCart className="h-5 w-5" />
               {cartCount > 0 && (
-                <span className="absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[9px] font-bold text-white border-2 border-white">
+                <span className="absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#3483fa] px-1 text-[9px] font-bold text-white border-2 border-white">
                   {cartCount}
                 </span>
               )}
@@ -151,17 +148,17 @@ const Header = () => {
                 <div className="relative hidden sm:block">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-50 hover:text-slate-950 transition-colors"
+                    className="flex h-10 w-10 items-center justify-center text-[#333333] hover:text-[#3483fa] transition-colors"
                   >
                     <User className="h-5 w-5" />
                   </button>
                   {showUserMenu && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl border border-slate-200 shadow-xl py-2 z-50">
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-sm border border-slate-200 shadow-lg py-2 z-50">
                       <div className="px-4 py-3 border-b border-slate-100">
-                        <p className="text-sm font-medium text-slate-950 truncate">
+                        <p className="text-sm font-medium text-[#333333] truncate">
                           {user.user_metadata?.full_name || user.email}
                         </p>
-                        <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                        <p className="text-xs text-[#999999] truncate">{user.email}</p>
                       </div>
                       <Link
                         href="/cuenta"
@@ -199,10 +196,10 @@ const Header = () => {
                 </div>
               ) : (
                 <div className="hidden sm:flex items-center gap-2">
-                  <Link href="/login" className="px-3 py-2 text-sm font-bold text-slate-700 hover:text-slate-950">
+                  <Link href="/login" className="px-3 py-2 text-[14px] font-normal text-[#333333] hover:text-[#3483fa]">
                     Ingresar
                   </Link>
-                  <Link href="/registro" className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-[0_14px_34px_rgba(37,99,235,0.28)] transition-colors hover:bg-blue-700">
+                  <Link href="/registro" className="px-3 py-2 text-[14px] font-normal text-[#333333] hover:text-[#3483fa]">
                     Crear cuenta
                   </Link>
                 </div>
@@ -211,20 +208,20 @@ const Header = () => {
 
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden flex h-10 w-10 items-center justify-center rounded-full text-slate-700 hover:bg-slate-50 transition-colors"
+              className="lg:hidden flex h-10 w-10 items-center justify-center text-[#333333] hover:text-[#3483fa] transition-colors"
             >
               {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
 
-        <div className="border-t border-slate-100 bg-white/90">
-          <div className="mx-auto flex max-w-[1440px] gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8">
+        <div className="border-t border-black/10">
+          <div className="mx-auto flex max-w-[1440px] gap-6 overflow-x-auto px-4 py-2 sm:px-6 lg:px-8">
             {contextualLinks.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
-                className="shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-[0_8px_22px_rgba(15,23,42,0.04)] transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+                className="shrink-0 text-[13px] font-normal text-[#333333] transition hover:text-[#3483fa]"
               >
                 {item.label}
               </Link>
@@ -233,7 +230,7 @@ const Header = () => {
         </div>
 
         {/* Mobile search & Quick Cats */}
-        <div className="lg:hidden px-4 pb-3 space-y-2 border-t border-slate-100">
+        <div className="lg:hidden px-4 pb-3 space-y-2 border-t border-black/10">
           <form
             action="/productos"
             method="GET"
@@ -251,19 +248,19 @@ const Header = () => {
               }
             }}
           >
-            <div className="flex h-10 items-center rounded-full border border-slate-200 bg-slate-50 px-4 transition-all focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-50 focus-within:bg-white">
-              <Search className="h-4 w-4 text-slate-400" />
+            <div className="flex h-10 items-center rounded-sm bg-white px-4 shadow-sm transition-all focus-within:ring-2 focus-within:ring-[#3483fa]">
               <input
                 type="text"
                 name="q"
-                placeholder="¿Qué buscás en Mar del Plata?"
-                className="ml-2.5 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+                placeholder="Buscar productos, marcas..."
+                className="flex-1 bg-transparent text-sm outline-none text-[#333333] placeholder:text-[#999999]"
               />
+              <Search className="h-4 w-4 text-[#999999] ml-2" />
             </div>
           </form>
           <button
             onClick={() => setMobileCategoriesOpen(true)}
-            className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-50 rounded-xl text-xs font-semibold text-slate-700 border border-slate-200 hover:bg-white transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-2.5 bg-white rounded-sm text-sm font-normal text-[#333333] shadow-sm transition-colors"
           >
             <LayoutGrid className="w-3.5 h-3.5" />
             Categorías

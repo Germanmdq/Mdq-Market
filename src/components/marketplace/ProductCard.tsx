@@ -20,13 +20,13 @@ export default function ProductCard({ product }: { product: Product }) {
   const imageSrc = getProductMainImage(product);
 
   return (
-    <article className="group flex h-full min-h-[430px] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_14px_42px_rgba(15,23,42,0.10)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_64px_rgba(15,23,42,0.16)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-sm bg-white shadow-sm border border-slate-200 transition-all duration-200 hover:shadow-md">
       <Link href={`/productos/${product.slug}`} className="flex h-full flex-col">
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-white border-b border-slate-100">
           <img
             src={imageSrc}
             alt={product.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-contain p-2"
             loading="lazy"
             onError={(event) => {
               const fallback = "/fallbacks/producto.svg";
@@ -36,15 +36,9 @@ export default function ProductCard({ product }: { product: Product }) {
             }}
           />
 
-          {product.discount ? (
-            <span className="absolute left-3 top-3 rounded-full bg-red-600 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">
-              {product.discount}% OFF
-            </span>
-          ) : null}
-
           <button
             type="button"
-            className={`absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/95 shadow-sm backdrop-blur-sm transition-colors ${isFav ? "text-red-500" : "text-slate-400 hover:text-red-500"}`}
+            className={`absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-sm transition-colors ${isFav ? "text-[#3483fa]" : "text-[#ccc] hover:text-[#3483fa]"}`}
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
@@ -56,46 +50,48 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
 
         <div className="flex flex-1 flex-col p-4">
-          <div className="flex min-h-[28px] flex-wrap items-start gap-1.5">
+          <div className="flex flex-col items-start mb-2 space-y-1">
             {product.mdp_delivery_available ? (
-              <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-semibold text-white">
-                Entrega MDP
+              <span className="text-[12px] font-semibold text-[#00a650]">
+                Llega gratis a MDP
               </span>
             ) : null}
 
             {product.protected_payment ? (
-              <span className="rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-semibold text-white">
-                Pago protegido
+              <span className="text-[12px] font-semibold text-[#3483fa]">
+                Compra Protegida
               </span>
             ) : null}
           </div>
 
-          <div className="mt-3 min-h-[54px]">
-            <p className="text-xl font-semibold tracking-tight text-slate-950">
+          <div className="mb-2">
+            <div className="flex items-center gap-2">
+              <p className="text-[24px] font-normal tracking-tight text-[#333333]">
               {formatPrice(product.price)}
             </p>
+              {product.discount ? (
+                <span className="text-[14px] font-normal text-[#00a650]">
+                  {product.discount}% OFF
+                </span>
+              ) : null}
+            </div>
             {product.old_price ? (
-              <p className="mt-0.5 text-sm text-slate-400 line-through">
+              <p className="text-[12px] text-[#999999] line-through mt-[-4px]">
                 {formatPrice(product.old_price)}
               </p>
             ) : null}
           </div>
 
-          <h3 className="mt-2 min-h-[44px] line-clamp-2 text-sm font-semibold leading-snug text-slate-950">
+          <h3 className="mb-2 line-clamp-2 text-[14px] font-light leading-snug text-[#666666]">
             {product.title}
           </h3>
 
-          <div className="mt-3 min-h-[26px]">
-            <span className="rounded-full bg-slate-700 px-2.5 py-1 text-[10px] font-semibold text-white">
-              {toTitleLabel(product.condition)}
+          <div className="mt-auto flex items-center gap-2 text-[12px] text-[#999999]">
+            <span>
+              {product.seller_name || "Vendedor"}
             </span>
-          </div>
-
-          <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
-            <span className="font-medium">
-              {product.seller_name || "Vendedor local"}
-            </span>
-            <span className="truncate ml-2">{product.zone}</span>
+            <span>·</span>
+            <span>{toTitleLabel(product.condition)}</span>
           </div>
         </div>
       </Link>
